@@ -1,0 +1,31 @@
+---
+- name: Install the dependence packages
+  package: name="{{ item }}" state=present
+  with_items: ["vim"]
+
+- template:
+    src: "vimrc"
+    dest: '~{{ item.user}}/.vimrc'
+    owner: '{{ item.user}}'
+    group: '{{ item.group}}'
+    mode: 0644
+  with_items:
+    - { user: '{{ dev_user}}', group: '{{ dev_group}}' }
+    - { user: root, group: root }
+
+# - blockinfile:
+#     path: '~{{ item.user}}/.vimrc'
+#     owner: '{{ item.user}}'
+#     group: '{{ item.group}}'
+#     mode: 0644
+#     marker: "\" {mark} ANSIBLE MANAGED BLOCK"
+#     create: yes
+#     block: |
+#       set nu
+#       set hlsearch
+#       set autoindent
+#       set ruler
+#       syntax on
+#   with_items:
+#     - { user: '{{ dev_user}}', group: '{{ dev_group}}' }
+#     - { user: root, group: root }

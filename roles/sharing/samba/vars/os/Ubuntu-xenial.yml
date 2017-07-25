@@ -1,0 +1,2 @@
+os_aware_tasks: default.yml
+smb_dependency: ["samba", "smbclient"]

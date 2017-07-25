@@ -1,0 +1,29 @@
+---
+
+- include_vars: '{{ item }}'
+  with_first_found:
+  - files:
+      - '{{ ansible_os_family }}.yml'
+      - 'default.yml'
+    paths: '{{ role_path }}/vars/os'
+
+- group: name={{ dev_group }} state=present
+- user:
+    name: "{{ dev_user }}"
+    comment: "{{ dev_user}}"
+    group: "{{ dev_group }}"
+    groups: ["{{ sudo_group }}"]
+    shell: /bin/bash
+    generate_ssh_key: yes
+    ssh_key_bits: 2048
+    ssh_key_file: ".ssh/id_rsa"
+
+- raw: echo "{{ dev_user}}:{{ dev_user_pwd }}"  | chpasswd
+
+- name: developer Desktop
+  file:
+    path: ~{{ dev_user}}/Desktop
+    owner: "{{ dev_user }}"
+    group: "{{ dev_group }}"
+    state: directory
+    mode: 0755

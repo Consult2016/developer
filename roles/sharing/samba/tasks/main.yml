@@ -1,0 +1,35 @@
+---
+
+- include_vars: '{{ item }}'
+  with_first_found:
+  - files:
+      - '{{ ansible_distribution }}-{{ ansible_distribution_release}}.yml'
+      - '{{ ansible_os_family }}.yml'
+      - 'default.yml'
+    paths: '{{ role_path }}/vars/os'
+
+- name: Install the dependence packages
+  package: name="{{ item }}" state=present
+  with_items: '{{ smb_dependency }}'
+
+- file:
+    path: '{{ smb_sharing_dir }}'
+    owner: '{{ nobody }}'
+    group: '{{ nogroup }}'
+    state: directory
+    mode: 2770
+
+- file:
+    path: '{{ smb_sharing_dir }}/{{ inventory_hostname}}'
+    owner: '{{ nobody }}'
+    group: '{{ nogroup }}'
+    state: touch
+    mode: 0666
+
+- include: "os_aware/{{ os_aware_tasks }}"
+
+- template:
+    src: smb.conf.v4
+    dest: /etc/samba/smb.conf
+    backup: yes
+

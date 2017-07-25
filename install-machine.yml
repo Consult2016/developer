@@ -1,0 +1,41 @@
+---
+
+
+- name: Prepare
+  hosts: local
+  vars:
+    init: true
+  vars_files:
+    - ./vars/config.yml
+  roles:
+    - text/sublime
+    - text/meld
+    - dev/jdk
+
+- name: Install apps
+  hosts: dev_machines
+  become: yes
+  become_method: sudo
+  vars:
+    # cluster_mode: false
+    # fresh_unzip: false
+    # drop_data: false
+  vars_files:
+    - ./vars/config.yml
+
+  roles:
+    - basic/sources
+    - basic/system
+    - basic/common
+    - basic/user
+    - basic/proxy
+    - basic/firewall
+    - text/vim
+    - text/sublime
+    - text/meld
+    - sharing/nfs
+    - sharing/samba
+    - sharing/vnc
+    - dev/general
+    - dev/jdk
+

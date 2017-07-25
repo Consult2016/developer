@@ -1,0 +1,36 @@
+---
+
+- name: fetch JAVA_HOME, setup if absent
+  command: /bin/sh -l -c "echo $JAVA_HOME"
+  register: fetch_java_home
+  changed_when: False
+
+- debug: msg="os{{ ':'}}{{ ansible_os_family }}, distribution{{ ':'}}{{ ansible_distribution }}-{{ ansible_distribution_version }}({{ ansible_distribution_release }}), JAVA_HOME{{ ':'}}{{ fetch_java_home.stdout }}"
+
+# - name: show debug                          
+#   debug: var=fetch_java_home
+
+# - set_fact:
+#     java_home_fact: "{{ fetch_java_home.stdout }}"
+
+# - name: print JAVA_HOME
+#   debug:
+#     msg: "{{ java_home_fact}}"
+
+# Install apt managed jdk
+
+- name: add-apt-repository
+  apt_repository:
+    repo: ppa:openjdk-r/ppa
+  when: ( ansible_distribution == "Ubuntu" ) and ( ansible_distribution_version | version_compare('16.04', '<') )
+  # failed_when: false
+  # changed_when: false
+  # ignore_errors: True
+
+- name: Install the openjdk packages
+  package: name="{{ item }}" state=present
+  with_items: ['openjdk-8-jdk']
+  # ignore_errors: yes
+
+- include: setup_jdk.yml
+  when: "fetch_java_home.stdout == ''"

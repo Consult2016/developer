@@ -1,0 +1,5 @@
+set nu
+set hlsearch
+set autoindent
+set ruler
+syntax on

@@ -1,0 +1,25 @@
+---
+
+- name: unarchive sublime
+  unarchive:
+    src: '{{ rcpath}}/{{ meld_tar_filename }}'
+    dest: "{{ meld_install_path}}"
+
+- name: Install the dependence packages
+  package: name="{{ item }}" state=present
+  with_items: ['meld']
+
+# - copy:
+#     remote_src: true
+#     src: '{{ sublime_install_path}}/{{ sublime_basename}}/sublime_text.desktop'
+#     dest: '~{{ dev_user}}/Desktop/sublime_text.desktop'
+#     owner: '{{ dev_user}}'
+#     group: '{{ dev_group}}'
+#     mode: 0755
+
+# # - debug: msg="sed -i 's/\/opt\/sublime_text/{{ sublime_install_path | regex_escape()}}\/sublime_text_3/g' ~{{ dev_user}}/Desktop/sublime_text.desktop"
+
+# - name: update sublime_text.desktop
+#   raw: sed -i 's/\/opt\/sublime_text/{{ sublime_install_path | regex_escape()}}\/sublime_text_3/g' ~{{ dev_user}}/Desktop/sublime_text.desktop
+
+  #  raw: sed -i 's/\/opt\/sublime_text_3/{{ sublime_install_path}}\/{{ sublime_basename}}/g' ~{{ dev_user}}/Desktop/sublime_text.desktop

@@ -1,0 +1,8 @@
+---
+
+#https://www.sublimetext.com/3
+meld_download_url: https://download.gnome.org/sources/meld/3.17/meld-3.17.2.tar.xz
+meld_tar_filename: meld-3.17.2.tar.xz
+meld_basename: meld-3.17.2
+
+meld_install_path: /opt

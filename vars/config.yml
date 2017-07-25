@@ -1,0 +1,13 @@
+---
+rcpath: resources
+
+dev_group: developer
+dev_user: andy
+dev_user_pwd: passw0rd
+
+sharing_dir: /workzone
+smb_sharing_dir: /workzone_smb
+# http_proxy: 
+
+mounts:
+  - {type: nfs, host: localhost, path: /workzone, mountpoint: /xxx}

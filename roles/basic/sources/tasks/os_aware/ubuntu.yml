@@ -1,0 +1,27 @@
+---
+
+- name: check if sources.list.bk exist
+  stat: path="/etc/apt/sources.list.bk"
+  register: bkstat
+- name: backup sources.list
+  copy:
+    remote_src: true
+    src: /etc/apt/sources.list
+    dest: /etc/apt/sources.list.bk
+  when: ( not bkstat.stat.exists ) and ( ansible_distribution == "Ubuntu")
+
+- template:
+    src: '{{ ansible_distribution }}/{{ ansible_distribution_release}}.sources.list'
+    dest: /etc/apt/sources.list
+    backup: yes
+  when: ( ansible_distribution == "Ubuntu")
+
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+  failed_when: false
+  changed_when: false
+  ignore_errors: True
+
+# - name: apt-get upgrade
+#   raw: apt-get upgrade -y

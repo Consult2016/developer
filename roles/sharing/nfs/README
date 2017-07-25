@@ -1,0 +1,2 @@
+Mac
+# mount -t nfs  -o resvport,rw ${nfs_server_hostname}:/workzone ${mount_point}

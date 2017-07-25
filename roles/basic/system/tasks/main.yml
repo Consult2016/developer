@@ -1,0 +1,16 @@
+---
+
+- debug: msg="os{{ ':'}}{{ ansible_os_family }}, distribution{{ ':'}}{{ ansible_distribution }}, dis-version{{ ':'}}{{ ansible_distribution_version }}({{ ansible_distribution_release }})"
+
+- include_vars: '{{ item }}'
+  with_first_found:
+  - files:
+      - '{{ ansible_os_family }}.yml'
+      - 'default.yml'
+    paths: '{{ role_path }}/vars/os'
+
+# - name: Update repositories cache and upgrade
+#   apt:
+#     update_cache: yes
+#     upgrade: dist
+#   ignore_errors: yes
