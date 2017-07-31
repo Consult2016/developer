@@ -1,4 +1,3 @@
 ---
 
-- include: os_aware/{{ ansible_distribution }}/install_using_repo.yml
- 
+- include: "{{ '_init_.yml' if init | default(false) else '_run_.yml'}}"

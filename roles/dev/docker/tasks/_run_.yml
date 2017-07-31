@@ -1,0 +1,8 @@
+---
+
+
+- include: os_aware/{{ ansible_distribution }}/install_using_repo.yml
+  when: repo_install
+
+- include: os_aware/{{ ansible_distribution }}/install_using_package.yml
+  when: not repo_install 

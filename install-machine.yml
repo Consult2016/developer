@@ -19,6 +19,7 @@
     - dev/build/gradle
     - dev/ide/eclipse
     - dev/ide/idea
+    - dev/docker
 
 - name: Install apps
   hosts: dev_machines
