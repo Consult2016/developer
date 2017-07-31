@@ -1,0 +1,8 @@
+list mapping:
+net use
+
+a new mapping:
+net use s: \\xxx.xxx.xxx.xxx\workzone
+
+a new mapping with account:
+net use s: \\xxx.xxx.xxx.xxx\workzone /user:andy password

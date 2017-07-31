@@ -1,0 +1,13 @@
+---
+
+- name: mkdir resource directory
+  file: path="{{ role_path }}/{{ rcpath}}" state=directory
+
+# Prepare golang resource
+- name: check if golang_tar_file exist
+  stat: path="{{ role_path }}/{{ rcpath}}/{{ golang_tar_filename }}"
+  register: golangtarfstat
+- name: download golang
+  get_url: url="{{ golang_download_url }}" dest="{{ role_path }}/{{ rcpath}}/{{ golang_tar_filename }}"
+  when: not golangtarfstat.stat.exists
+

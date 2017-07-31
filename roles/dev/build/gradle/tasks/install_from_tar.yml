@@ -1,0 +1,40 @@
+---
+
+# install gradle files
+- name: mkdir for gradle
+  file: path="{{ gradle_dirname }}" state=directory
+- name: upload gradle tar file
+  copy:
+    src: "{{ rcpath}}/{{ gradle_tar_filename }}"
+    dest: "{{ gradle_dirname }}/{{ gradle_tar_filename }}"
+- name: check unarchive gradle directory
+  stat: path="{{ gradle_dirname }}/{{ gradle_basename }}"
+  register: gradlefstat
+- name: unarchive gradle
+  unarchive:
+    src: "{{ gradle_dirname }}/{{ gradle_tar_filename }}"
+    dest: "{{ gradle_dirname }}"
+    remote_src: yes
+  when: gradlefstat.stat.isdir is not defined
+
+# export environment variable
+- name: export GRADLE_HOME (/etc/environment)
+  lineinfile:
+    path: /etc/environment
+    regexp: '^GRADLE_HOME='
+    line: 'GRADLE_HOME={{ gradle_dirname }}/{{ gradle_basename }}'
+- name: export GRADLE_HOME
+  lineinfile:
+    path: "{{ sys_profile }}"
+    regexp: '^export GRADLE_HOME='
+    line: 'export GRADLE_HOME={{ gradle_dirname }}/{{ gradle_basename }}'
+- name: export GRADLE_HOME to PATH
+  lineinfile:
+    path: '{{ sys_profile }}'
+    line: 'export PATH=$PATH:$GRADLE_HOME/bin'
+
+- name: check gradle installation
+  raw: '/bin/bash -l -c "gradle -version"'
+  register: gradle_v
+  changed_when: False
+  failed_when: "( gradle_v | failed ) or ( gradle_v_expect not in gradle_v.stdout )"

@@ -1,0 +1,5 @@
+---
+
+- include: install_sbt_from_tar.yml
+
+- include: install_scala_from_tar.yml

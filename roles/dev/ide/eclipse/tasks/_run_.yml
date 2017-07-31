@@ -1,0 +1,13 @@
+---
+
+- name: unarchive eclipse
+  unarchive:
+    src: '{{ rcpath}}/{{ eclipse_tar_filename }}'
+    dest: "{{ eclipse_install_path}}"
+
+- template:
+    src: 'eclipse.desktop'
+    dest: '~{{ dev_user}}/Desktop/eclipse.desktop'
+    owner: '{{ dev_user}}'
+    group: '{{ dev_group}}'
+    mode: 0755

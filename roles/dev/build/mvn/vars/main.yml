@@ -1,0 +1,7 @@
+---
+mvn_dirname: /usr/lib/maven
+
+mvn_download_url: http://www-us.apache.org/dist/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.tar.gz
+mvn_tar_filename: apache-maven-3.5.0-bin.tar.gz
+mvn_basename: apache-maven-3.5.0
+mvn_v_expect: Apache Maven 3.5.0

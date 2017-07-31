@@ -1,0 +1,27 @@
+---
+
+# install python files
+- name: check unarchive {{ python_x }} directory
+  stat: path="{{ python_dirname }}/{{ python_basename }}"
+  register: pythonxfstat
+- name: unarchive {{ python_x }}
+  unarchive:
+    src: "{{ rcpath }}/{{ python_tar_filename }}"
+    dest: "{{ python_dirname }}"
+  when: pythonxfstat.stat.isdir is not defined
+
+# make install
+- name: make install
+  shell: |
+    ./configure
+    make
+    make install
+  args:
+    chdir: "{{ python_dirname }}/{{ python_basename}}"
+
+- name: check python installation
+  shell: "{{ python_x}} --version 2>&1"
+  register: python_v
+  changed_when: False
+  failed_when: "( python_v | failed ) or ( python_v_expect not in python_v.stdout )"
+

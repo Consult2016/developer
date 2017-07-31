@@ -1,0 +1,12 @@
+---
+
+
+- name: fetch gradle version
+  raw: '/bin/bash -l -c "gradle -version"'
+  register: gradle_v
+  changed_when: false
+  failed_when: false
+- name: install gradle
+  include: install_from_tar.yml
+  when: "( gradle_v | failed ) or ( gradle_v_expect not in gradle_v.stdout )"
+

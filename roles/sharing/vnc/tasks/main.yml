@@ -1,1 +1,16 @@
 ---
+
+- name: Install the vnc packages
+  package: name="{{ item }}" state=present
+  with_items: ['vnc4server']
+
+- name: mkdir for sbt
+  file: path="~{{ dev_user}}/.vnc" state=directory owner={{ dev_user}} group={{ dev_group}} mode=0770
+
+- template:
+    src: xstartup
+    dest: ~{{ dev_user}}/.vnc/xstartup
+    owner: '{{ dev_user}}'
+    group: '{{ dev_group}}'
+    mode: 0770
+

@@ -1,0 +1,41 @@
+---
+
+# install mvn files
+- name: mkdir for mvn
+  file: path="{{ mvn_dirname }}" state=directory
+- name: upload mvn tar file
+  copy:
+    src: "{{ rcpath}}/{{ mvn_tar_filename }}"
+    dest: "{{ mvn_dirname }}/{{ mvn_tar_filename }}"
+- name: check unarchive mvn directory
+  stat: path="{{ mvn_dirname }}/{{ mvn_basename }}"
+  register: mvnfstat
+- name: unarchive mvn
+  unarchive:
+    src: "{{ mvn_dirname }}/{{ mvn_tar_filename }}"
+    dest: "{{ mvn_dirname }}"
+    remote_src: yes
+  when: mvnfstat.stat.isdir is not defined
+
+# export environment variable
+- name: export MAVEN_HOME (/etc/environment)
+  lineinfile:
+    path: /etc/environment
+    regexp: '^MAVEN_HOME='
+    line: 'MAVEN_HOME={{ mvn_dirname }}/{{ mvn_basename }}'
+- name: export MAVEN_HOME
+  lineinfile:
+    path: "{{ sys_profile }}"
+    regexp: '^export MAVEN_HOME='
+    line: 'export MAVEN_HOME={{ mvn_dirname }}/{{ mvn_basename }}'
+- name: export MAVEN_HOME to PATH
+  lineinfile:
+    path: '{{ sys_profile }}'
+    line: 'export PATH=$PATH:$MAVEN_HOME/bin'
+
+- name: check mvn installation
+  raw: '/bin/bash -l -c "mvn -version"'
+  register: mvn_v
+  changed_when: False
+  failed_when: "( mvn_v | failed ) or ( mvn_v_expect not in mvn_v.stdout )"
+

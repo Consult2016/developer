@@ -17,7 +17,7 @@
     owner: '{{ nobody }}'
     group: '{{ nogroup }}'
     state: directory
-    mode: 2770
+    mode: 0777
 
 - file:
     path: '{{ smb_sharing_dir }}/{{ inventory_hostname}}'

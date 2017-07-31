@@ -1,1 +1,40 @@
 ---
+
+- blockinfile:
+    path: /etc/environment
+    marker: "# {mark} PROXY BLOCK"
+    block: |
+      http_proxy={{ '"' }}{{ http_proxy }}{{ '"' }}
+      https_proxy={{ '"' }}{{ https_proxy }}{{ '"' }}
+      ftp_proxy={{ '"' }}{{ ftp_proxy }}{{ '"' }}
+      socks_proxy={{ '"' }}{{ socks_proxy }}{{ '"' }}
+      no_proxy={{ '"' }}{{ no_proxy }}{{ '"' }}
+      HTTP_PROXY={{ '"' }}{{ http_proxy }}{{ '"' }}
+      HTTPS_PROXY={{ '"' }}{{ https_proxy }}{{ '"' }}
+      FTP_PROXY={{ '"' }}{{ ftp_proxy }}{{ '"' }}
+      SOCKS_PROXY={{ '"' }}{{ socks_proxy }}{{ '"' }}
+      NO_PROXY={{ '"' }}{{ no_proxy }}{{ '"' }}
+  when: use_proxy
+
+- name: export PROXIES
+  blockinfile:
+    path: '{{ sys_bashrc }}'
+    marker: "# {mark} PROXY BLOCK"
+    block: |
+      export http_proxy={{ '"' }}{{ http_proxy }}{{ '"' }}
+      export https_proxy={{ '"' }}{{ https_proxy }}{{ '"' }}
+      export ftp_proxy={{ '"' }}{{ ftp_proxy }}{{ '"' }}
+      export socks_proxy={{ '"' }}{{ socks_proxy }}{{ '"' }}
+      export no_proxy={{ '"' }}{{ no_proxy }}{{ '"' }}
+  when: use_proxy
+
+- blockinfile:
+    path: /etc/apt/apt.conf.d/95proxies
+    marker: "// {mark} PROXY BLOCK"
+    block: |
+      Acquire::http::proxy {{ '"' }}{{ http_proxy }}{{ '"' }};
+      Acquire::https::proxy {{ '"' }}{{ https_proxy }}{{ '"' }};
+      Acquire::ftp::proxy {{ '"' }}{{ ftp_proxy }}{{ '"' }};
+      Acquire::socks::proxy {{ '"' }}{{ socks_proxy }}{{ '"' }};
+    create: yes
+  when: use_proxy

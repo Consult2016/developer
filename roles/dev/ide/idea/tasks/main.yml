@@ -1,0 +1,2 @@
+---
+- include: "{{ '_init_.yml' if init | default(false) else '_run_.yml'}}"

@@ -1,0 +1,45 @@
+---
+
+# install sbt files
+- name: mkdir for sbt
+  file: path="{{ sbt_dirname }}" state=directory
+- name: upload sbt tar file
+  copy:
+    src: "{{ rcpath}}/{{ sbt_tar_filename }}"
+    dest: "{{ sbt_dirname }}/{{ sbt_tar_filename }}"
+- name: check unarchive sbt directory
+  stat: path="{{ sbt_dirname }}/{{ sbt_basename }}"
+  register: sbtfstat
+- name: unarchive sbt
+  unarchive:
+    src: "{{ sbt_dirname }}/{{ sbt_tar_filename }}"
+    dest: "{{ sbt_dirname }}"
+    remote_src: yes
+  when: sbtfstat.stat.isdir is not defined
+- name: rename sbt -> {{ sbt_basename }}
+  shell: |
+    mv {{ sbt_dirname }}/sbt {{ sbt_dirname }}/{{ sbt_basename }}
+  when: sbtfstat.stat.isdir is not defined
+
+# export environment variable
+- name: export SBT_HOME (/etc/environment)
+  lineinfile:
+    path: /etc/environment
+    regexp: '^SBT_HOME='
+    line: 'SBT_HOME={{ sbt_dirname }}/{{ sbt_basename }}'
+- name: export SBT_HOME
+  lineinfile:
+    path: "{{ sys_profile }}"
+    regexp: '^export SBT_HOME='
+    line: 'export SBT_HOME={{ sbt_dirname }}/{{ sbt_basename }}'
+- name: export SBT_HOME to PATH
+  lineinfile:
+    path: '{{ sys_profile }}'
+    line: 'export PATH=$PATH:$SBT_HOME/bin'
+
+# check
+- name: check if sbt installed
+  raw: su - {{ dev_user}} -l -c "sbt sbt-version"
+  register: command_result
+  failed_when: "( command_result | failed ) or ( sbt_version_expect not in command_result.stdout) "
+  changed_when: false

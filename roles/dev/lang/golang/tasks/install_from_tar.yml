@@ -1,0 +1,45 @@
+---
+
+# install golang files
+- name: mkdir for golang
+  file: path="{{ golang_dirname }}" state=directory
+- name: upload golang tar file
+  copy:
+    src: "{{ rcpath}}/{{ golang_tar_filename }}"
+    dest: "{{ golang_dirname }}/{{ golang_tar_filename }}"
+- name: check unarchive golang directory
+  stat: path="{{ golang_dirname }}/{{ golang_basename }}"
+  register: golangfstat
+- name: unarchive golang
+  unarchive:
+    src: "{{ golang_dirname }}/{{ golang_tar_filename }}"
+    dest: "{{ golang_dirname }}"
+    remote_src: yes
+  when: golangfstat.stat.isdir is not defined
+- name: rename golang -> {{ golang_basename }}
+  shell: |
+    mv {{ golang_dirname }}/go {{ golang_dirname }}/{{ golang_basename }}
+  when: golangfstat.stat.isdir is not defined
+
+# export environment variable
+- name: export GOROOT (/etc/environment)
+  lineinfile:
+    path: /etc/environment
+    regexp: '^GOROOT='
+    line: 'GOROOT={{ golang_dirname }}/{{ golang_basename }}'
+- name: export GOROOT
+  lineinfile:
+    path: "{{ sys_profile }}"
+    regexp: '^export GOROOT='
+    line: 'export GOROOT={{ golang_dirname }}/{{ golang_basename }}'
+- name: export GOROOT to PATH
+  lineinfile:
+    path: '{{ sys_profile }}'
+    line: 'export PATH=$PATH:$GOROOT/bin'
+
+# check
+- name: check go installation
+  raw: su - {{ dev_user}} -l -c "go version"
+  register: command_result
+  failed_when: "( command_result | failed ) or ( golang_version_expect not in command_result.stdout) "
+  changed_when: false

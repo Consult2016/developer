@@ -10,7 +10,15 @@
   roles:
     - text/sublime
     - text/meld
-    - dev/jdk
+    - dev/lang/jdk
+    - dev/lang/scala
+    - dev/lang/golang
+    - dev/lang/nodejs
+    - dev/lang/python
+    - dev/build/mvn
+    - dev/build/gradle
+    - dev/ide/eclipse
+    - dev/ide/idea
 
 - name: Install apps
   hosts: dev_machines
@@ -24,18 +32,29 @@
     - ./vars/config.yml
 
   roles:
-    - basic/sources
     - basic/system
+    - basic/proxy
+    - basic/sources
     - basic/common
     - basic/user
-    - basic/proxy
     - basic/firewall
     - text/vim
     - text/sublime
     - text/meld
+    - internet/chrome
     - sharing/nfs
     - sharing/samba
     - sharing/vnc
     - dev/general
-    - dev/jdk
+    - dev/lang/jdk
+    - dev/lang/scala
+    - dev/lang/golang
+    - dev/lang/nodejs
+    - dev/lang/python
+    - dev/build/mvn
+    - dev/build/gradle
+    - dev/ansible
+    - dev/ide/eclipse
+    - dev/ide/idea
+    - dev/docker
 

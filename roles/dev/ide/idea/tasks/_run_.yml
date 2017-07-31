@@ -1,0 +1,22 @@
+---
+
+- name: unarchive idea
+  unarchive:
+    src: '{{ rcpath}}/{{ idea_tar_filename }}'
+    dest: "{{ idea_install_path}}"
+
+- file:
+    src: '{{ idea_install_path}}/{{ idea_basename}}'
+    dest: '~{{ dev_user}}/Desktop/{{ idea_basename}}'
+    state: link
+# - name: setup
+#   shell:
+#     ./idea.sh
+#     chdir: '{{ idea_install_path}}/{{ idea_basename}}/bin'
+
+# - template:
+#     src: 'idea.desktop'
+#     dest: '~{{ dev_user}}/Desktop/idea.desktop'
+#     owner: '{{ dev_user}}'
+#     group: '{{ dev_group}}'
+#     mode: 0755
