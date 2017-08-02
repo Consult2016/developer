@@ -18,7 +18,7 @@
 #     msg: "{{ java_home_fact}}"
 
 - include: install_from_repo.yml
-  when: "fetch_java_home.stdout == ''"
+  when: ("fetch_java_home.stdout == ''") and repo_install
 
 - include: install_from_tar.yml
   when: "fetch_java_home.stdout == ''"

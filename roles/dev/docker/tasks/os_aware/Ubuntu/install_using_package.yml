@@ -5,7 +5,9 @@
   register: deb_temp
 
 - set_fact:
-    deb_file: '{{ docker_packages[ansible_distribution][ansible_distribution_release] }}'
+    docker_res_key: "{{ ansible_distribution}}-{{ansible_distribution_release }}"
+- set_fact:
+    deb_file: '{{ docker_packages[docker_res_key].file }}'
 
 - copy: src='{{ role_path }}/{{ rcpath}}/{{ deb_file}}' dest="{{ deb_temp.path}}/{{ deb_file}}"
 

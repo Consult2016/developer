@@ -1,0 +1,36 @@
+---
+
+# Manage Docker as a non-root user (affect after logout and logback, try "$ docker run hello-world")
+- group: name='{{ docker_group }}' state=present
+- user:
+    name: "{{ dev_user }}"
+    groups: '{{ docker_group }}'
+    append: yes
+
+# Configure Docker to start on boot
+- service: name=docker enabled=yes state=started
+
+- template: src=daemon.json dest=/etc/docker/daemon.json
+# - file:
+#     path: '/etc/systemd/system/docker.service.d'
+#     state: directory
+#     owner: root
+#     group: root
+#     mode: 0755
+# - template: src=http-proxy.conf dest=/etc/systemd/system/docker.service.d/http-proxy.conf
+
+# https://stackoverflow.com/questions/26550360/docker-ubuntu-behind-proxy
+- name: export PROXIES
+  blockinfile:
+    path: '/etc/default/docker'
+    marker: "# {mark} PROXY BLOCK"
+    block: |
+      export http_proxy={{ '"' }}{{ proxy.http }}{{ '"' }}
+      export https_proxy={{ '"' }}{{ proxy.https }}{{ '"' }}
+      export ftp_proxy={{ '"' }}{{ proxy.ftp }}{{ '"' }}
+      export socks_proxy={{ '"' }}{{ proxy.socks }}{{ '"' }}
+      export no_proxy={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
+  when: proxy.enable
+
+- name: restart docker daemon
+  service: name=docker state=restarted enabled=yes

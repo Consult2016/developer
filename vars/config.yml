@@ -9,5 +9,14 @@ sharing_dir: /workzone
 smb_sharing_dir: /workzone_smb
 # http_proxy: 
 
+proxy:
+  enable: false
+  default: http://192.168.3.2:1080
+  http: http://192.168.3.2:1080
+  https: http://192.168.3.2:1080
+  ftp: http://192.168.3.2:1080
+  socks: http://192.168.3.2:1080
+  no_proxy: "localhost,127.0.0.1,localaddress,.localdomain.com"
+
 mounts:
   - {type: nfs, host: localhost, path: /workzone, mountpoint: /xxx}

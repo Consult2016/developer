@@ -35,4 +35,4 @@
       {{ sharing_dir }}    *(rw,sync,no_root_squash,no_subtree_check)
 
 - name: restart nfsserver
-  service: name=nfs-kernel-server state=restarted
+  service: name=nfs-kernel-server state=restarted enabled=yes

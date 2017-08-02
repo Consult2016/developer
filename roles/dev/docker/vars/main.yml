@@ -1,16 +1,28 @@
 ---
 
-repo_install: true
+repo_install: false
 
 docker_download_url: https://download.docker.com/linux/ubuntu/dists/
 
 docker_packages:
-  Ubuntu:
-    trusty: docker-ce_17.06.0-ce-0-ubuntu_amd64(trusty).deb
-    xenial: docker-ce_17.06.0-ce-0-ubuntu_amd64(xenial).deb
-  centos:
-    7: docker-ce-17.06.0.ce-1.el7.centos.x86_64.rpm
-  debian:
-    wheezy: docker-ce_17.06.0-ce-0-debian_amd64(wheezy).deb
-    stretch: docker-ce_17.06.0-ce-0-debian_amd64(stretch).deb
-    jessie: docker-ce_17.06.0-ce-0-debian_amd64(jessie).deb
+  Ubuntu-trusty:
+    file: docker-ce_17.06.0-ce-0-ubuntu_amd64(trusty).deb
+    url: https://download.docker.com/linux/ubuntu/dists/trusty/pool/stable/amd64/docker-ce_17.06.0~ce-0~ubuntu_amd64.deb
+  Ubuntu-xenial:
+    file: docker-ce_17.06.0-ce-0-ubuntu_amd64(xenial).deb
+    url: https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/docker-ce_17.06.0~ce-0~ubuntu_amd64.deb
+  centos-7:
+    file: docker-ce-17.06.0.ce-1.el7.centos.x86_64.rpm
+    url: https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.06.0.ce-1.el7.centos.x86_64.rpm
+  debian-wheezy:
+    file: docker-ce_17.06.0-ce-0-debian_amd64(wheezy).deb
+    url: https://download.docker.com/linux/debian/dists/wheezy/pool/stable/amd64/docker-ce_17.06.0~ce-0~debian_amd64.deb
+  debian-stretch:
+    file: docker-ce_17.06.0-ce-0-debian_amd64(stretch).deb
+    url: https://download.docker.com/linux/debian/dists/stretch/pool/stable/amd64/docker-ce_17.06.0~ce-0~debian_amd64.deb
+  debian-jessie:
+    file: docker-ce_17.06.0-ce-0-debian_amd64(jessie).deb
+    url: https://download.docker.com/linux/debian/dists/jessie/pool/stable/amd64/docker-ce_17.06.0~ce-0~debian_amd64.deb
+
+
+docker_group: docker

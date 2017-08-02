@@ -7,6 +7,7 @@
 - name: add-apt-repository
   apt_repository:
     repo: ppa:ansible/ansible
+    # validate_certs: no
   when: ( ansible_distribution == "Ubuntu" )
   # failed_when: false
   # changed_when: false

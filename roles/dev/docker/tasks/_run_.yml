@@ -6,3 +6,5 @@
 
 - include: os_aware/{{ ansible_distribution }}/install_using_package.yml
   when: not repo_install 
+
+- include: os_aware/{{ ansible_distribution }}/postinstall-{{ ansible_distribution_release }}.yml

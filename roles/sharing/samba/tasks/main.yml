@@ -33,3 +33,5 @@
     dest: /etc/samba/smb.conf
     backup: yes
 
+- name: restart smbd
+  service: name=smbd state=started enabled=yes

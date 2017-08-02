@@ -3,7 +3,14 @@
 - name: mkdir resource directory
   file: path="{{ role_path }}/{{ rcpath}}" state=directory
 
-- debug: msg="{{ docker_packages }}"
-# - name: check if jdk_tar_file exist
-#   stat: path="{{ role_path }}/{{ rcpath}}/{{ jdk_tar_filename }}"
-#   register: jdktarfstat
+- name: check package exist
+  stat: path="{{ role_path }}/{{ rcpath}}/{{ docker_packages[item].file }}" get_attributes=false get_checksum=false get_md5=false get_mime=false 
+  register: dockerpackages_stat
+  with_items: "{{ docker_packages | list }}"
+- name: download files
+  get_url:
+    url: '{{ docker_packages[item.item].url }}'
+    dest: "{{ role_path }}/{{ rcpath}}/{{ docker_packages[item.item].file }}"
+  when: (item.stat.exists is not defined ) or (not item.stat.exists)
+  with_items:
+    - "{{ dockerpackages_stat.results }}"
