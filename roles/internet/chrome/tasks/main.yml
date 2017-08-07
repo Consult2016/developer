@@ -4,5 +4,5 @@
   package: name="chromium-browser" state=present
 
 - apt:
-    deb: '{{ rcpath}}/{{ chrome_deb_file}}'
+    deb: '{{ resource_cache}}/{{ chrome_deb_file}}'
   failed_when: false

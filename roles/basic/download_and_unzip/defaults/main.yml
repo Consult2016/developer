@@ -1,0 +1,8 @@
+---
+do_unzip: true
+
+pkg_conf:
+  name: x
+  install_path: /x
+  url: xx://xx.xx
+  file: xx.xx

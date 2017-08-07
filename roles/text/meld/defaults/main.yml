@@ -1,0 +1,9 @@
+---
+
+pkg_ic:
+  #https://www.sublimetext.com/3
+  name: meld
+  install_path: /opt
+  url: https://download.gnome.org/sources/meld/3.17/meld-3.17.2.tar.xz
+  file: meld-3.17.2.tar.xz
+  basename: meld-3.17.2

@@ -1,0 +1,10 @@
+---
+
+pkg_ic:
+  #https://www.sublimetext.com/3
+  name: sublime
+  install_path: /opt
+  url: https://download.sublimetext.com/sublime_text_3_build_3126_x64.tar.bz2
+  file: sublime_text_3_build_3126_x64.tar.bz2
+  basename: sublime_text_3
+

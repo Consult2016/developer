@@ -27,8 +27,8 @@
 
 - name: Check ansible versions
   shell: "ansible --version | grep ansible | grep -v config | cut -d ' ' -f2"
-  sudo: yes
+  # sudo: yes
   register: ansible_v
   failed_when: ( ansible_v | failed ) or ( ansible_v.stdout | version_compare('2.3.0.1', '<=') )
+  changed_when: false
 
-- debug: msg="ansible_v {{ ansible_v.stdout }}"

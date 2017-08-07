@@ -1,33 +1,22 @@
 ---
 
-# install mvn files
-- name: mkdir for mvn
-  file: path="{{ mvn_dirname }}" state=directory
-- name: upload mvn tar file
-  copy:
-    src: "{{ rcpath}}/{{ mvn_tar_filename }}"
-    dest: "{{ mvn_dirname }}/{{ mvn_tar_filename }}"
-- name: check unarchive mvn directory
-  stat: path="{{ mvn_dirname }}/{{ mvn_basename }}"
-  register: mvnfstat
-- name: unarchive mvn
-  unarchive:
-    src: "{{ mvn_dirname }}/{{ mvn_tar_filename }}"
-    dest: "{{ mvn_dirname }}"
-    remote_src: yes
-  when: mvnfstat.stat.isdir is not defined
+- name: download and unzip
+  include_role:
+    name: basic/download_and_unzip
+  vars:
+    pkg_conf: '{{ pkg_ic }}'
 
 # export environment variable
 - name: export MAVEN_HOME (/etc/environment)
   lineinfile:
     path: /etc/environment
     regexp: '^MAVEN_HOME='
-    line: 'MAVEN_HOME={{ mvn_dirname }}/{{ mvn_basename }}'
+    line: 'MAVEN_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: export MAVEN_HOME
   lineinfile:
     path: "{{ sys_profile }}"
     regexp: '^export MAVEN_HOME='
-    line: 'export MAVEN_HOME={{ mvn_dirname }}/{{ mvn_basename }}'
+    line: 'export MAVEN_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: export MAVEN_HOME to PATH
   lineinfile:
     path: '{{ sys_profile }}'
@@ -35,7 +24,7 @@
 
 - name: check mvn installation
   raw: '/bin/bash -l -c "mvn -version"'
-  register: mvn_v
+  register: pkg_v
   changed_when: False
-  failed_when: "( mvn_v | failed ) or ( mvn_v_expect not in mvn_v.stdout )"
+  failed_when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout )"
 

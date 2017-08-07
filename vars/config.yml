@@ -1,5 +1,6 @@
 ---
-rcpath: resources
+
+resource_cache: "{{ playbook_dir | dirname }}/.resources"
 
 dev_group: developer
 dev_user: andy

@@ -1,42 +1,30 @@
 ---
 
-# install scala files
-- name: mkdir for scala
-  file: path="{{ scala_dirname }}" state=directory
-- name: upload scala tar file
-  copy:
-    src: "{{ rcpath}}/{{ scala_tar_filename }}"
-    dest: "{{ scala_dirname }}/{{ scala_tar_filename }}"
-- name: check unarchive scala directory
-  stat: path="{{ scala_dirname }}/{{ scala_basename }}"
-  register: scalafstat
-- name: unarchive scala
-  unarchive:
-    src: "{{ scala_dirname }}/{{ scala_tar_filename }}"
-    dest: "{{ scala_dirname }}"
-    remote_src: yes
-  when: scalafstat.stat.isdir is not defined
+- name: download and unzip
+  include_role:
+    name: basic/download_and_unzip
+  vars:
+    pkg_conf: '{{ pkg_ic }}'
 
 # export environment variable
 - name: export SCALA_HOME (/etc/environment)
   lineinfile:
     path: /etc/environment
     regexp: '^SCALA_HOME='
-    line: 'SCALA_HOME={{ scala_dirname }}/{{ scala_basename }}'
+    line: 'SCALA_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: export SCALA_HOME
   lineinfile:
     path: "{{ sys_profile }}"
     regexp: '^export SCALA_HOME='
-    line: 'export SCALA_HOME={{ scala_dirname }}/{{ scala_basename }}'
-#  when: ansible_os_family == "RedHat"
+    line: 'export SCALA_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: export SCALA_HOME to PATH
   lineinfile:
     path: '{{ sys_profile }}'
     line: 'export PATH=$PATH:$SCALA_HOME/bin'
 
 # check
-- name: check if scala installed
+- name: check scala installation
   raw: su - {{ dev_user}} -l -c "scala -version"
-  register: command_result
-  failed_when: "( command_result | failed ) or ( scala_version_expect not in command_result.stdout) "
+  register: pkg_v
+  failed_when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout) "
   changed_when: false

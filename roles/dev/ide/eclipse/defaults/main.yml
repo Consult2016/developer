@@ -1,0 +1,9 @@
+---
+pkg_ic:
+  #https://www.sublimetext.com/3
+  name: eclipse
+  install_path: /opt
+  url: http://mirrors.xmission.com/eclipse/technology/epp/downloads/release/oxygen/R/eclipse-jee-oxygen-R-linux-gtk-x86_64.tar.gz
+  file: eclipse-jee-oxygen-R-linux-gtk-x86_64.tar.gz
+  basename: eclipse
+

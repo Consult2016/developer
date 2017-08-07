@@ -1,18 +1,19 @@
 ---
 
-- blockinfile:
+- name: setup proxy in /etc/environment
+  blockinfile:
     path: /etc/environment
     marker: "# {mark} PROXY BLOCK"
     block: |
       http_proxy={{ '"' }}{{ proxy.http }}{{ '"' }}
-      https_proxy={{ '"' }}{{ proxy.https }}{{ '"' }}
-      ftp_proxy={{ '"' }}{{ proxy.ftp }}{{ '"' }}
-      socks_proxy={{ '"' }}{{ proxy.socks }}{{ '"' }}
-      no_proxy={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
       HTTP_PROXY={{ '"' }}{{ proxy.http }}{{ '"' }}
+      https_proxy={{ '"' }}{{ proxy.https }}{{ '"' }}
       HTTPS_PROXY={{ '"' }}{{ proxy.https }}{{ '"' }}
+      ftp_proxy={{ '"' }}{{ proxy.ftp }}{{ '"' }}
       FTP_PROXY={{ '"' }}{{ proxy.ftp }}{{ '"' }}
+      socks_proxy={{ '"' }}{{ proxy.socks }}{{ '"' }}
       SOCKS_PROXY={{ '"' }}{{ proxy.socks }}{{ '"' }}
+      no_proxy={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
       NO_PROXY={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
   when: proxy.enable
 
@@ -22,13 +23,19 @@
     marker: "# {mark} PROXY BLOCK"
     block: |
       export http_proxy={{ '"' }}{{ proxy.http }}{{ '"' }}
+      export HTTP_PROXY={{ '"' }}{{ proxy.http }}{{ '"' }}
       export https_proxy={{ '"' }}{{ proxy.https }}{{ '"' }}
+      export HTTPS_PROXY={{ '"' }}{{ proxy.https }}{{ '"' }}
       export ftp_proxy={{ '"' }}{{ proxy.ftp }}{{ '"' }}
+      export FTP_PROXY={{ '"' }}{{ proxy.ftp }}{{ '"' }}
       export socks_proxy={{ '"' }}{{ proxy.socks }}{{ '"' }}
+      export SOCKS_PROXY={{ '"' }}{{ proxy.socks }}{{ '"' }}
       export no_proxy={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
+      export NO_PROXY={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
   when: proxy.enable
 
-- blockinfile:
+- name: setup proxy for apt
+  blockinfile:
     path: /etc/apt/apt.conf.d/95proxies
     marker: "// {mark} PROXY BLOCK"
     block: |

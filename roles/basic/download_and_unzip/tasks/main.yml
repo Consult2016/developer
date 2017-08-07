@@ -1,0 +1,28 @@
+---
+
+# - name: '{{ "[" }}{{ pkg_conf.name }}{{ "]" }} debug conf'
+#   debug: var=pkg_conf
+
+# make packages directory
+- name: '{{ "[" }}{{ pkg_conf.name }}{{ "]" }} mkdir for package'
+  file: path="{{ pkg_conf.install_path }}" state=directory
+
+# download file  
+- name: '{{ "[" }}{{ pkg_conf.name }}{{ "]" }} check local file cache'
+  local_action:
+    module: stat
+    path: '{{ pkg_conf.cached_dir | default(resource_cache) }}/{{ pkg_conf.file }}'
+  become: false
+  run_once: True
+  register: cached_stat
+- name: '{{ "[" }}{{ pkg_conf.name }}{{ "]" }} get tar file by copy cache'
+  copy:
+    src: "{{ pkg_conf.cached_dir | default(resource_cache) }}/{{ pkg_conf.file }}"
+    dest: "{{ pkg_conf.install_path }}/{{ pkg_conf.file }}"
+  when: cached_stat.stat.exists
+- name: '{{ "[" }}{{ pkg_conf.name }}{{ "]" }} get tar file by download, {{ pkg_conf.url}} -> {{ pkg_conf.file}}'
+  get_url: url="{{ pkg_conf.url }}" dest="{{ pkg_conf.install_path }}/{{ pkg_conf.file }}"
+  when: not cached_stat.stat.exists
+
+- include: unzip.yml
+  when: do_unzip

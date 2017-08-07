@@ -1,4 +1,0 @@
----
-
-- include: "os_aware/ubuntu.yml"
-  when: ansible_distribution == "Ubuntu"

@@ -1,8 +1,12 @@
 ---
 
-# https://www.sublimetext.com/docs/3/linux_repositories.html
-# wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+# - name: download and unzip
+#   include_role:
+#     name: basic/download_and_unzip
+#   vars:
+#     pkg_conf: '{{ pkg_ic }}'
 
-# https://download.sublimetext.com/sublime_text_3_build_3126_x64.tar.bz2
+- name: Install the dependence packages
+  package: name="{{ item }}" state=present
+  with_items: ['meld']
 
-- include: "{{ '_init_.yml' if init | default(false) else '_run_.yml'}}"

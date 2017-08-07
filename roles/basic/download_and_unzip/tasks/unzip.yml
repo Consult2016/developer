@@ -1,0 +1,18 @@
+---
+# unarchive package
+- name: '{{ "[" }}{{ pkg_conf.name }}{{ "]" }} check unarchive directory'
+  stat: path="{{ pkg_conf.install_path }}/{{ pkg_conf.basename }}"
+  register: pkg_stat
+- name: '{{ "[" }}{{ pkg_conf.name }}{{ "]" }} unarchive package'
+  unarchive:
+    src: "{{ pkg_conf.install_path }}/{{ pkg_conf.file }}"
+    dest: "{{ pkg_conf.install_path }}"
+    remote_src: yes
+  when: pkg_stat.stat.isdir is not defined
+
+
+- name: '{{ "[" }}{{ pkg_conf.name }}{{ "]" }} rename {{ pkg_conf.basename_from|default(pkg_conf.basename) }} -> {{ pkg_conf.basename }}'
+  shell: |
+    mv {{ pkg_conf.install_path }}/{{ pkg_conf.basename_from }} {{ pkg_conf.install_path }}/{{ pkg_conf.basename }}
+  when: (pkg_conf.basename_from|default(none) != none) and (pkg_conf.basename_from|default("") != "" ) and ( pkg_stat.stat.isdir is not defined)
+

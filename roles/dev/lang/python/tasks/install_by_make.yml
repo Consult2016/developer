@@ -1,14 +1,11 @@
 ---
 
-# install python files
-- name: check unarchive {{ python_x }} directory
-  stat: path="{{ python_dirname }}/{{ python_basename }}"
-  register: pythonxfstat
-- name: unarchive {{ python_x }}
-  unarchive:
-    src: "{{ rcpath }}/{{ python_tar_filename }}"
-    dest: "{{ python_dirname }}"
-  when: pythonxfstat.stat.isdir is not defined
+- name: download and unzip
+  include_role:
+    name: basic/download_and_unzip
+  vars:
+    pkg_conf: '{{ pkg_ic }}'
+
 
 # make install
 - name: make install
@@ -17,7 +14,7 @@
     make
     make install
   args:
-    chdir: "{{ python_dirname }}/{{ python_basename}}"
+    chdir: "{{ pkg_ic.install_path }}/{{ pkg_ic.basename}}"
 
 - name: check python installation
   shell: "{{ python_x}} --version 2>&1"

@@ -1,37 +1,22 @@
 ---
 
-# install nodejs files
-- name: mkdir for nodejs
-  file: path="{{ nodejs_dirname }}" state=directory
-- name: upload nodejs tar file
-  copy:
-    src: "{{ rcpath}}/{{ nodejs_tar_filename }}"
-    dest: "{{ nodejs_dirname }}/{{ nodejs_tar_filename }}"
-- name: check unarchive nodejs directory
-  stat: path="{{ nodejs_dirname }}/{{ nodejs_basename }}"
-  register: nodejsfstat
-- name: unarchive nodejs
-  unarchive:
-    src: "{{ nodejs_dirname }}/{{ nodejs_tar_filename }}"
-    dest: "{{ nodejs_dirname }}"
-    remote_src: yes
-  when: nodejsfstat.stat.isdir is not defined
-- name: rename {{ nodejs_unzip_basename}} -> {{ nodejs_basename }}
-  shell: |
-    mv {{ nodejs_dirname }}/{{ nodejs_unzip_basename}} {{ nodejs_dirname }}/{{ nodejs_basename }}
-  when: nodejsfstat.stat.isdir is not defined
+- name: download and unzip
+  include_role:
+    name: basic/download_and_unzip
+  vars:
+    pkg_conf: '{{ pkg_ic }}'
 
 # export environment variable
 - name: export NODEJS_HOME (/etc/environment)
   lineinfile:
     path: /etc/environment
     regexp: '^NODEJS_HOME='
-    line: 'NODEJS_HOME={{ nodejs_dirname }}/{{ nodejs_basename }}'
+    line: 'NODEJS_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: export NODEJS_HOME
   lineinfile:
     path: "{{ sys_profile }}"
     regexp: '^export NODEJS_HOME='
-    line: 'export NODEJS_HOME={{ nodejs_dirname }}/{{ nodejs_basename }}'
+    line: 'export NODEJS_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: export NODEJS_HOME to PATH
   lineinfile:
     path: '{{ sys_profile }}'
@@ -41,5 +26,5 @@
 - name: check nodejs installation
   raw: su - {{ dev_user}} -l -c "node --version"
   register: command_result
-  failed_when: "( command_result | failed ) or ( nodejs_version_expect not in command_result.stdout) "
+  failed_when: "( command_result | failed ) or ( pkg_ic.version_expect not in command_result.stdout) "
   changed_when: false

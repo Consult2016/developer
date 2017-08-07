@@ -1,8 +1,0 @@
----
-
-#https://www.sublimetext.com/3
-sublime_download_url: https://download.sublimetext.com/sublime_text_3_build_3126_x64.tar.bz2
-sublime_tar_filename: sublime_text_3_build_3126_x64.tar.bz2
-sublime_basename: sublime_text_3
-
-sublime_install_path: /opt

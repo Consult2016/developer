@@ -1,0 +1,19 @@
+---
+
+pkg_ics:
+  python2:
+    name: python2
+    install_path: /tmp/python
+    url: https://www.python.org/ftp/python/2.7.13/Python-2.7.13.tgz
+    file: Python-2.7.13.tgz
+    basename: Python-2.7.13
+    version_expect: 'Python 2.7.13'
+
+  python3:
+    name: python3
+    install_path: /tmp/python
+    url: https://www.python.org/ftp/python/3.6.2/Python-3.6.2.tgz
+    file: Python-3.6.2.tgz
+    basename: Python-3.6.2
+    version_expect: 'Python 3.6.2'
+

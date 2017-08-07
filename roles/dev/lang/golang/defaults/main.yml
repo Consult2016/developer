@@ -1,0 +1,11 @@
+---
+
+pkg_ic:
+  name: golang
+  install_path: /usr/local/go
+  url: https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
+  cached_dir: '{{ resource_cache | default(role_path ~ "/resources" ) }}'
+  file: go1.8.3.linux-amd64.tar.gz
+  basename: go1.8.3
+  basename_from: go
+  version_expect: 'go version go1.8.3 linux/amd64'

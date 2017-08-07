@@ -1,26 +1,5 @@
 ---
 
-
-- name: Prepare
-  hosts: local
-  vars:
-    init: true
-  vars_files:
-    - ./vars/config.yml
-  roles:
-    - text/sublime
-    - text/meld
-    - dev/lang/jdk
-    - dev/lang/scala
-    - dev/lang/golang
-    - dev/lang/nodejs
-    - dev/lang/python
-    - dev/build/mvn
-    - dev/build/gradle
-    - dev/ide/eclipse
-    - dev/ide/idea
-    - dev/docker
-
 - name: Install apps
   hosts: dev_machines
   become: yes
@@ -47,15 +26,17 @@
     - sharing/samba
     - sharing/vnc
     - dev/general
+
     - dev/lang/jdk
     - dev/lang/scala
     - dev/lang/golang
     - dev/lang/nodejs
     - dev/lang/python
+    
     - dev/build/mvn
     - dev/build/gradle
-    - dev/ansible
     - dev/ide/eclipse
     - dev/ide/idea
+    - dev/ansible
     - dev/docker
 

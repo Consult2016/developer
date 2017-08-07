@@ -4,7 +4,7 @@ Type=Application
 Name=IDEA
 GenericName=IDEA
 Comment=IDEA
-Exec={{ idea_install_path}}/{{ idea_basename}}/eclipse %F
+Exec={{ pkg_ic.install_path}}/{{ pkg_ic.basename}}/eclipse %F
 Terminal=false
 MimeType=text/plain;
 Icon=sublime-text
@@ -14,10 +14,10 @@ Actions=Window;Document;
 
 [Desktop Action Window]
 Name=New Window
-Exec={{ idea_install_path}}/{{ idea_basename}}/eclipse -n
+Exec={{ pkg_ic.install_path}}/{{ pkg_ic.basename}}/eclipse -n
 OnlyShowIn=Unity;
 
 [Desktop Action Document]
 Name=New File
-Exec={{ idea_install_path}}/{{ idea_basename}}/eclipse --command new_file
+Exec={{ pkg_ic.install_path}}/{{ pkg_ic.basename}}/eclipse --command new_file
 OnlyShowIn=Unity;

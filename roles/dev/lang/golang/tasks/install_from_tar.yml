@@ -1,37 +1,22 @@
 ---
 
-# install golang files
-- name: mkdir for golang
-  file: path="{{ golang_dirname }}" state=directory
-- name: upload golang tar file
-  copy:
-    src: "{{ rcpath}}/{{ golang_tar_filename }}"
-    dest: "{{ golang_dirname }}/{{ golang_tar_filename }}"
-- name: check unarchive golang directory
-  stat: path="{{ golang_dirname }}/{{ golang_basename }}"
-  register: golangfstat
-- name: unarchive golang
-  unarchive:
-    src: "{{ golang_dirname }}/{{ golang_tar_filename }}"
-    dest: "{{ golang_dirname }}"
-    remote_src: yes
-  when: golangfstat.stat.isdir is not defined
-- name: rename golang -> {{ golang_basename }}
-  shell: |
-    mv {{ golang_dirname }}/go {{ golang_dirname }}/{{ golang_basename }}
-  when: golangfstat.stat.isdir is not defined
+- name: download and unzip
+  include_role:
+    name: basic/download_and_unzip
+  vars:
+    pkg_conf: '{{ pkg_ic }}'
 
 # export environment variable
 - name: export GOROOT (/etc/environment)
   lineinfile:
     path: /etc/environment
     regexp: '^GOROOT='
-    line: 'GOROOT={{ golang_dirname }}/{{ golang_basename }}'
+    line: 'GOROOT={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: export GOROOT
   lineinfile:
     path: "{{ sys_profile }}"
     regexp: '^export GOROOT='
-    line: 'export GOROOT={{ golang_dirname }}/{{ golang_basename }}'
+    line: 'export GOROOT={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: export GOROOT to PATH
   lineinfile:
     path: '{{ sys_profile }}'
@@ -40,6 +25,6 @@
 # check
 - name: check go installation
   raw: su - {{ dev_user}} -l -c "go version"
-  register: command_result
-  failed_when: "( command_result | failed ) or ( golang_version_expect not in command_result.stdout) "
-  changed_when: false
+  register: pkg_v
+  changed_when: False
+  failed_when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout )"

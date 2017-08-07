@@ -4,20 +4,20 @@ Type=Application
 Name=Eclipse
 GenericName=Eclipse
 Comment=Eclipse
-Exec={{ eclipse_install_path}}/eclipse/eclipse %F
+Exec={{ pkg_ic.install_path}}/eclipse/eclipse %F
 Terminal=false
 MimeType=text/plain;
-Icon={{ eclipse_install_path}}/eclipse/eclipse/icon.xpm
+Icon={{ pkg_ic.install_path}}/eclipse/eclipse/icon.xpm
 Categories=TextEditor;Development;
 StartupNotify=true
 Actions=Window;Document;
 
 [Desktop Action Window]
 Name=New Window
-Exec={{ eclipse_install_path}}/eclipse/eclipse -n
+Exec={{ pkg_ic.install_path}}/eclipse/eclipse -n
 OnlyShowIn=Unity;
 
 [Desktop Action Document]
 Name=New File
-Exec={{ eclipse_install_path}}/eclipse/eclipse --command new_file
+Exec={{ pkg_ic.install_path}}/eclipse/eclipse --command new_file
 OnlyShowIn=Unity;

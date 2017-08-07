@@ -1,8 +1,0 @@
----
-golang_dirname: /usr/local
-
-golang_download_url: https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz
-golang_tar_filename: go1.8.3.linux-amd64.tar.gz
-golang_basename: go1.8.3
-
-golang_version_expect: 'go version go1.8.3 linux/amd64'
