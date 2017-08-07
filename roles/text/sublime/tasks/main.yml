@@ -1,0 +1,20 @@
+---
+
+- name: download and unzip
+  include_role:
+    name: basic/download_and_unzip
+  vars:
+    pkg_conf: '{{ pkg_ic }}'
+
+- copy:
+    remote_src: true
+    src: '{{ pkg_ic.install_path}}/{{ pkg_ic.basename}}/sublime_text.desktop'
+    dest: '~{{ dev_user}}/Desktop/sublime_text.desktop'
+    owner: '{{ dev_user}}'
+    group: '{{ dev_group}}'
+    mode: 0755
+
+- name: update sublime_text.desktop
+  raw: sed -i 's/\/opt\/sublime_text/{{ pkg_ic.install_path | regex_escape()}}\/sublime_text_3/g' ~{{ dev_user}}/Desktop/sublime_text.desktop
+
+  #  raw: sed -i 's/\/opt\/sublime_text_3/{{ sublime_install_path}}\/{{ sublime_basename}}/g' ~{{ dev_user}}/Desktop/sublime_text.desktop

@@ -1,13 +1,14 @@
 ---
 
-- name: unarchive idea
-  unarchive:
-    src: '{{ rcpath}}/{{ idea_tar_filename }}'
-    dest: "{{ idea_install_path}}"
+- name: download and unzip
+  include_role:
+    name: basic/download_and_unzip
+  vars:
+    pkg_conf: '{{ pkg_ic }}'
 
 - file:
-    src: '{{ idea_install_path}}/{{ idea_basename}}'
-    dest: '~{{ dev_user}}/Desktop/{{ idea_basename}}'
+    src: '{{ pkg_ic.install_path}}/{{ pkg_ic.basename}}'
+    dest: '~{{ dev_user}}/Desktop/{{ pkg_ic.basename}}'
     state: link
 # - name: setup
 #   shell:

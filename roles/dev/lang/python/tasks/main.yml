@@ -1,0 +1,25 @@
+---
+
+- name: fetch python2 version
+  shell: "python2 --version 2>&1"
+  register: python2_v
+  changed_when: False
+- name: install python2
+  include: install_by_make.yml
+  when: "( python2_v | failed ) or ( pkg_ics.python2.version_expect not in python2_v.stdout )"
+  vars:
+    python_x: python2
+    pkg_ic: '{{ pkg_ics.python2 }}'
+
+- name: fetch python3 version
+  shell: "python3 --version 2>&1"
+  register: python3_v
+  changed_when: False
+- name: install python3
+  include: install_by_make.yml
+  when: "( python3_v | failed ) or ( pkg_ics.python3.version_expect not in python3_v.stdout )"
+  vars:
+    python_x: python3
+    pkg_ic: '{{ pkg_ics.python3 }}'
+
+# - include: install_from_tar.yml

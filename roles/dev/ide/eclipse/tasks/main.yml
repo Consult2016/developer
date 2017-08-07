@@ -1,9 +1,10 @@
 ---
 
-- name: unarchive eclipse
-  unarchive:
-    src: '{{ rcpath}}/{{ eclipse_tar_filename }}'
-    dest: "{{ eclipse_install_path}}"
+- name: download and unzip
+  include_role:
+    name: basic/download_and_unzip
+  vars:
+    pkg_conf: '{{ pkg_ic }}'
 
 - template:
     src: 'eclipse.desktop'
