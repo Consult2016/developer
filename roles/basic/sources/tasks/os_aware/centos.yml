@@ -1,0 +1,24 @@
+---
+
+- name: check CentOS-Base.repo.backup
+  stat: path="/etc/yum.repos.d/CentOS-Base.repo.backup"
+  register: bkstat
+- name: backup /etc/yum.repos.d/CentOS-Base.repo
+  copy:
+    remote_src: true
+    src: /etc/yum.repos.d/CentOS-Base.repo
+    dest: /etc/yum.repos.d/CentOS-Base.repo.backup
+  when: ( not bkstat.stat.exists )
+
+- template:
+    src: '{{ ansible_distribution | lower }}/centos-{{ ansible_distribution_major_version | lower}}.repo'
+    dest: /etc/yum.repos.d/CentOS-Base.repo
+
+- name: Update repositories cache
+  yum:
+    list: ansible
+    update_cache: yes
+    cache_valid_time: 3600
+  failed_when: false
+  changed_when: false
+  ignore_errors: True

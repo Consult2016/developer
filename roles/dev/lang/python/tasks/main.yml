@@ -1,9 +1,25 @@
 ---
 
+- include_vars: '{{ item }}'
+  with_first_found:
+  - files:
+      - '{{ ansible_pkg_mgr | lower }}.yml'
+      - 'default.yml'
+    paths: '{{ role_path }}/vars/pkg_mgr'
+
+- name: dependency
+  package:
+    name: '{{ item }}'
+    state: present
+  with_items: "{{ dependencies }}"
+
 - name: fetch python2 version
-  shell: "python2 --version 2>&1"
+  raw: su - {{ dev_user}} -l -c "python2 --version 2>&1"
+  # next line wont work on centos ?
+  # shell: "python2 --version 2>&1"
   register: python2_v
   changed_when: False
+  ignore_errors: true
 - name: install python2
   include: install_by_make.yml
   when: "( python2_v | failed ) or ( pkg_ics.python2.version_expect not in python2_v.stdout )"
@@ -12,9 +28,12 @@
     pkg_ic: '{{ pkg_ics.python2 }}'
 
 - name: fetch python3 version
-  shell: "python3 --version 2>&1"
+  raw: su - {{ dev_user}} -l -c "python3 --version 2>&1"
+  # next line wont work on centos ?
+  # shell: "python3 --version 2>&1"
   register: python3_v
   changed_when: False
+  ignore_errors: true
 - name: install python3
   include: install_by_make.yml
   when: "( python3_v | failed ) or ( pkg_ics.python3.version_expect not in python3_v.stdout )"

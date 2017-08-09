@@ -8,13 +8,11 @@
     remote_src: true
     src: /etc/apt/sources.list
     dest: /etc/apt/sources.list.bk
-  when: ( not bkstat.stat.exists ) and ( ansible_distribution == "Ubuntu")
+  when: ( not bkstat.stat.exists )
 
 - template:
-    src: '{{ ansible_distribution }}/{{ ansible_distribution_release}}.sources.list'
+    src: '{{ ansible_distribution | lower }}/{{ ansible_distribution_release | lower}}.sources.list'
     dest: /etc/apt/sources.list
-    backup: yes
-  when: ( ansible_distribution == "Ubuntu")
 
 - name: Update repositories cache
   apt:

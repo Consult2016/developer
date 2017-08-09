@@ -33,15 +33,3 @@
       export no_proxy={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
       export NO_PROXY={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
   when: proxy.enable
-
-- name: setup proxy for apt
-  blockinfile:
-    path: /etc/apt/apt.conf.d/95proxies
-    marker: "// {mark} PROXY BLOCK"
-    block: |
-      Acquire::http::proxy {{ '"' }}{{ proxy.http }}{{ '"' }};
-      Acquire::https::proxy {{ '"' }}{{ proxy.https }}{{ '"' }};
-      Acquire::ftp::proxy {{ '"' }}{{ proxy.ftp }}{{ '"' }};
-      Acquire::socks::proxy {{ '"' }}{{ proxy.socks }}{{ '"' }};
-    create: yes
-  when: proxy.enable

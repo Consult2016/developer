@@ -1,0 +1,11 @@
+---
+
+- name: install ansible
+  package:
+    name: '{{ item_foo }}'
+    state: present
+  with_items: 
+    - epel-release
+    - ansible
+  loop_control:
+    loop_var: item_foo

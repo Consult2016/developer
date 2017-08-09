@@ -1,0 +1,39 @@
+---
+# Uninstall old versions
+- name: remove old version
+  package:
+    name: '{{ item_l2 }}'
+    state: absent
+  with_items: [docker, docker-common, docker-selinux, docker-engine]
+  loop_control:
+    loop_var: item_l2
+
+- name: create temporary rpm file directory
+  tempfile: state=directory
+  register: rpm_temp
+
+- set_fact:
+    temp_pkg_info: "{{ docker_packages[ansible_distribution | lower ]['_' + ansible_distribution_major_version] | default({ 'defined' : false }) }}"
+
+- set_fact:
+    temp_ic:
+      name: docker
+      install_path: '{{ rpm_temp.path }}'
+      url: "{{ temp_pkg_info.url | default('') }}"
+      file: "{{ temp_pkg_info.file | default('') }}"
+      defined: "{{ temp_pkg_info.defined | default(true) }}"
+- name: download and unzip
+  include_role:
+    name: basic/download_and_unzip
+  vars:
+    do_unzip: false
+    pkg_conf: '{{ temp_ic }}'
+  when: temp_ic.defined
+
+- name: Install a .rpm package
+  yum:
+    name: '{{ rpm_temp.path}}/{{ temp_ic.file }}'
+    state: present
+  when: temp_ic.defined
+- set_fact:
+    docker_installed: temp_ic.defined

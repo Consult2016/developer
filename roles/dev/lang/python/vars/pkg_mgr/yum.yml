@@ -1,0 +1,8 @@
+---
+dependencies:
+  - gcc
+  - zlib-devel
+  - bzip2-devel
+  - openssl-devel
+  - ncurses-devel
+  - sqlite-devel

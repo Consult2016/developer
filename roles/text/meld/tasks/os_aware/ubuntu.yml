@@ -1,0 +1,6 @@
+---
+
+- name: Install the dependence packages
+  package: name="{{ item }}" state=present
+  with_items: ['meld']
+

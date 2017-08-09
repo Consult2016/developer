@@ -6,7 +6,12 @@
 #   vars:
 #     pkg_conf: '{{ pkg_ic }}'
 
-- name: Install the dependence packages
-  package: name="{{ item }}" state=present
-  with_items: ['meld']
-
+- name: post install
+  include: '{{ item_l1 }}'
+  with_first_found:
+  - files:
+    - '{{ ansible_distribution | lower }}.yml'
+    - 'default.yml'
+    paths: '{{ role_path }}/tasks/os_aware'
+  loop_control:
+    loop_var: item_l1

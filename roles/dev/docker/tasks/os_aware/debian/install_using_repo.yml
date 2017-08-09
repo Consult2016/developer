@@ -1,0 +1,66 @@
+---
+
+# Uninstall old versions
+- name: remove old version
+  apt:
+    name: '{{ item }}'
+    state: absent
+  with_items: [docker, docker-engine, docker.io]
+
+# Recommended extra packages for Trusty 14.04
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  failed_when: false
+  changed_when: false
+  ignore_errors: True
+- name: extra packages for wheezy
+  raw: apt-get install linux-image-extra-$(uname -r) linux-image-extra-virtual
+  when: ( ansible_distribution_release == "wheezy")
+
+# Install Docker CE
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  failed_when: false
+  changed_when: false
+  ignore_errors: True
+- name: install dependencies
+  apt:
+    name: '{{ item }}'
+  with_items: [apt-transport-https, ca-certificates, curl, gnupg2, software-properties-common]
+  when: ( ansible_distribution_release == "stretch") or ( ansible_distribution_release == "jessie")
+- name: install dependencies
+  apt:
+    name: '{{ item }}'
+  with_items: [apt-transport-https, ca-certificates, curl, software-properties-common]
+  when: ( ansible_distribution_release == "wheezy")
+
+- apt_key:
+    url: "https://download.docker.com/linux/debian/gpg"
+    state: present
+- name: add-apt-repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ansible_distribution_release }}  stable"
+- name: drop line in /etc/apt/sources.list
+  lineinfile:
+    path: /etc/apt/sources.list
+    regexp: 'deb-src [arch=amd64] https://download.docker.com/linux/debian wheezy stable'
+    line: '# deb-src [arch=amd64] https://download.docker.com/linux/debian wheezy stable'
+  when: ( ansible_distribution_release == "wheezy")
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  failed_when: false
+  changed_when: false
+  ignore_errors: True
+- name: install docker-ce
+  apt:
+    name: '{{ item }}'
+  with_items: [docker-ce]
+
+
+

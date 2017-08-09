@@ -1,4 +1,7 @@
 ---
 
-- include: "os_aware/{{ ansible_distribution }}.yml"
+- include: "proxy/{{ ansible_pkg_mgr | lower }}.yml"
+  when: (proxy.enable)
+
+- include: "os_aware/{{ ansible_distribution | lower }}.yml"
 

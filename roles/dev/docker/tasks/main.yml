@@ -1,10 +1,6 @@
 ---
 
-
-- include: os_aware/{{ ansible_distribution }}/install_using_repo.yml
-  when: repo_install
-
-- include: os_aware/{{ ansible_distribution }}/install_using_package.yml
-  when: not repo_install 
-
-- include: os_aware/{{ ansible_distribution }}/postinstall-{{ ansible_distribution_release }}.yml
+- name: pick install script
+  include: "os_aware/{{ item }}/install.yml"
+  with_items: [ubuntu, debian, centos]
+  static: no

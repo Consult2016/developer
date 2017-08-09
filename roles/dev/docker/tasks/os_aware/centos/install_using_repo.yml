@@ -1,0 +1,37 @@
+---
+
+# Uninstall old versions
+- name: remove old version
+  package:
+    name: '{{ item_l2 }}'
+    state: absent
+  with_items: [docker, docker-common, docker-selinux, docker-engine]
+  loop_control:
+    loop_var: item_l2
+
+# SET UP THE REPOSITORY
+- name: dependencies
+  packages:
+    name: '{{ item_l2 }}'
+    state: present
+  with_items: [yum-utils, device-mapper-persistent-data, lvm2]
+  loop_control:
+    loop_var: item_l2
+
+- name: Add docker-ce repository
+  yum_repository:
+    name: docker-ce
+    description: docker-ce YUM repo
+    baseurl: https://download.docker.com/linux/centos/docker-ce.repo
+
+# install docker 
+- name: install docker.ce
+  yum:
+    name: docker-ce
+    state: present
+  update_cache: yes
+  cache_valid_time: 3600
+
+
+
+

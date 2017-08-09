@@ -15,3 +15,12 @@
 - name: Install the dependence packages
   package: name="{{ item }}" state=present
   with_items: '{{ dependency }}'
+
+# - name: set proxy for git
+#   shell: |
+#     git config --global http.proxy {{ proxy.http }}
+#     git config --global https.proxy {{ proxy.https }}
+#   when: (proxy.enable)
+#   become: true
+#   become_method: sudo
+#   become_user: '{{ dev_user }}'

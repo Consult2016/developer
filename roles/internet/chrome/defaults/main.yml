@@ -1,3 +1,14 @@
 ---
 
-chrome_deb_file: google-chrome-stable_current_amd64.deb
+pkg_ics:
+  rpm:
+    name: chrome
+    url: https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+    file: google-chrome-stable_current_x86_64.rpm
+    basename: chrome
+
+  deb:
+    name: chrome
+    url: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+    file: google-chrome-stable_current_amd64.deb
+    basename: chrome

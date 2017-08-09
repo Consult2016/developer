@@ -3,13 +3,15 @@
 - include_vars: '{{ item }}'
   with_first_found:
   - files:
-      - '{{ ansible_os_family }}.yml'
-      - 'default.yml'
+    - '{{ ansible_distribution | lower }}.yml'
+    - '{{ ansible_os_family | lower }}.yml'
+    - '{{ ansible_pkg_mgr | lower }}.yml'
+    - 'default.yml'
     paths: '{{ role_path }}/vars/os'
 
 - name: Install the dependence packages
   package: name="{{ item }}" state=present
-  with_items: ["nfs-kernel-server", "nfs-common"]
+  with_items: '{{ pkg_set.dependencies }}'
 
 - name: mkdir nfs sharing dir
   file:
@@ -18,16 +20,12 @@
     group: '{{ nogroup }}'
     state: directory
     mode: 0777
-
 - file:
-    path: '{{ sharing_dir }}/{{ inventory_hostname}}'
+    path: '{{ sharing_dir }}/{{ inventory_hostname }}'
     owner: '{{ nobody }}'
     group: '{{ nogroup }}'
     state: touch
     mode: 0666
-
-
-- include: "os_aware/{{ os_aware_tasks }}"
 
 - blockinfile:
     path: /etc/exports
@@ -35,4 +33,4 @@
       {{ sharing_dir }}    *(rw,sync,no_root_squash,no_subtree_check)
 
 - name: restart nfsserver
-  service: name=nfs-kernel-server state=restarted enabled=yes
+  service: name='{{ pkg_set.service }}' state=restarted enabled=yes

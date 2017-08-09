@@ -1,0 +1,31 @@
+---
+
+- name: Install the software-properties-common packages
+  package: name="{{ item_foo }}" state=present
+  with_items: ['software-properties-common']
+  loop_control:
+    loop_var: item_foo
+
+- name: add-apt-repository
+  apt_repository:
+    repo: ppa:ansible/ansible
+    # validate_certs: no
+  when: ( ansible_distribution == "Ubuntu" )
+  # failed_when: false
+  # changed_when: false
+  # ignore_errors: True
+
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  failed_when: false
+  changed_when: false
+  ignore_errors: True
+
+- name: Install the ansible packages
+  package: name="{{ item_foo }}" state=present
+  with_items: ['ansible']
+  loop_control:
+    loop_var: item_foo
+  

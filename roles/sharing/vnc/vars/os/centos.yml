@@ -1,0 +1,4 @@
+---
+
+pkg_set:
+  dependencies: [vnc-server, vnc, xterm]

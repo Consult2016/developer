@@ -3,9 +3,11 @@
 # Uninstall old versions
 - name: remove old version
   apt:
-    name: '{{ item }}'
+    name: '{{ item_l2 }}'
     state: absent
   with_items: [docker, docker-engine, docker.io]
+  loop_control:
+    loop_var: item_l2
 
 # Recommended extra packages for Trusty 14.04
 - name: Update repositories cache
@@ -29,8 +31,10 @@
   ignore_errors: True
 - name: install dependencies
   apt:
-    name: '{{ item }}'
+    name: '{{ item_l2 }}'
   with_items: [apt-transport-https, ca-certificates, curl, software-properties-common]
+  loop_control:
+    loop_var: item_l2
 - apt_key:
     url: "https://download.docker.com/linux/ubuntu/gpg"
     state: present
@@ -46,8 +50,10 @@
   ignore_errors: True
 - name: install docker-ce
   apt:
-    name: '{{ item }}'
+    name: '{{ item_l2 }}'
   with_items: [docker-ce]
+  loop_control:
+    loop_var: item_l2
 
 
 

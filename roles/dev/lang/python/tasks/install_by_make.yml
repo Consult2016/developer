@@ -6,7 +6,6 @@
   vars:
     pkg_conf: '{{ pkg_ic }}'
 
-
 # make install
 - name: make install
   shell: |
@@ -17,8 +16,10 @@
     chdir: "{{ pkg_ic.install_path }}/{{ pkg_ic.basename}}"
 
 - name: check python installation
-  shell: "{{ python_x}} --version 2>&1"
+  raw: su - {{ dev_user}} -l -c "{{ python_x}} --version 2>&1"
+  # next line wont work on centos ?
+  # shell: "{{ python_x}} --version 2>&1"
   register: python_v
   changed_when: False
-  failed_when: "( python_v | failed ) or ( python_v_expect not in python_v.stdout )"
+  failed_when: "( python_v | failed ) or ( (pkg_ic.version_expect not in python_v.stdout ) and (ansible_python_version not in python_v.stdout ) )"
 

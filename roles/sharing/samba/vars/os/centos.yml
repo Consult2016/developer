@@ -1,0 +1,5 @@
+---
+
+pkg_set:
+  dependencies: [samba, samba-client, samba-common]
+  services: ["nmb.service", "smb.service"]

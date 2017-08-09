@@ -13,7 +13,6 @@
     module: stat
     path: '{{ pkg_conf.cached_dir | default(resource_cache) }}/{{ pkg_conf.file }}'
   become: false
-  run_once: True
   register: cached_stat
 - name: '{{ "[" }}{{ pkg_conf.name }}{{ "]" }} get tar file by copy cache'
   copy:
@@ -26,3 +25,4 @@
 
 - include: unzip.yml
   when: do_unzip
+  static: no

@@ -1,1 +1,5 @@
-os_aware_tasks: default.yml
+---
+
+pkg_set:
+  dependencies: ["nfs-kernel-server", "nfs-common"]
+  service: nfs-kernel-server

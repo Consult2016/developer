@@ -1,0 +1,23 @@
+---
+
+- name: create temporary deb file directory
+  tempfile: state=directory
+  register: deb_temp
+
+- set_fact:
+    temp_ic:
+      name: '{{ pkg_ics.deb.name}}'
+      install_path: '{{ deb_temp.path }}'
+      url: "{{ pkg_ics.deb.url }}"
+      file: "{{ pkg_ics.deb.file }}"
+
+- name: download and unzip
+  include_role:
+    name: basic/download_and_unzip
+  vars:
+    do_unzip: false
+    pkg_conf: '{{ temp_ic }}'
+
+- name: Install a .deb package
+  apt:
+    deb: '{{ deb_temp.path}}/{{ temp_ic.file }}'

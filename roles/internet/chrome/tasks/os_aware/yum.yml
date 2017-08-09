@@ -1,0 +1,24 @@
+---
+
+- name: create temporary rpm file directory
+  tempfile: state=directory
+  register: rpm_temp
+
+- set_fact:
+    temp_ic:
+      name: '{{ pkg_ics.rpm.name}}'
+      install_path: '{{ rpm_temp.path }}'
+      url: "{{ pkg_ics.rpm.url }}"
+      file: "{{ pkg_ics.rpm.file }}"
+
+- name: download and unzip
+  include_role:
+    name: basic/download_and_unzip
+  vars:
+    do_unzip: false
+    pkg_conf: '{{ temp_ic }}'
+
+- name: Install a .rpm package
+  yum:
+    name: '{{ rpm_temp.path}}/{{ temp_ic.file }}'
+    state: present

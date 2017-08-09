@@ -1,8 +1,10 @@
 ---
 
-- name: Install chromium
-  package: name="chromium-browser" state=present
-
-- apt:
-    deb: '{{ resource_cache}}/{{ chrome_deb_file}}'
-  failed_when: false
+- include: "{{ item }}"
+  with_first_found:
+  - files:
+    - '{{ ansible_distribution | lower }}.yml'
+    - '{{ ansible_pkg_mgr | lower }}.yml'
+    - 'default.yml'
+    paths: '{{ role_path }}/tasks/pkg_aware'
+    skip: true
