@@ -1,6 +1,6 @@
 ---
 
-- name: setup proxy for yum
+- name: Setup proxy for yum
   blockinfile:
     path: /etc/yum.conf
     marker: "# {mark} PROXY BLOCK"

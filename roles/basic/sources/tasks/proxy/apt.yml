@@ -1,6 +1,6 @@
 ---
 
-- name: setup proxy for apt
+- name: Setup proxy for apt
   blockinfile:
     path: /etc/apt/apt.conf.d/95proxies
     marker: "// {mark} PROXY BLOCK"

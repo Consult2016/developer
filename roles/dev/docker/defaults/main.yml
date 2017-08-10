@@ -2,9 +2,11 @@
 
 repo_install: false
 
-docker_download_url: https://download.docker.com/linux/ubuntu/dists/
 
 docker_packages:
+  docker_download_url: https://download.docker.com/linux/ubuntu/dists/
+  version_expect: 17.06.0-ce
+
   ubuntu:
     trusty:
       comment: 14

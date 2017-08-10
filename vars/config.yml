@@ -7,7 +7,9 @@ dev_user: andy
 dev_user_pwd: passw0rd
 
 sharing_dir: /workzone
-smb_sharing_dir: /workzone_smb
+smb_conf:
+  sharing_dir: /workzone_smb
+  init_pwd: aabbcc
 # http_proxy: 
 
 proxy:

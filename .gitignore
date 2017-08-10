@@ -1,6 +1,8 @@
+.idea/
 *.retry
 .DS_Store
 vm/.vagrant/
 **/*.tar.gz
 *.log
+*.pyc
 roles/**/resources/

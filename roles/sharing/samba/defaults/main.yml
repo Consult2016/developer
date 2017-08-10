@@ -1,1 +1,4 @@
 ---
+smb_conf:
+  sharing_dir: /sharing
+  init_pwd: aabbcc

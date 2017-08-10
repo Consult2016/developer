@@ -1,13 +1,13 @@
 ---
 
-- name: download and unzip
+- name: Download and unzip
   include_role:
     name: basic/download_and_unzip
   vars:
     pkg_conf: '{{ pkg_ic }}'
 
 # make install
-- name: make install
+- name: Make install
   shell: |
     ./configure
     make
@@ -15,7 +15,7 @@
   args:
     chdir: "{{ pkg_ic.install_path }}/{{ pkg_ic.basename}}"
 
-- name: check python installation
+- name: Check python installation
   raw: su - {{ dev_user}} -l -c "{{ python_x}} --version 2>&1"
   # next line wont work on centos ?
   # shell: "{{ python_x}} --version 2>&1"

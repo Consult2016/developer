@@ -1,6 +1,12 @@
 ---
 
 - name: pick install script
-  include: "os_aware/{{ item }}/install.yml"
-  with_items: [ubuntu, debian, centos]
-  static: no
+  include: "os_aware/{{ ansible_distribution | lower }}/install.yml"
+
+- name: Check docker installation
+  raw: su - {{ dev_user}} -l -c "docker version"
+  register: docker_v
+  changed_when: False
+  failed_when: "( docker_v | failed ) or (docker_packages.version_expect not in docker_v.stdout )"
+  when: docker_installed | default(false)
+

@@ -24,7 +24,7 @@
    valid users = %S
 [workzone]
    comment = Workzone on Samba
-   path = {{ smb_sharing_dir}}
+   path = {{ smb_conf.sharing_dir}}
    writable   = yes
    browseable = yes 
    guest ok = yes

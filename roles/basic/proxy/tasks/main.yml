@@ -1,6 +1,6 @@
 ---
 
-- name: setup proxy in /etc/environment
+- name: Setup proxy in /etc/environment
   blockinfile:
     path: /etc/environment
     marker: "# {mark} PROXY BLOCK"
@@ -17,7 +17,7 @@
       NO_PROXY={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
   when: proxy.enable
 
-- name: export PROXIES
+- name: Export proxies
   blockinfile:
     path: '{{ sys_bashrc }}'
     marker: "# {mark} PROXY BLOCK"

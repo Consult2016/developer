@@ -1,7 +1,7 @@
 ---
 
 
-- name: download and unzip
+- name: Download and unzip
   include_role:
     name: basic/download_and_unzip
   vars:

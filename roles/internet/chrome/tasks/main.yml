@@ -1,10 +1,11 @@
 ---
 
-- include: "{{ item }}"
+- name: Load proper tasks
+  include: "{{ item }}"
   with_first_found:
   - files:
     - '{{ ansible_distribution | lower }}.yml'
     - '{{ ansible_pkg_mgr | lower }}.yml'
     - 'default.yml'
-    paths: '{{ role_path }}/tasks/pkg_aware'
-    skip: true
+    paths: '{{ role_path }}/tasks/os_aware'
+  static: no

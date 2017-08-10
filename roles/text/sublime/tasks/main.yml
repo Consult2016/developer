@@ -1,12 +1,21 @@
 ---
 
-- name: download and unzip
+#- name: Present install path @ '{{ pkg_ic.install_path }}'
+#  file: path="{{ pkg_conf.install_path }}" state=directory
+#- name: Download {{ pkg_ic.file }}
+#  cached_get_url:
+#    cached: "{{ resource_cache }}/{{ pkg_ic.file }}"
+#    url: "{{ pkg_ic.url }}"
+#    dest: '{{ pkg_ic.install_path }}/{{ pkg_ic.file }}'
+
+- name: Download and unzip
   include_role:
     name: basic/download_and_unzip
   vars:
     pkg_conf: '{{ pkg_ic }}'
 
-- copy:
+- name: Copy desktop icon
+  copy:
     remote_src: true
     src: '{{ pkg_ic.install_path}}/{{ pkg_ic.basename}}/sublime_text.desktop'
     dest: '~{{ dev_user}}/Desktop/sublime_text.desktop'
@@ -14,7 +23,7 @@
     group: '{{ dev_group}}'
     mode: 0755
 
-- name: update sublime_text.desktop
+- name: Update sublime_text.desktop
   raw: sed -i 's/\/opt\/sublime_text/{{ pkg_ic.install_path | regex_escape()}}\/sublime_text_3/g' ~{{ dev_user}}/Desktop/sublime_text.desktop
 
   #  raw: sed -i 's/\/opt\/sublime_text_3/{{ sublime_install_path}}\/{{ sublime_basename}}/g' ~{{ dev_user}}/Desktop/sublime_text.desktop

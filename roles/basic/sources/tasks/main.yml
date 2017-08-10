@@ -1,7 +1,9 @@
 ---
 
-- include: "proxy/{{ ansible_pkg_mgr | lower }}.yml"
+- name: Setup proxy for package manager
+  include: "proxy/{{ ansible_pkg_mgr | lower }}.yml"
   when: (proxy.enable)
 
-- include: "os_aware/{{ ansible_distribution | lower }}.yml"
+- name: Update repo
+  include: "os_aware/{{ ansible_distribution | lower }}.yml"
 

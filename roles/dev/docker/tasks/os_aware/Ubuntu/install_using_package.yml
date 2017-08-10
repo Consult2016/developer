@@ -1,12 +1,11 @@
 ---
 
-- name: create temporary deb file directory
+- name: Create temporary deb file directory
   tempfile: state=directory
   register: deb_temp
 
 - set_fact:
     temp_pkg_info: "{{ docker_packages[ansible_distribution | lower ][ansible_distribution_release] | default({ 'defined' : false }) }}"
-
 - set_fact:
     temp_ic:
       name: docker
@@ -15,18 +14,15 @@
       file: "{{ temp_pkg_info.file | default('') }}"
       defined: "{{ temp_pkg_info.defined | default(true) }}"
 
-- name: download and unzip
-  include_role:
-    name: basic/download_and_unzip
-  vars:
-    do_unzip: false
-    pkg_conf: '{{ temp_ic }}'
+- name: get_url_with_cache
+  cached_get_url:
+    cached: '{{ resource_cache }}/{{ temp_ic.file }}'
+    url: "{{ temp_ic.url }}"
+    dest: '{{ deb_temp.path }}/{{ temp_ic.file }}'
   when: temp_ic.defined
 
 - name: Install a .deb package
   apt:
     deb: '{{ deb_temp.path}}/{{ temp_ic.file }}'
   when: temp_ic.defined
-- set_fact:
-    docker_installed: temp_ic.defined
 

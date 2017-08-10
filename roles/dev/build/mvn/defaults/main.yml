@@ -2,7 +2,7 @@
 pkg_ic:
   name: maven
   install_path: /usr/lib/maven
-  url: http://www-us.apache.org/dist/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.tar.gz
+  url: https://mirrors.tuna.tsinghua.edu.cn/apache/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.tar.gz
   file: apache-maven-3.5.0-bin.tar.gz
   basename: apache-maven-3.5.0
   version_expect: Apache Maven 3.5.0

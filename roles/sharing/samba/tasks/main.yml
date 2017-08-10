@@ -1,6 +1,7 @@
 ---
 
-- include_vars: '{{ item }}'
+- name: Load os depended vars
+  include_vars: '{{ item }}'
   with_first_found:
   - files:
       - '{{ ansible_distribution | lower }}-{{ ansible_distribution_release | lower }}.yml'
@@ -13,24 +14,44 @@
   package: name="{{ item }}" state=present
   with_items: '{{ pkg_set.dependencies }}'
 
-- file:
-    path: '{{ smb_sharing_dir }}'
+- name: Present samba sharing directory
+  file:
+    path: '{{ smb_conf.sharing_dir }}'
     owner: '{{ nobody }}'
     group: '{{ nogroup }}'
     state: directory
     mode: 0777
-- file:
-    path: '{{ smb_sharing_dir }}/{{ inventory_hostname}}'
+- name: Present a sample file
+  file:
+    path: '{{ smb_conf.sharing_dir }}/{{ inventory_hostname}}'
     owner: '{{ nobody }}'
     group: '{{ nogroup }}'
     state: touch
     mode: 0666
 
-- template:
+- name: Set samba configure file
+  template:
     src: smb.conf.v4
     dest: /etc/samba/smb.conf
     backup: yes
 
-- name: restart samba service
+- name: Print test
+  shell: echo -e "{{ smb_conf.init_pwd }}\n{{ smb_conf.init_pwd }}"
+
+- name: Debug test
+  debug: msg='echo -e "{{ smb_conf.init_pwd + '\n' + smb_conf.init_pwd }}"'
+
+
+- name: Set samba user account
+  # shell: echo -e "{{ smb_conf.init_pwd + '\n' + smb_conf.init_pwd + '\n' }}" | pdbedit -t -a -u {{ dev_user }}
+  shell: echo {{ (ansible_distribution == 'Ubuntu') | ternary(' ', '-e') }} '{{ smb_conf.init_pwd }}\n{{ smb_conf.init_pwd }}\n' | pdbedit -t -a -u {{ dev_user }}
+
+- name: Restart samba service
   service: name={{ item }} state=started enabled=yes
   with_items: '{{ pkg_set.services }}'
+
+- name: Check service status
+  raw: su - {{ dev_user}} -l -c "smbclient -L localhost -U={{ dev_user }}%{{ smb_conf.init_pwd }}"
+  register: smbc_res
+  changed_when: False
+  failed_when: "( smbc_res | failed ) or ( ('Workzone on Samba' not in smbc_res.stdout ) and (ansible_python_version not in python_v.stdout ) )"

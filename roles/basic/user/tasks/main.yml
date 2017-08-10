@@ -20,7 +20,7 @@
 
 - raw: echo "{{ dev_user}}:{{ dev_user_pwd }}"  | chpasswd
 
-- name: developer Desktop
+- name: Present developer desktop
   file:
     path: ~{{ dev_user}}/Desktop
     owner: "{{ dev_user }}"

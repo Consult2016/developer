@@ -8,13 +8,12 @@
   loop_control:
     loop_var: item_l2
 
-- name: create temporary rpm file directory
+- name: Create temporary rpm file directory
   tempfile: state=directory
   register: rpm_temp
 
 - set_fact:
     temp_pkg_info: "{{ docker_packages[ansible_distribution | lower ]['_' + ansible_distribution_major_version] | default({ 'defined' : false }) }}"
-
 - set_fact:
     temp_ic:
       name: docker
@@ -22,12 +21,12 @@
       url: "{{ temp_pkg_info.url | default('') }}"
       file: "{{ temp_pkg_info.file | default('') }}"
       defined: "{{ temp_pkg_info.defined | default(true) }}"
-- name: download and unzip
-  include_role:
-    name: basic/download_and_unzip
-  vars:
-    do_unzip: false
-    pkg_conf: '{{ temp_ic }}'
+      
+- name: get_url_with_cache
+  cached_get_url:
+    cached: "{{ resource_cache }}/{{ temp_ic.file }}"
+    url: "{{ temp_ic.url }}"
+    dest: '{{ rpm_temp.path }}/{{ temp_ic.file }}'
   when: temp_ic.defined
 
 - name: Install a .rpm package
