@@ -1,7 +1,7 @@
 ---
 
 # Uninstall old versions
-- name: remove old version
+- name: Remove old version
   apt:
     name: '{{ item_l2 }}'
     state: absent
@@ -17,7 +17,7 @@
   failed_when: false
   changed_when: false
   ignore_errors: True
-- name: extra packages for trusty
+- name: Extra packages for trusty
   raw: apt-get install linux-image-extra-$(uname -r) linux-image-extra-virtual
   when: ( ansible_distribution == "Ubuntu" ) and ( ansible_distribution_release == "trusty")
 
@@ -29,7 +29,7 @@
   failed_when: false
   changed_when: false
   ignore_errors: True
-- name: install dependencies
+- name: Install dependencies
   apt:
     name: '{{ item_l2 }}'
   with_items: [apt-transport-https, ca-certificates, curl, software-properties-common]
@@ -38,7 +38,7 @@
 - apt_key:
     url: "https://download.docker.com/linux/ubuntu/gpg"
     state: present
-- name: add-apt-repository
+- name: Add apt repository
   apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ansible_distribution_release }}  stable"
 - name: Update repositories cache
@@ -48,7 +48,7 @@
   failed_when: false
   changed_when: false
   ignore_errors: True
-- name: install docker-ce
+- name: Install docker-ce
   apt:
     name: '{{ item_l2 }}'
   with_items: [docker-ce]

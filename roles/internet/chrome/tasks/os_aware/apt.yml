@@ -4,17 +4,12 @@
   tempfile: state=directory
   register: deb_temp
 
-- set_fact:
-    temp_ic:
-      name: '{{ pkg_ics.deb.name}}'
-      url: "{{ pkg_ics.deb.url }}"
-      file: "{{ pkg_ics.deb.file }}"
-
-- cached_get_url:
-    cached: "{{ resource_cache }}/{{ temp_ic.file }}"
-    url: "{{ temp_ic.url }}"
-    dest: '{{ deb_temp.path }}/{{ temp_ic.file }}'
+- name: Download {{ pkg_ics.deb.file }}
+  cached_get_url:
+    cached: "{{ resource_cache }}/{{ pkg_ics.deb.file }}"
+    url: "{{ pkg_ics.deb.url }}"
+    dest: '{{ deb_temp.path }}/{{ pkg_ics.deb.file }}'
 
 - name: Install a .deb package
   apt:
-    deb: '{{ deb_temp.path}}/{{ temp_ic.file }}'
+    deb: '{{ deb_temp.path}}/{{ pkg_ics.deb.file }}'

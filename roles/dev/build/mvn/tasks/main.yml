@@ -1,10 +1,10 @@
 ---
 
-- name: fetch mvn version
+- name: Fetch mvn version
   raw: '/bin/bash -l -c "mvn -version"'
   register: pkg_v
   changed_when: false
   failed_when: false
-- name: install mvn
+- name: Install mvn
   include: install_from_tar.yml
   when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout )"

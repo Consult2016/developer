@@ -1,6 +1,6 @@
 ---
 
-- name: install ansible
+- name: Install ansible
   package:
     name: '{{ item_foo }}'
     state: present

@@ -4,15 +4,7 @@
   tempfile: state=directory
   register: rpm_temp
 
-- name: Set temp_ic
-  set_fact:
-    temp_ic:
-      name: '{{ pkg_ics.rpm.name}}'
-      install_path: '{{ rpm_temp.path }}'
-      url: "{{ pkg_ics.rpm.url }}"
-      file: "{{ pkg_ics.rpm.file }}"
-
-- name: get_url_with_cache
+- name: Download {{ pkg_ics.rpm.file }}
   cached_get_url:
     cached: '{{ resource_cache }}/{{ pkg_ics.rpm.file }}'
     url: "{{ pkg_ics.rpm.url }}"
@@ -20,5 +12,5 @@
 
 - name: Install a .rpm package
   yum:
-    name: '{{ rpm_temp.path}}/{{ temp_ic.file }}'
+    name: '{{ rpm_temp.path}}/{{ pkg_ics.rpm.file }}'
     state: present

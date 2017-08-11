@@ -35,13 +35,6 @@
     dest: /etc/samba/smb.conf
     backup: yes
 
-- name: Print test
-  shell: echo -e "{{ smb_conf.init_pwd }}\n{{ smb_conf.init_pwd }}"
-
-- name: Debug test
-  debug: msg='echo -e "{{ smb_conf.init_pwd + '\n' + smb_conf.init_pwd }}"'
-
-
 - name: Set samba user account
   # shell: echo -e "{{ smb_conf.init_pwd + '\n' + smb_conf.init_pwd + '\n' }}" | pdbedit -t -a -u {{ dev_user }}
   shell: echo {{ (ansible_distribution == 'Ubuntu') | ternary(' ', '-e') }} '{{ smb_conf.init_pwd }}\n{{ smb_conf.init_pwd }}\n' | pdbedit -t -a -u {{ dev_user }}

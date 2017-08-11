@@ -6,7 +6,7 @@
   loop_control:
     loop_var: item_foo
 
-- name: add-apt-repository
+- name: Add apt repository
   apt_repository:
     repo: ppa:ansible/ansible
     # validate_certs: no

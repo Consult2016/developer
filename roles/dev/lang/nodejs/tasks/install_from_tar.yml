@@ -1,29 +1,45 @@
 ---
 
-- name: Download and unzip
-  include_role:
-    name: basic/download_and_unzip
-  vars:
-    pkg_conf: '{{ pkg_ic }}'
+- name: Present install path '{{ "[" }}{{ pkg_ic.install_path }}{{ "]" }}'
+  file: path="{{ pkg_ic.install_path }}" state=directory
+- name: Download {{ pkg_ic.file }}
+  cached_get_url:
+    cached: "{{ resource_cache }}/{{ pkg_ic.file }}"
+    url: "{{ pkg_ic.url }}"
+    dest: '{{ pkg_ic.install_path }}/{{ pkg_ic.file }}'
+
+- name: Check unarchived
+  stat: path="{{ pkg_ic.install_path }}/{{ pkg_ic.basename }}"
+  register: pkg_stat
+- name: 'Unarchive package'
+  unarchive:
+    src: "{{ pkg_ic.install_path }}/{{ pkg_ic.file }}"
+    dest: "{{ pkg_ic.install_path }}"
+    remote_src: yes
+  when: pkg_stat.stat.isdir is not defined
+- name: Rename '{{ pkg_ic.basename_from }} -> {{ pkg_ic.basename }}'
+  shell: |
+    mv {{ pkg_ic.install_path }}/{{ pkg_ic.basename_from }} {{ pkg_ic.install_path }}/{{ pkg_ic.basename }}
+  when: (pkg_ic.basename_from|default(none) != none) and (pkg_ic.basename_from|default("") != "" ) and ( pkg_stat.stat.isdir is not defined)
 
 # export environment variable
-- name: export NODEJS_HOME (/etc/environment)
+- name: Export NODEJS_HOME (/etc/environment)
   lineinfile:
     path: /etc/environment
     regexp: '^NODEJS_HOME='
     line: 'NODEJS_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
-- name: export NODEJS_HOME
+- name: Export NODEJS_HOME
   lineinfile:
     path: "{{ sys_profile }}"
     regexp: '^export NODEJS_HOME='
     line: 'export NODEJS_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
-- name: export NODEJS_HOME to PATH
+- name: Export NODEJS_HOME to PATH
   lineinfile:
     path: '{{ sys_profile }}'
     line: 'export PATH=$PATH:$NODEJS_HOME/bin'
 
 # check
-- name: check nodejs installation
+- name: Check nodejs installation
   raw: su - {{ dev_user}} -l -c "node --version"
   register: command_result
   failed_when: "( command_result | failed ) or ( pkg_ic.version_expect not in command_result.stdout) "

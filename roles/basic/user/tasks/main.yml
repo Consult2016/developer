@@ -7,8 +7,10 @@
       - 'default.yml'
     paths: '{{ role_path }}/vars/os'
 
-- group: name={{ dev_group }} state=present
-- user:
+- name: Present developer group
+  group: name={{ dev_group }} state=present
+- name: Present developer account
+  user:
     name: "{{ dev_user }}"
     comment: "{{ dev_user}}"
     group: "{{ dev_group }}"
@@ -18,7 +20,8 @@
     ssh_key_bits: 2048
     ssh_key_file: ".ssh/id_rsa"
 
-- raw: echo "{{ dev_user}}:{{ dev_user_pwd }}"  | chpasswd
+- name: Configure developer password
+  raw: echo "{{ dev_user}}:{{ dev_user_pwd }}"  | chpasswd
 
 - name: Present developer desktop
   file:

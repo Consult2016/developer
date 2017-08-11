@@ -1,11 +1,5 @@
 ---
 
-# - name: Download and unzip
-#   include_role:
-#     name: basic/download_and_unzip
-#   vars:
-#     pkg_conf: '{{ pkg_ic }}'
-
 - name: Post install
   include: '{{ item_l1 }}'
   with_first_found:

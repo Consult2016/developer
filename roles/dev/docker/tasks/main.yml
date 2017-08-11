@@ -1,6 +1,6 @@
 ---
 
-- name: pick install script
+- name: Pick install script
   include: "os_aware/{{ ansible_distribution }}/install.yml"
 
 - name: Check docker installation

@@ -5,7 +5,6 @@ pkg_ics:
     name: sbt
     install_path:  /usr/lib/sbt
     url: https://cocl.us/sbt01316tgz
-    cached_dir: '{{ resource_cache | default(role_path ~ "/resources" ) }}'
     file: sbt-0.13.16.tgz
     basename: sbt-0.13.16
     basename_from: sbt
@@ -15,7 +14,6 @@ pkg_ics:
     name: scala
     install_path:  /usr/lib/scala
     url: https://downloads.lightbend.com/scala/2.12.3/scala-2.12.3.tgz
-    cached_dir: '{{ resource_cache | default(role_path ~ "/resources" ) }}'
     file: scala-2.12.3.tgz
     basename: scala-2.12.3
     version_expect: 'Scala code runner version 2.12.3'

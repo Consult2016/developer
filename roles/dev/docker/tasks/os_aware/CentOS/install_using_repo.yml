@@ -1,7 +1,7 @@
 ---
 
 # Uninstall old versions
-- name: remove old version
+- name: Remove old version
   package:
     name: '{{ item_l2 }}'
     state: absent
@@ -10,7 +10,7 @@
     loop_var: item_l2
 
 # SET UP THE REPOSITORY
-- name: dependencies
+- name: Install dependencies
   packages:
     name: '{{ item_l2 }}'
     state: present
@@ -25,7 +25,7 @@
     baseurl: https://download.docker.com/linux/centos/docker-ce.repo
 
 # install docker 
-- name: install docker.ce
+- name: Install docker.ce
   yum:
     name: docker-ce
     state: present

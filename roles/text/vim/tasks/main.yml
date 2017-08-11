@@ -3,7 +3,8 @@
   package: name="{{ item }}" state=present
   with_items: ["vim"]
 
-- template:
+- name: Configure vim default setting
+  template:
     src: "vimrc"
     dest: '~{{ item.user}}/.vimrc'
     owner: '{{ item.user}}'

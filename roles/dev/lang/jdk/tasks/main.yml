@@ -1,14 +1,28 @@
 ---
 
-- name: fetch JAVA_HOME, setup if absent
+- name: Fetch JAVA_HOME, setup if absent
   command: /bin/sh -l -c "echo $JAVA_HOME"
   register: fetch_java_home
   changed_when: False
 
 - debug: msg="os{{ ':'}}{{ ansible_os_family }}, distribution{{ ':'}}{{ ansible_distribution }}-{{ ansible_distribution_version }}({{ ansible_distribution_release }}), JAVA_HOME{{ ':'}}{{ fetch_java_home.stdout }}"
+- name: Fetch java version
+  raw: su - {{ dev_user}} -l -c "java -version"
+  register: java_v
+  changed_when: False
+  ignore_errors: true
 
-- include: install_from_repo.yml
-  when: ( pkg_ic.repo_install ) and (fetch_java_home.stdout == '')
+- name: Install from repo
+  include: install_from_repo.yml
+  when: ( pkg_ic.repo_install ) and ((fetch_java_home.stdout == '') or ( java_v | failed ) )
 
-- include: install_from_tar.yml
-  when: fetch_java_home.stdout == ''
+- name: Install from tar
+  include: install_from_tar.yml
+  when: ((fetch_java_home.stdout == '') or ( java_v | failed ) )
+
+- name: Check java installation
+  raw: su - {{ dev_user}} -l -c "java -version"
+  register: java_v
+  changed_when: False
+  failed_when: "( java_v | failed )"
+

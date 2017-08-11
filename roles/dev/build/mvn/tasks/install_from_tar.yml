@@ -1,28 +1,35 @@
 ---
 
-- name: Download and unzip
-  include_role:
-    name: basic/download_and_unzip
-  vars:
-    pkg_conf: '{{ pkg_ic }}'
+- name: Present install path '{{ "[" }}{{ pkg_ic.install_path }}{{ "]" }}'
+  file: path="{{ pkg_ic.install_path }}" state=directory
+- name: Download {{ pkg_ic.file }}
+  cached_get_url:
+    cached: "{{ resource_cache }}/{{ pkg_ic.file }}"
+    url: "{{ pkg_ic.url }}"
+    dest: '{{ pkg_ic.install_path }}/{{ pkg_ic.file }}'
+- name: Unarchive package
+  unarchive:
+    src: "{{ pkg_ic.install_path }}/{{ pkg_ic.file }}"
+    dest: "{{ pkg_ic.install_path }}"
+    remote_src: yes
 
 # export environment variable
-- name: export MAVEN_HOME (/etc/environment)
+- name: Export MAVEN_HOME (/etc/environment)
   lineinfile:
     path: /etc/environment
     regexp: '^MAVEN_HOME='
     line: 'MAVEN_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
-- name: export MAVEN_HOME
+- name: Export MAVEN_HOME
   lineinfile:
     path: "{{ sys_profile }}"
     regexp: '^export MAVEN_HOME='
     line: 'export MAVEN_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
-- name: export MAVEN_HOME to PATH
+- name: Export MAVEN_HOME to PATH
   lineinfile:
     path: '{{ sys_profile }}'
     line: 'export PATH=$PATH:$MAVEN_HOME/bin'
 
-- name: check mvn installation
+- name: Check mvn installation
   raw: '/bin/bash -l -c "mvn -version"'
   register: pkg_v
   changed_when: False

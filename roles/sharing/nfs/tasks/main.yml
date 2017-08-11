@@ -13,24 +13,26 @@
   package: name="{{ item }}" state=present
   with_items: '{{ pkg_set.dependencies }}'
 
-- name: mkdir nfs sharing dir
+- name: Present nfs sharing dir
   file:
     path: '{{ sharing_dir }}'
     owner: '{{ nobody }}'
     group: '{{ nogroup }}'
     state: directory
     mode: 0777
-- file:
+- name: Present sample file
+  file:
     path: '{{ sharing_dir }}/{{ inventory_hostname }}'
     owner: '{{ nobody }}'
     group: '{{ nogroup }}'
     state: touch
     mode: 0666
 
-- blockinfile:
+- name: Define exports
+  blockinfile:
     path: /etc/exports
     block: |
       {{ sharing_dir }}    *(rw,sync,no_root_squash,no_subtree_check)
 
-- name: restart nfsserver
+- name: Restart nfsserver
   service: name='{{ pkg_set.service }}' state=restarted enabled=yes

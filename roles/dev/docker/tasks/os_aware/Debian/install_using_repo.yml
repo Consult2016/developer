@@ -1,7 +1,7 @@
 ---
 
 # Uninstall old versions
-- name: remove old version
+- name: Remove old version
   apt:
     name: '{{ item }}'
     state: absent
@@ -15,7 +15,7 @@
   failed_when: false
   changed_when: false
   ignore_errors: True
-- name: extra packages for wheezy
+- name: Extra packages for wheezy
   raw: apt-get install linux-image-extra-$(uname -r) linux-image-extra-virtual
   when: ( ansible_distribution_release == "wheezy")
 
@@ -27,12 +27,12 @@
   failed_when: false
   changed_when: false
   ignore_errors: True
-- name: install dependencies
+- name: Install dependencies
   apt:
     name: '{{ item }}'
   with_items: [apt-transport-https, ca-certificates, curl, gnupg2, software-properties-common]
   when: ( ansible_distribution_release == "stretch") or ( ansible_distribution_release == "jessie")
-- name: install dependencies
+- name: Install dependencies
   apt:
     name: '{{ item }}'
   with_items: [apt-transport-https, ca-certificates, curl, software-properties-common]
@@ -41,10 +41,10 @@
 - apt_key:
     url: "https://download.docker.com/linux/debian/gpg"
     state: present
-- name: add-apt-repository
+- name: Add apt repository
   apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ansible_distribution_release }}  stable"
-- name: drop line in /etc/apt/sources.list
+- name: Drop line in /etc/apt/sources.list
   lineinfile:
     path: /etc/apt/sources.list
     regexp: 'deb-src [arch=amd64] https://download.docker.com/linux/debian wheezy stable'
@@ -57,7 +57,7 @@
   failed_when: false
   changed_when: false
   ignore_errors: True
-- name: install docker-ce
+- name: Install docker-ce
   apt:
     name: '{{ item }}'
   with_items: [docker-ce]

@@ -10,7 +10,7 @@
       url: "{{ docker_packages[ansible_distribution ][ansible_distribution_release].url }}"
       file: "{{ docker_packages[ansible_distribution ][ansible_distribution_release].file }}"
 
-- name: get_url_with_cache
+- name: Download '{{ temp_ic.file }}'
   cached_get_url:
     cached: "{{ resource_cache }}/{{ temp_ic.file }}"
     url: "{{ temp_ic.url }}"

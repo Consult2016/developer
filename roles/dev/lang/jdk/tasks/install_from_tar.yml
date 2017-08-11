@@ -1,23 +1,30 @@
 ---
 
-- name: Download and unzip
-  include_role:
-    name: basic/download_and_unzip
-  vars:
-    pkg_conf: '{{ pkg_ic }}'
+- name: Present install path '{{ "[" }}{{ pkg_ic.install_path }}{{ "]" }}'
+  file: path="{{ pkg_ic.install_path }}" state=directory
+- name: Download {{ pkg_ic.file }}
+  cached_get_url:
+    cached: "{{ resource_cache }}/{{ pkg_ic.file }}"
+    url: "{{ pkg_ic.url }}"
+    dest: '{{ pkg_ic.install_path }}/{{ pkg_ic.file }}'
+- name: 'Unarchive package'
+  unarchive:
+    src: "{{ pkg_ic.install_path }}/{{ pkg_ic.file }}"
+    dest: "{{ pkg_ic.install_path }}"
+    remote_src: yes
 
 # export environment variable
-- name: export JAVA_HOME (/etc/environment)
+- name: Export JAVA_HOME (/etc/environment)
   lineinfile:
     path: /etc/environment
     regexp: '^JAVA_HOME='
     line: 'JAVA_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
-- name: export JAVA_HOME
+- name: Export JAVA_HOME
   lineinfile:
     path: "{{ sys_profile }}"
     regexp: '^export JAVA_HOME='
     line: 'export JAVA_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
-- name: export JAVA_HOME to PATH
+- name: Export JAVA_HOME to PATH
   lineinfile:
     path: '{{ sys_profile }}'
     line: 'export PATH=$PATH:$JAVA_HOME/bin'

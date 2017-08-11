@@ -4,5 +4,6 @@ pkg_ic:
   name: ideaIC
   install_path: /opt
   manual_url: https://www.jetbrains.com/idea/
+  url: https://www.jetbrains.com/idea/
   file: ideaIC-2017.2.tar.gz
   basename: idea-IC-172.3317.76
