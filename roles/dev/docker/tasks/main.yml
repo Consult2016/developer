@@ -1,7 +1,7 @@
 ---
 
 - name: pick install script
-  include: "os_aware/{{ ansible_distribution | lower }}/install.yml"
+  include: "os_aware/{{ ansible_distribution }}/install.yml"
 
 - name: Check docker installation
   raw: su - {{ dev_user}} -l -c "docker version"

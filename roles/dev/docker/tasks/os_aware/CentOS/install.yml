@@ -3,8 +3,8 @@
 - name: pick install script
   include: "install_using_{{ repo_install | ternary('repo', 'package') }}.yml"
   static: no
-  when: (ansible_distribution | lower) == 'centos'
+  when: ansible_distribution == 'CentOS'
 - name: post install
   include: 'postinstall-{{ ansible_distribution_major_version }}.yml'
   static: no
-  when: (ansible_distribution | lower) == 'centos'
+  when: ansible_distribution == 'CentOS'

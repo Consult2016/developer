@@ -3,8 +3,8 @@
 - include: "{{ item }}"
   with_first_found:
   - files:
-    - '{{ ansible_distribution | lower }}.yml'
-    - '{{ ansible_pkg_mgr | lower }}.yml'
+    - '{{ ansible_distribution }}.yml'
+    - '{{ ansible_pkg_mgr }}.yml'
     - 'default.yml'
     paths: '{{ role_path }}/tasks/pkg_aware'
     skip: true

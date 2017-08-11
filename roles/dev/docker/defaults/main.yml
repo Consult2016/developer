@@ -7,7 +7,7 @@ docker_packages:
   docker_download_url: https://download.docker.com/linux/ubuntu/dists/
   version_expect: 17.06.0-ce
 
-  ubuntu:
+  Ubuntu:
     trusty:
       comment: 14
       file: docker-ce_17.06.0-ce-0-ubuntu_amd64(trusty).deb
@@ -16,11 +16,11 @@ docker_packages:
       comment: 16
       file: docker-ce_17.06.0-ce-0-ubuntu_amd64(xenial).deb
       url: https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/docker-ce_17.06.0~ce-0~ubuntu_amd64.deb
-  centos:
+  CentOS:
     _7:
       file: docker-ce-17.06.0.ce-1.el7.centos.x86_64.rpm
       url: https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.06.0.ce-1.el7.centos.x86_64.rpm
-  debian:
+  Debian:
     wheezy:
       comment: 7
       file: docker-ce_17.06.0-ce-0-debian_amd64(wheezy).deb

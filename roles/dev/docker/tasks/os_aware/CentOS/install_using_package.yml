@@ -13,7 +13,7 @@
   register: rpm_temp
 
 - set_fact:
-    temp_pkg_info: "{{ docker_packages[ansible_distribution | lower ]['_' + ansible_distribution_major_version] | default({ 'defined' : false }) }}"
+    temp_pkg_info: "{{ docker_packages[ansible_distribution ]['_' + ansible_distribution_major_version] | default({ 'defined' : false }) }}"
 - set_fact:
     temp_ic:
       name: docker

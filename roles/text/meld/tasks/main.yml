@@ -10,7 +10,7 @@
   include: '{{ item_l1 }}'
   with_first_found:
   - files:
-    - '{{ ansible_distribution | lower }}.yml'
+    - '{{ ansible_distribution }}.yml'
     - 'default.yml'
     paths: '{{ role_path }}/tasks/os_aware'
   loop_control:

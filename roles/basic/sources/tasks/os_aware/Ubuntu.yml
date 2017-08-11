@@ -12,7 +12,7 @@
 
 - name: Use new repo setting
   template:
-    src: '{{ ansible_distribution | lower }}/{{ ansible_distribution_release | lower}}.sources.list'
+    src: '{{ ansible_distribution }}/{{ ansible_distribution_release }}.sources.list'
     dest: /etc/apt/sources.list
 
 - name: Update repo cache

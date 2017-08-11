@@ -3,8 +3,8 @@
 - name: pick install script
   include: "install_using_{{ repo_install | ternary('repo', 'package') }}.yml"
   static: no
-  when: ((ansible_distribution | lower) == 'ubuntu') and ( (ansible_distribution_release | lower) in ["trusty", "xenial"])
+  when: ansible_distribution_release in ["trusty", "xenial"]
 - name: post install
   include: 'postinstall-{{ ansible_distribution_release }}.yml'
   static: no
-  when: ((ansible_distribution | lower) == 'ubuntu') and ( (ansible_distribution_release | lower) in ["trusty", "xenial"])
+  when: ansible_distribution_release in ["trusty", "xenial"]

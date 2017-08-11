@@ -12,7 +12,7 @@
 
 - name: Use new repo setting
   template:
-    src: '{{ ansible_distribution | lower }}/centos-{{ ansible_distribution_major_version | lower}}.repo'
+    src: '{{ ansible_distribution }}/CentOS-{{ ansible_distribution_major_version }}.repo'
     dest: /etc/yum.repos.d/CentOS-Base.repo
 
 - name: Update repo cache

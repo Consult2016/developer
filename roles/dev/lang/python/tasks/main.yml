@@ -3,7 +3,7 @@
 - include_vars: '{{ item }}'
   with_first_found:
   - files:
-      - '{{ ansible_pkg_mgr | lower }}.yml'
+      - '{{ ansible_pkg_mgr }}.yml'
       - 'default.yml'
     paths: '{{ role_path }}/vars/pkg_mgr'
 

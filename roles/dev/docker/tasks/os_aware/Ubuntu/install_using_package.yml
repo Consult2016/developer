@@ -5,7 +5,7 @@
   register: deb_temp
 
 - set_fact:
-    temp_pkg_info: "{{ docker_packages[ansible_distribution | lower ][ansible_distribution_release] | default({ 'defined' : false }) }}"
+    temp_pkg_info: "{{ docker_packages[ansible_distribution ][ansible_distribution_release] | default({ 'defined' : false }) }}"
 - set_fact:
     temp_ic:
       name: docker
