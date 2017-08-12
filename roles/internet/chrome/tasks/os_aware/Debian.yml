@@ -1,0 +1,5 @@
+---
+
+# - name: Install chromium
+#   package: name="chromium-browser" state=present
+

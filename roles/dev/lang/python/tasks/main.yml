@@ -3,9 +3,11 @@
 - include_vars: '{{ item }}'
   with_first_found:
   - files:
+      - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml'
+      - '{{ ansible_distribution }}.yml'
       - '{{ ansible_pkg_mgr }}.yml'
       - 'default.yml'
-    paths: '{{ role_path }}/vars/pkg_mgr'
+    paths: '{{ role_path }}/vars/os_aware'
 
 - name: Install dependencies
   package:

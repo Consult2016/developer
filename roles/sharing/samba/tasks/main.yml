@@ -37,7 +37,7 @@
 
 - name: Set samba user account
   # shell: echo -e "{{ smb_conf.init_pwd + '\n' + smb_conf.init_pwd + '\n' }}" | pdbedit -t -a -u {{ dev_user }}
-  shell: echo {{ (ansible_distribution == 'Ubuntu') | ternary(' ', '-e') }} '{{ smb_conf.init_pwd }}\n{{ smb_conf.init_pwd }}\n' | pdbedit -t -a -u {{ dev_user }}
+  shell: echo {{ (ansible_distribution in ['Ubuntu', 'Debian']) | ternary(' ', '-e') }} '{{ smb_conf.init_pwd }}\n{{ smb_conf.init_pwd }}\n' | pdbedit -t -a -u {{ dev_user }}
 
 - name: Restart samba service
   service: name={{ item }} state=started enabled=yes

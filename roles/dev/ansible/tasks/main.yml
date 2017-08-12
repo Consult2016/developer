@@ -3,10 +3,11 @@
 - include: "{{ item }}"
   with_first_found:
   - files:
+    - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml'
     - '{{ ansible_distribution }}.yml'
     - '{{ ansible_pkg_mgr }}.yml'
     - 'default.yml'
-    paths: '{{ role_path }}/tasks/pkg_aware'
+    paths: '{{ role_path }}/tasks/os_aware'
     skip: true
 
 - name: Check ansible versions

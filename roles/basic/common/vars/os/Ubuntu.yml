@@ -1,0 +1,5 @@
+dependency:
+  - ssh
+  - rsync
+  - unzip
+  - tar
