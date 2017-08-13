@@ -37,6 +37,4 @@
 
 - name: Restart docker daemon
   service: name=docker state=restarted enabled=yes
-- set_fact:
-    docker_installed: true
 

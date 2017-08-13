@@ -26,3 +26,5 @@
     deb: '{{ deb_temp.path}}/{{ temp_ic.file }}'
   when: temp_ic.defined
 
+- set_fact:
+    docker_installed: temp_ic.defined

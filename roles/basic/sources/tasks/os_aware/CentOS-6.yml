@@ -1,0 +1,9 @@
+---
+
+- name: Install the dependence packages
+  package: name="{{ item_foo }}" state=present
+  with_items: ['libselinux-python']
+  loop_control:
+    loop_var: item_foo
+
+- include: '{{ role_path }}/tasks/os_aware/CentOS.yml'

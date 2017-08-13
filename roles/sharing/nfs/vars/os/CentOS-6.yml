@@ -1,0 +1,5 @@
+---
+
+pkg_set:
+  dependencies: ["nfs-utils", "nfs-utils-lib"]
+  service: nfs

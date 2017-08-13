@@ -13,3 +13,4 @@
 - name: Install a .deb package
   apt:
     deb: '{{ deb_temp.path }}/{{ pkg_ics.deb.file }}'
+  ignore_errors: true

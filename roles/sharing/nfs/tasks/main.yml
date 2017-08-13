@@ -3,6 +3,8 @@
 - include_vars: '{{ item }}'
   with_first_found:
   - files:
+    - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml'
+    - '{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml'
     - '{{ ansible_distribution }}.yml'
     - '{{ ansible_os_family }}.yml'
     - '{{ ansible_pkg_mgr }}.yml'
@@ -36,3 +38,11 @@
 
 - name: Restart nfsserver
   service: name='{{ pkg_set.service }}' state=restarted enabled=yes
+
+- name: Check nfs setting
+  raw: "exportfs"
+  register: exportfs_o
+  failed_when: ( exportfs_o | failed ) or ( sharing_dir not in exportfs_o.stdout )
+  changed_when: false
+
+

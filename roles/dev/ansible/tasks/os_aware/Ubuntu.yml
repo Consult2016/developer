@@ -1,8 +1,14 @@
 ---
 
+- set_fact:
+    temp_dependencies: ['software-properties-common']
+- set_fact:
+    temp_dependencies: ['python-software-properties']
+  when: ansible_distribution_major_version < 14
+
 - name: Install the software-properties-common packages
   package: name="{{ item_foo }}" state=present
-  with_items: ['software-properties-common']
+  with_items: '{{ temp_dependencies }}'
   loop_control:
     loop_var: item_foo
 

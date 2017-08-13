@@ -1,0 +1,23 @@
+---
+
+- name: Install the vnc packages
+  package: name="{{ item }}" state=present
+  with_items: [xfce4, xfce4-goodies. tightvncserver]
+
+- name: Init vnc
+  raw: su - {{ dev_user }} -l -c "echo {{ (ansible_distribution in ['Ubuntu', 'Debian']) | ternary(' ', '-e') }} '{{ vnc_init_pwd }}\n{{ vnc_init_pwd }}\n' | |vncpasswd"
+
+- name: Check if .bk exist
+  stat: path="/home/{{ dev_user }}/.vnc/xstartup.bk"
+  register: bkstat
+- name: Backup xstartup
+  copy:
+    remote_src: true
+    src: /home/{{ dev_user }}/.vnc/xstartup
+    dest: /home/{{ dev_user }}/.vnc/xstartup.bk
+  when: ( not bkstat.stat.exists )
+
+- name: Set xstartup
+  template:
+    src: xfce4-xstartup
+    dest: '/home/{{ dev_user }}/.vnc/xstartup'

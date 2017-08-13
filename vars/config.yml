@@ -11,6 +11,7 @@ smb_conf:
   sharing_dir: /workzone_smb
   init_pwd: aabbcc
 # http_proxy: 
+vnc_init_pwd: aabbcc
 
 proxy:
   enable: false

@@ -4,6 +4,7 @@
   with_first_found:
   - files:
     - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml'
+    - '{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml'
     - '{{ ansible_distribution }}.yml'
     - '{{ ansible_pkg_mgr }}.yml'
     - 'default.yml'
@@ -14,6 +15,8 @@
   raw: "ansible --version | grep ansible | grep -v config | cut -d ' ' -f2"
   # sudo: yes
   register: ansible_v
-  failed_when: ( ansible_v | failed ) or ( ansible_v.stdout | version_compare('2.3.0.0', '<=') )
+  failed_when: ( ansible_v.stdout | version_compare('2.3.0.0', '<=') )
+  # failed_when: ( ansible_v | failed ) or ( ansible_v.stdout | version_compare('2.3.0.0', '<=') )
   changed_when: false
+  when: (ansible_distribution not in ["Ubuntu", "Debian"]) or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version >= 14)
 

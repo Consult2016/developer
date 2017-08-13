@@ -1,10 +1,9 @@
 ---
 
+- name: Install dependencies
+  include: 'preinstall-{{ ansible_distribution_major_version }}.yml'
+  static: no
+
 - name: Pick install script
   include: "install_using_{{ repo_install | ternary('repo', 'package') }}.yml"
   static: no
-  when: ansible_distribution == 'Debian'
-- name: Post install
-  include: '{{ role_path }}/tasks/os_aware/postinstall.yml'
-  static: no
-  when: ansible_distribution == 'Debian'

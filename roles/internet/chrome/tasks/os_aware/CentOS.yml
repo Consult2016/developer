@@ -1,0 +1,16 @@
+---
+
+- name: Create temporary rpm file directory
+  tempfile: state=directory
+  register: rpm_temp
+
+- name: Download {{ pkg_ics.rpm.file }}
+  cached_get_url:
+    cached: '{{ resource_cache }}/{{ pkg_ics.rpm.file }}'
+    url: "{{ pkg_ics.rpm.url }}"
+    dest: '{{ rpm_temp.path }}/{{ pkg_ics.rpm.file }}'
+
+- name: Install a .rpm package
+  yum:
+    name: '{{ rpm_temp.path}}/{{ pkg_ics.rpm.file }}'
+    state: present

@@ -3,6 +3,18 @@
 - name: Pick install script
   include: "os_aware/{{ ansible_distribution }}/install.yml"
 
+- name: Load post install script
+  include: '{{ item }}'
+  with_first_found:
+  - files:
+      - '{{ ansible_distribution }}/postinstall-{{ ansible_distribution_release }}.yml'
+      - '{{ ansible_distribution }}/postinstall-{{ ansible_distribution_major_version }}.yml'
+      - '{{ ansible_distribution }}/postinstall.yml'
+      - 'postinstall.yml'
+      - 'default.yml'
+    paths: '{{ role_path }}/tasks/os_aware'
+  when: docker_installed | default(false)
+
 - name: Check docker installation
   raw: su - {{ dev_user}} -l -c "docker version"
   register: docker_v

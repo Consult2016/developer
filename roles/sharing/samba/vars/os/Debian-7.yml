@@ -1,0 +1,5 @@
+---
+
+pkg_set:
+  dependencies: ["samba", "smbclient"]
+  services: ["samba"]

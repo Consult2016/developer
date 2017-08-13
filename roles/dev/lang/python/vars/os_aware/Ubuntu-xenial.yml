@@ -1,8 +1,6 @@
 ---
 dependencies: 
   - gcc
-  - libc6
-  - libc6-dev
   - build-essential
 
   - libbz2-dev

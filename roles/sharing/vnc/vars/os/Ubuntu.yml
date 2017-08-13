@@ -2,3 +2,4 @@
 
 pkg_set:
   dependencies: [vnc4server]
+  dependencies2: [xfce4, xfce4-goodies, tightvncserver]

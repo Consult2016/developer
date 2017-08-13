@@ -1,0 +1,20 @@
+---
+
+- name: Add ansible PPA ...
+  blockinfile:
+    path: /etc/apt/sources.list
+    marker: "# {mark} PPA BLOCK for init-system-helpers"
+    block: |
+      deb http://ftp.debian.org/debian/ wheezy-backports main
+
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  failed_when: false
+  changed_when: false
+  ignore_errors: True
+
+- name: Install the dependence packages
+  package: name="{{ item }}" state=present
+  with_items: ['init-system-helpers']

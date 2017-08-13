@@ -2,4 +2,5 @@ dependency:
   - openssh-client
   - openssh-server
   - rsync
+  - unzip
   - tar
