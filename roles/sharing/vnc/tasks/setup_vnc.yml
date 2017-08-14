@@ -1,0 +1,45 @@
+---
+
+- name: Remove old vnc packages
+  package: name="{{ item }}" state=absent
+  with_items: [tightvncserver]
+- name: Install the vnc packages
+  package: name="{{ item }}" state=present
+  with_items: '{{ vnc_s.vnc_pkgs }}'
+- name: Install the dm packages
+  package: name="{{ item }}" state=present
+  with_items: '{{ vnc_s.dm_pkgs }}'
+
+- set_fact:
+    vnc_setpw_cmd: "echo {{ (ansible_distribution in ['Ubuntu', 'Debian']) | ternary(' ', '-e') }} '{{ vnc_init_pwd }}\n{{ vnc_init_pwd }}\n' | vncpasswd"
+- debug:
+    msg: su - {{ dev_user }} -l -c "{{ vnc_setpw_cmd}}"
+- name: Init vnc
+  raw: su - {{ dev_user }} -l -c "{{ vnc_setpw_cmd}}"
+- name: Check if .bk exist
+  stat: path="/home/{{ dev_user }}/.vnc/xstartup.bk"
+  register: bkstat
+- name: Backup xstartup
+  copy:
+    remote_src: true
+    src: /home/{{ dev_user }}/.vnc/xstartup
+    dest: /home/{{ dev_user }}/.vnc/xstartup.bk
+    owner: '{{ dev_user}}' 
+    group: '{{ dev_group}}' 
+    mode: 0770 
+  when: ( not bkstat.stat.exists )
+
+- name: Set xstartup by copy
+  template:
+    src: '{{ vnc_s.xstartup }}'
+    dest: '/home/{{ dev_user }}/.vnc/{{ vnc_s.xstartup }}'
+    owner: '{{ dev_user}}' 
+    group: '{{ dev_group}}' 
+    mode: 0770 
+- name: Set xstartup
+  template:
+    src: '{{ vnc_s.xstartup }}'
+    dest: '/home/{{ dev_user }}/.vnc/xstartup'
+    owner: '{{ dev_user}}' 
+    group: '{{ dev_group}}' 
+    mode: 0770 

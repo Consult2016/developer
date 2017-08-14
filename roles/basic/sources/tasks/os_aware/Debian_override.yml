@@ -1,0 +1,27 @@
+---
+
+- name: Check if .bk exist
+  stat: path="/etc/apt/sources.list.bk"
+  register: bkstat
+- name: Backup sources.list
+  copy:
+    remote_src: true
+    src: /etc/apt/sources.list
+    dest: /etc/apt/sources.list.bk
+  when: ( not bkstat.stat.exists )
+
+- name: Use new repo setting
+  template:
+    src: '{{ ansible_distribution }}/{{ ansible_distribution_release }}.sources.list'
+    dest: /etc/apt/sources.list
+
+- name: Update repo cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  failed_when: false
+  changed_when: false
+  ignore_errors: True
+
+# - name: apt-get upgrade
+#   raw: apt-get upgrade -y

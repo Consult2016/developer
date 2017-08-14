@@ -15,4 +15,3 @@ gnome-settings-daemon &
 metacity &
 nautilus &
 gnome-terminal &
-vncconfig -nowin &

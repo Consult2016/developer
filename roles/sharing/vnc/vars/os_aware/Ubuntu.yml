@@ -1,0 +1,18 @@
+---
+
+pkg_set:
+  vnc_xfce4:
+    vnc_pkgs: [vnc4server]
+    dm_pkgs: [xfce4, xfce4-goodies]
+    xstartup: xstartup-xfce4
+  vnc_gnome:
+    vnc_pkgs: [vnc4server]
+    dm_pkgs: 
+      - gnome-panel
+      - gnome-settings-daemon
+      - metacity
+      - nautilus
+      - gnome-terminal
+      - ubuntu-desktop # not necessary, but more pretty 
+    xstartup: xstartup-gnome
+

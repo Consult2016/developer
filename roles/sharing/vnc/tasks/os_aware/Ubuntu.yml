@@ -1,0 +1,5 @@
+---
+
+- include: setup_vnc.yml
+  vars:
+    vnc_s: '{{ pkg_set.vnc_gnome}}'
