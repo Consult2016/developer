@@ -8,6 +8,11 @@ if ! [ -L /var/www ]; then
   ln -fs /vagrant /var/www
 fi
 
+APT_GET_CMD=$(which apt-get)
+if [[ ! -z $APT_GET_CMD ]]; then
+    apt-get install -y python
+fi
+
 #echo r00tpassw0rd | passwd --stdin
 echo "root:passw0rd" | chpasswd
 #sed -i 's/\%sudo/sudo/g' /etc/sudoers
@@ -47,4 +52,9 @@ fi
 if [ -f /root/.profile ]; then
 #     sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile
       sed -i 's/^mesg n$/tty -s \&\& mesg n/g' /root/.profile
+fi
+
+if [ -f /etc/sudoers ]; then
+#     sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile
+      sed -i 's/^# %wheel\tALL=(ALL)\tALL$/%wheel\tALL=(ALL)\tALL/g' /etc/sudoers
 fi

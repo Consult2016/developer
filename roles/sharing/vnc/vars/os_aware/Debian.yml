@@ -1,4 +1,20 @@
 ---
 
 pkg_set:
-  dependencies: [vnc4server]
+  vnc_xfce4:
+    vnc_pkgs: [vnc4server]
+    dm_pkgs: [xfce4, xfce4-goodies, gnome-icon-theme]
+    xstartup: xstartup-xfce4(debian)
+  vnc_gnome:
+    vnc_pkgs: [vnc4server]
+    dm_pkgs: 
+      - gnome-panel
+      - gnome-settings-daemon
+      - metacity
+      - nautilus
+      - gnome-terminal
+      - gnome-icon-theme
+      - gnome-backgrounds
+      - gnome-core
+      # - ubuntu-desktop # not necessary, but more pretty 
+    xstartup: xstartup-gnome

@@ -8,7 +8,7 @@ dev_user_pwd: passw0rd
 
 sharing_dir: /workzone
 smb_conf:
-  sharing_dir: /workzone_smb
+  sharing_dir: /workzone
   init_pwd: aabbcc
 # http_proxy: 
 vnc_init_pwd: aabbcc

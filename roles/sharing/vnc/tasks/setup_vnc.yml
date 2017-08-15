@@ -1,14 +1,17 @@
 ---
 
-- name: Remove old vnc packages
-  package: name="{{ item }}" state=absent
-  with_items: [tightvncserver]
+# - name: Remove old vnc packages
+#   package: name="{{ item }}" state=absent
+#   with_items: [tightvncserver]
 - name: Install the vnc packages
   package: name="{{ item }}" state=present
   with_items: '{{ vnc_s.vnc_pkgs }}'
 - name: Install the dm packages
   package: name="{{ item }}" state=present
   with_items: '{{ vnc_s.dm_pkgs }}'
+- name: Install the dm packages
+  yum: name="{{ item }}" state=present
+  with_items: '{{ vnc_s.yum_pkgs | default([]) }}'
 
 - set_fact:
     vnc_setpw_cmd: "echo {{ (ansible_distribution in ['Ubuntu', 'Debian']) | ternary(' ', '-e') }} '{{ vnc_init_pwd }}\n{{ vnc_init_pwd }}\n' | vncpasswd"
@@ -19,6 +22,9 @@
 - name: Check if .bk exist
   stat: path="/home/{{ dev_user }}/.vnc/xstartup.bk"
   register: bkstat
+- name: Check if xstartup exist
+  stat: path="/home/{{ dev_user }}/.vnc/xstartup"
+  register: xstat
 - name: Backup xstartup
   copy:
     remote_src: true
@@ -27,7 +33,7 @@
     owner: '{{ dev_user}}' 
     group: '{{ dev_group}}' 
     mode: 0770 
-  when: ( not bkstat.stat.exists )
+  when: (xstat.stat.exists) and ( not bkstat.stat.exists )
 
 - name: Set xstartup by copy
   template:
