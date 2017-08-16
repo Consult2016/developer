@@ -22,3 +22,14 @@
   failed_when: "( docker_v | failed ) or (docker_packages.version_expect not in docker_v.stdout )"
   when: docker_installed | default(false)
 
+- name: Install docker compose
+  include: install_compose.yml
+  vars:
+    param_conf: '{{ docker_packages.tools.compose}}'
+  when: docker_installed | default(false)
+
+- name: Install docker machine
+  include: install_machine.yml
+  vars:
+    param_conf: '{{ docker_packages.tools.machine}}'
+  when: docker_installed | default(false)

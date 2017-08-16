@@ -1,0 +1,8 @@
+---
+
+- name: Install compose
+  cached_get_url:
+    cached: "{{ resource_cache }}/{{ param_conf.file }}"
+    url: "{{ param_conf.url }}"
+    dest: /usr/local/bin/docker-compose
+    mode: 0755

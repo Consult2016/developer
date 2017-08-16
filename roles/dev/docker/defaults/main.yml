@@ -4,9 +4,19 @@ repo_install: false
 
 
 docker_packages:
+  tools:
+    compose:
+      file: docker-compose-Linux-x86_64-v1.15.0
+      url: https://github.com/docker/compose/releases/download/1.15.0/docker-compose-Linux-x86_64
+    compose_sh:
+      file: docker-compose-v1.15.0-run.sh
+    machine:
+      file: docker-machine-Linux-x86_64-v0.12.2
+      url: https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-Linux-x86_64
+
+
   docker_download_url: https://download.docker.com/linux/ubuntu/dists/
   version_expect: 17.06.0-ce
-
   Ubuntu:
     trusty:
       comment: 14

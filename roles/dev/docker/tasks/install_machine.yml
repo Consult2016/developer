@@ -1,0 +1,8 @@
+---
+
+- name: Install docker machine
+  cached_get_url:
+    cached: "{{ resource_cache }}/{{ param_conf.file }}"
+    url: "{{ param_conf.url }}"
+    dest: /usr/local/bin/docker-machine
+    mode: 0755
