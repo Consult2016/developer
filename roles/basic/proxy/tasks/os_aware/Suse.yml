@@ -15,5 +15,12 @@
 
 - name: Set proxies ({{ local_proxy_file }})
   template:
-    src: suse.proxy
+    src: Suse.proxy
     dest: '{{ local_proxy_file }}'
+  when: proxy.enable
+- name: Reset proxies ({{ local_proxy_file }})
+  copy:
+    src: "{{ local_proxy_file }}.bk"
+    dest: '{{ local_proxy_file }}'
+    remote_src: true
+  when: not proxy.enable

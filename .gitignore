@@ -5,4 +5,6 @@ vm/.vagrant/
 **/*.tar.gz
 *.log
 *.pyc
+.config.yml
+.hosts
 roles/**/resources/

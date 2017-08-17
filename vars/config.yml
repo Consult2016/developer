@@ -3,24 +3,23 @@
 resource_cache: "{{ playbook_dir | dirname }}/.resources"
 
 dev_group: developer
-dev_user: andy
-dev_user_pwd: passw0rd
+dev_user: abc
+dev_user_pwd: abcdefg
 
-sharing_dir: /workzone
+sharing_dir: /sharing
 smb_conf:
-  sharing_dir: /workzone
-  init_pwd: aabbcc
-# http_proxy: 
-vnc_init_pwd: aabbcc
+  sharing_dir: /sharing
+  init_pwd: abcdefg
+vnc_init_pwd: abcdefg
 
 proxy:
   enable: false
-  default: http://192.168.3.2:1080
-  http: http://192.168.3.2:1080
-  https: http://192.168.3.2:1080
-  ftp: http://192.168.3.2:1080
-  socks: http://192.168.3.2:1080
+  default: http://1.1.1.1:1111
+  http: http://1.1.1.1:1111
+  https: http://1.1.1.1:1111
+  ftp: http://1.1.1.1:1111
+  socks: http://1.1.1.1:1111
   no_proxy: "localhost,127.0.0.1,localaddress,.localdomain.com"
 
 mounts:
-  - {type: nfs, host: localhost, path: /workzone, mountpoint: /xxx}
+  - {type: nfs, host: localhost, path: /sharing, mountpoint: /xxx}

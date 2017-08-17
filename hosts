@@ -2,6 +2,7 @@
 controller ansible_connection=local
 
 [dev_machines]
+#self ansible_connection=local ansible_become_user=root ansible_become_pass=passw0rd
 centos6-100 ansible_host=192.168.101.100 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
 centos7-101 ansible_host=192.168.101.101 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
 

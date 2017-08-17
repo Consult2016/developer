@@ -10,6 +10,7 @@
     # drop_data: false
   vars_files:
     - ./vars/config.yml
+    - .config.yml
 
   roles:
     - basic/system

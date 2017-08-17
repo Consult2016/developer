@@ -1,0 +1,30 @@
+---
+
+# https://stackoverflow.com/questions/26550360/docker-ubuntu-behind-proxy
+
+- name: Check if /etc/default/docker exist
+  stat: path="/etc/default/docker"
+  register: tempdstat
+- name: Export PROXIES
+  blockinfile:
+    path: '/etc/default/docker'
+    marker: "# {mark} PROXY BLOCK"
+    block: |
+      export http_proxy={{ '"' }}{{ proxy.http }}{{ '"' }}
+      export https_proxy={{ '"' }}{{ proxy.https }}{{ '"' }}
+      export ftp_proxy={{ '"' }}{{ proxy.ftp }}{{ '"' }}
+      export socks_proxy={{ '"' }}{{ proxy.socks }}{{ '"' }}
+      export no_proxy={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
+  when: tempdstat.stat.exists and proxy.enable
+
+- name: Configure Docker proxy
+  file:
+    path: '/etc/systemd/system/docker.service.d'
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  when: not tempdstat.stat.exists
+- name: Configure Docker proxy
+  template: src=http-proxy.conf dest=/etc/systemd/system/docker.service.d/http-proxy.conf
+  when: (not tempdstat.stat.exists) and proxy.enable

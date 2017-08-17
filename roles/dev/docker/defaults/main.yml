@@ -1,6 +1,14 @@
 ---
 
 repo_install: false
+docker_registry:
+  insecure_registries:
+    enable: true
+    entries:
+      - "myregistrydomain.com:5000"
+    hosts_mapping:
+      - host: myregistrydomain.com
+        ip: 127.0.0.1
 
 
 docker_packages:
@@ -17,6 +25,7 @@ docker_packages:
 
   docker_download_url: https://download.docker.com/linux/ubuntu/dists/
   version_expect: 17.06.0-ce
+
   Ubuntu:
     trusty:
       comment: 14

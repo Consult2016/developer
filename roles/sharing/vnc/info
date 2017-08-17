@@ -1,0 +1,10 @@
+To check which display manager is currently being used, run this command:
+cat /etc/X11/default-display-manager
+
+
+Repairing is broad term. However, if you have multiple display managers installed, you can choose between them using:
+sudo dpkg-reconfigure gdm3
+
+
+Unity:
+ /usr/share/gnome-session/sessions/

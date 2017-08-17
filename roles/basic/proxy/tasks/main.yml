@@ -17,6 +17,14 @@
       NO_PROXY={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
   when: proxy.enable
 
+- name: Setup no-proxy in /etc/environment
+  blockinfile:
+    path: /etc/environment
+    marker: "# {mark} PROXY BLOCK"
+    block: |
+      # --------- PROXY DISABLED
+  when: not proxy.enable
+
 - name: Export proxies
   blockinfile:
     path: '{{ sys_bashrc }}'
@@ -34,6 +42,14 @@
       export NO_PROXY={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
   when: proxy.enable
 
+- name: Un-Export proxies
+  blockinfile:
+    path: '{{ sys_bashrc }}'
+    marker: "# {mark} PROXY BLOCK"
+    block: |
+      # --------- PROXY DISABLED
+  when: not proxy.enable
+
 - name: Platform dependent setting
   include: "{{ item }}"
   with_first_found:
@@ -45,4 +61,3 @@
     - 'default.yml'
     paths: '{{ role_path }}/tasks/os_aware'
     skip: true
-  when: proxy.enable

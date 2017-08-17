@@ -10,27 +10,34 @@
     append: yes
 
 # Configure Docker to start on boot
-- name: Configure Docker to start on boot
-  service: name=docker enabled=yes state=started
 
 - name: Configure Docker daemon
   template: src=daemon.json dest=/etc/docker/daemon.json
+- name: Add insecure-registries to docker daemon
+  lineinfile:
+    path: /etc/docker/daemon.json
+    regexp: '^\s*"?insecure-registries"?'
+    line: '  "insecure-registries" : {{ docker_registry.insecure_registries.entries | to_json  }}'
+    insertafter:  '^{'
+  when: docker_registry.insecure_registries.enable
+- name: Update hosts for insecure-registries
+  lineinfile:
+    path: /etc/hosts
+    regexp: '{{ item_e.host }}$'
+    line: '{{ item_e.ip }}  {{ item_e.host }}'
+  with_items: "{{ docker_registry.insecure_registries.hosts_mapping }}"
+  loop_control:
+    loop_var: item_e
+  when: docker_registry.insecure_registries.enable
 
-# https://stackoverflow.com/questions/26550360/docker-ubuntu-behind-proxy
-- name: Configure Docker proxy
-  file:
-    path: '/etc/systemd/system/docker.service.d'
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
-- name: Configure Docker proxy
-  template: src=http-proxy.conf dest=/etc/systemd/system/docker.service.d/http-proxy.conf
-  when: proxy.enable
+- include: '{{ role_path }}/tasks/os_aware/proxy_setting.yml'
 
-- systemd:
-    state: restarted
-    daemon_reload: yes
-    name: docker
+
 - name: Restart docker daemon
   service: name=docker state=restarted enabled=yes
+- name: Docker daemon reload
+  systemd:
+    state: restarted
+    enabled: true
+    daemon_reload: yes
+    name: docker

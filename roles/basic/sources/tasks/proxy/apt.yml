@@ -10,3 +10,13 @@
       Acquire::ftp::proxy {{ '"' }}{{ proxy.ftp }}{{ '"' }};
       Acquire::socks::proxy {{ '"' }}{{ proxy.socks }}{{ '"' }};
     create: yes
+  when: (proxy.enable)
+
+- name: Disable proxy for apt
+  blockinfile:
+    path: /etc/apt/apt.conf.d/95proxies
+    marker: "// {mark} PROXY BLOCK"
+    block: |
+      // --------- PROXY DISABLED
+    create: yes
+  when: not proxy.enable

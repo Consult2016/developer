@@ -2,7 +2,6 @@
 
 - name: Setup proxy for package manager
   include: "proxy/{{ ansible_pkg_mgr }}.yml"
-  when: (proxy.enable)
 
 - name: Update repo
   include: "{{ item }}"
