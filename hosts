@@ -2,16 +2,12 @@
 controller ansible_connection=local
 
 [dev_machines]
-ubuntu-ws ansible_host=192.168.99.100 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
-node-ubuntu1204.1 ansible_host=192.168.100.100 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
-node-ubuntu1404.2 ansible_host=192.168.100.101 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
-node-ubuntu1204.3 ansible_host=192.168.100.102 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
-node-ubuntu1404.4 ansible_host=192.168.100.103 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
-#node-ubuntu1604 ansible_host=192.168.100.102 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
-#node-centos7 ansible_host=192.168.100.100 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+centos6-100 ansible_host=192.168.101.100 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+centos7-101 ansible_host=192.168.101.101 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
 
-[_dev_machines]
-node-debianjessie ansible_host=192.168.100.101 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd is_historyserver=true is_proxyserver=true
-node-ubuntuprecise64 ansible_host=192.168.100.102 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
-node-bentoopensuse ansible_host=192.168.100.104 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
-node-bentoopensuse ansible_host=192.168.100.105 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+ubuntu12-102 ansible_host=192.168.101.102 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+ubuntu14-103 ansible_host=192.168.101.103 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+ubuntu16-104 ansible_host=192.168.101.104 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+
+debian7-105 ansible_host=192.168.101.105 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+debian8-106 ansible_host=192.168.101.106 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd

@@ -26,43 +26,20 @@ end
 Vagrant.configure("2") do |config|
   config.vm.box_check_update = false
 
-# Oracle Linux
-# Red Hat Enterprise Linux
-
   boxes = [
-    BoxRef.new("bento/centos-6.7", ""),
-    BoxRef.new("bento/centos-7.2", ""),
-    # BoxRef.new("centos/6", ""),
-    # BoxRef.new("centos/7", ""),
+    BoxRef.new("centos/6", ""),
+    BoxRef.new("centos/7", ""),
 
-    # BoxRef.new("bento/ubuntu-12.04", ""),
-    # BoxRef.new("bento/ubuntu-14.04", ""),
-    # BoxRef.new("bento/ubuntu-16.04", ""),
     BoxRef.new("ubuntu/precise64", ""), #12
     BoxRef.new("ubuntu/trusty64", ""),
+    BoxRef.new("bento/ubuntu-16.04", ""),
    
-    # BoxRef.new("bento/debian-7.8", ""),
-    BoxRef.new("bento/debian-8.2", ""),
-    # BoxRef.new("debian/wheezy64", ""),  #7
-    # BoxRef.new("debian/jessie64", ""),  #8
+    BoxRef.new("debian/wheezy64", ""),  #7
     BoxRef.new("debian/contrib-jessie64", ""), 
-
-
-    # BoxRef.new("bento/opensuse-13.2", ""),
-    # BoxRef.new("opensuse/openSUSE-42.1-x86_64", ""),
-    # BoxRef.new("suse/sles11sp3", ""),
-
-# Fedora
-    # BoxRef.new("bento/fedora-23", ""),
-    # BoxRef.new("fedora/24-cloud-base", "20160621"),
-    # BoxRef.new("fedora/25-cloud-base", "20161122"),
-# SUSE Linux Enterprise Server
-    # BoxRef.new("bento/opensuse-13.2", ""),
-
   ]
 
 
-  (0..5).each do |i|
+  (0..6).each do |i|
     ip = 100 + i
     node_name = "devnode#{ip}"
     host_name = "devnode#{ip}"
