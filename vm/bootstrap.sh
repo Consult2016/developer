@@ -12,6 +12,10 @@ APT_GET_CMD=$(which apt-get)
 if [[ ! -z $APT_GET_CMD ]]; then
     apt-get install -y python
 fi
+YUM_CMD=$(which yum)
+if [[ ! -z $YUM_CMD ]]; then
+    yum -y install libselinux-python
+fi
 
 #echo r00tpassw0rd | passwd --stdin
 echo "root:passw0rd" | chpasswd
