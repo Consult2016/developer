@@ -7,4 +7,3 @@ vm/.vagrant/
 *.pyc
 .config.yml
 .hosts
-roles/**/resources/
