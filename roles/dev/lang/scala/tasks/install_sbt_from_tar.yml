@@ -37,7 +37,7 @@
 - name: Export SBT_HOME to PATH
   lineinfile:
     path: '{{ sys_profile }}'
-    line: 'export PATH=$PATH:$SBT_HOME/bin'
+    line: 'export PATH=$SBT_HOME/bin:$PATH'
 
 # check
 - name: Check sbt installation

@@ -27,7 +27,7 @@
 - name: Export SCALA_HOME to PATH
   lineinfile:
     path: '{{ sys_profile }}'
-    line: 'export PATH=$PATH:$SCALA_HOME/bin'
+    line: 'export PATH=$SCALA_HOME/bin:$PATH'
 
 # check
 - name: Check scala installation

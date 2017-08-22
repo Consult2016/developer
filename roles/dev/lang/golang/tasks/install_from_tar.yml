@@ -36,7 +36,7 @@
 - name: Export GOROOT to PATH
   lineinfile:
     path: '{{ sys_profile }}'
-    line: 'export PATH=$PATH:$GOROOT/bin'
+    line: 'export PATH=$GOROOT/bin:$PATH'
 
 - name: Check go installation
   raw: su - {{ dev_user}} -l -c "go version"

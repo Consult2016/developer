@@ -20,6 +20,8 @@ class ActionModule(CopyActionModule):
         if os.path.exists(b_cache_path):
             args['src'] = cached
             args.pop('url')
+            if args.has_key('headers'):
+                args.pop('headers')
             result = super(ActionModule, self).run(tmp, task_vars)
             return result
         else:
