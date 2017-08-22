@@ -1,0 +1,46 @@
+---
+
+# Using insecure-registries
+# - name: Add insecure-registries to docker daemon
+#   lineinfile:
+#     path: /etc/docker/daemon.json
+#     regexp: '^\s*"?insecure-registries"?'
+#     line: '  "insecure-registries" : {{ docker_registry.insecure_registries.entries | to_json  }}'
+#     insertafter:  '^{'
+#   when: docker_registry.insecure_registries.enable
+- name: registry url
+  set_fact:
+    temp_registry_url: "{{ docker_conf.custom_registry_hostname}}:{{ docker_conf.custom_registry_port}}"
+- name: Update hosts for registry
+  lineinfile:
+    path: /etc/hosts
+    regexp: '{{ docker_conf.custom_registry_hostname }}$'
+    line: '{{ docker_conf.custom_registry_ip }}  {{ docker_conf.custom_registry_hostname }}'
+  when: docker_conf.enable_custom_registry
+- name: Mkdir for Docker daemon certs
+  file: path=/etc/docker/{{ item_e }} state=directory
+  with_items: 
+    - 'certs.d'
+    - 'certs.d/{{ temp_registry_url }}'
+  loop_control:
+    loop_var: item_e
+- name: Instruct every Docker daemon to trust the certificate
+  copy:
+    src: resources/certs/domain.crt
+    dest: /etc/docker/certs.d/{{ temp_registry_url }}/ca.crt
+- name: Copy certificate to developer's HOME
+  copy:
+    src: resources/certs/
+    dest: /home/{{ dev_user }}/registry_certs
+    owner: '{{ dev_user }}'
+    group: '{{ dev_group }}'
+  when: is_docker_registry | default(false)
+
+
+  # docker run -d   --restart=always   --name registry   -v `pwd`/certs:/certs   -e REGISTRY_HTTP_ADDR=0.0.0.0:5000   -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt   -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key   -p 5000:5000   registry:2
+  # docker stop registry && docker rm -v registry
+
+# $ docker pull ubuntu:16.04
+# $ docker tag ubuntu:16.04 myregistrydomain.com/my-ubuntu
+# $ docker push myregistrydomain.com/my-ubuntu
+# $ docker pull myregistrydomain.com/my-ubuntu

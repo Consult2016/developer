@@ -9,35 +9,24 @@
     groups: '{{ docker_group }}'
     append: yes
 
-# Configure Docker to start on boot
-
+# Configure Docker daemon
+- name: Mkdir for Docker daemon file
+  file: path=/etc/docker state=directory
 - name: Configure Docker daemon
   template: src=daemon.json dest=/etc/docker/daemon.json
-- name: Add insecure-registries to docker daemon
-  lineinfile:
-    path: /etc/docker/daemon.json
-    regexp: '^\s*"?insecure-registries"?'
-    line: '  "insecure-registries" : {{ docker_registry.insecure_registries.entries | to_json  }}'
-    insertafter:  '^{'
-  when: docker_registry.insecure_registries.enable
-- name: Update hosts for insecure-registries
-  lineinfile:
-    path: /etc/hosts
-    regexp: '{{ item_e.host }}$'
-    line: '{{ item_e.ip }}  {{ item_e.host }}'
-  with_items: "{{ docker_registry.insecure_registries.hosts_mapping }}"
-  loop_control:
-    loop_var: item_e
-  when: docker_registry.insecure_registries.enable
 
+- include: '{{ role_path }}/tasks/os_aware/config_registry.yml'
+
+# Proxy Setting
 - include: '{{ role_path }}/tasks/os_aware/proxy_setting.yml'
 
-
-- name: Restart docker daemon
-  service: name=docker state=restarted enabled=yes
-- name: Docker daemon reload
+# Configure Docker to start on boot
+- name: Docker daemon reload by systemd
   systemd:
     state: restarted
     enabled: true
     daemon_reload: yes
     name: docker
+  failed_when: false
+- name: Restart docker daemon
+  service: name=docker state=restarted enabled=yes

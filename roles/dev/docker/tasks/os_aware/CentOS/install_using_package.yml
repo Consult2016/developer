@@ -36,3 +36,17 @@
   when: temp_ic.defined
 - set_fact:
     docker_installed: temp_ic.defined
+
+- name: Enable bridge-nf-call-iptables and bridge-nf-call-ip6tables
+  blockinfile:
+    path: /etc/sysctl.conf
+    marker: "# {mark} NET BRIDGE BLOCK"
+    block: |
+      net.bridge.bridge-nf-call-ip6tables = 1
+      net.bridge.bridge-nf-call-iptables = 1
+
+- name: Enable bridge-nf-call-iptables and bridge-nf-call-ip6tables right now
+  shell: |
+    sysctl net.bridge.bridge-nf-call-iptables=1
+    sysctl net.bridge.bridge-nf-call-ip6tables=1
+

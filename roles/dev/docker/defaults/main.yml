@@ -1,15 +1,12 @@
 ---
 
 repo_install: false
-docker_registry:
-  insecure_registries:
-    enable: true
-    entries:
-      - "myregistrydomain.com:5000"
-    hosts_mapping:
-      - host: myregistrydomain.com
-        ip: 127.0.0.1
 
+docker_conf:
+  enable_custom_registry: false
+  custom_registry_hostname: abcregistry.domain.com
+  custom_registry_port: 5000
+  custom_registry_ip: 127.0.0.1
 
 docker_packages:
   tools:

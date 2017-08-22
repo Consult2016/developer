@@ -23,3 +23,9 @@ proxy:
 
 mounts:
   - {type: nfs, host: localhost, path: /sharing, mountpoint: /xxx}
+
+docker_conf:
+  enable_custom_registry: false
+  custom_registry_hostname: abcregistry.domain.com
+  custom_registry_port: 5000
+  custom_registry_ip: 127.0.0.1
