@@ -1,5 +1,11 @@
 ---
 
+- name: Install the dependence packages
+  package: name="{{ item_foo }}" state=present
+  with_items: '{{ pkg_conf.dependencies }}'
+  loop_control:
+    loop_var: item_foo
+
 - name: Check CentOS-Base.repo.backup
   stat: path="/etc/yum.repos.d/CentOS-Base.repo.backup"
   register: bkstat

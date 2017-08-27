@@ -10,22 +10,31 @@
     dest: /etc/apt/sources.list.bk
   when: ( not bkstat.stat.exists )
 
-- name: Create temporary rpm file directory
-  tempfile: state=directory
-  register: temp_src_dir
-- copy:
-    src: 'templates/{{ ansible_distribution }}/{{ ansible_distribution_release }}.sources.list'
-    dest: '{{ temp_src_dir.path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list'
-- name: Reading Mirror file and register it into data variable
-  shell: cat {{ temp_src_dir.path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list
-  register: temp_src_content
-- name: Insert the text from Mirror file into file sources.list
-  blockinfile:
+- name: Setup sources.list by adding mrrior config at BOF
+  block:
+    - name: Create temporary rpm file directory
+      tempfile: state=directory
+      register: temp_src_dir
+    - copy:
+        src: 'templates/{{ ansible_distribution }}/{{ ansible_distribution_release }}.sources.list'
+        dest: '{{ temp_src_dir.path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list'
+    - name: Reading Mirror file and register it into data variable
+      shell: cat {{ temp_src_dir.path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list
+      register: temp_src_content
+    - name: Insert the text from Mirror file into file sources.list
+      blockinfile:
+        dest: /etc/apt/sources.list
+        insertbefore: BOF
+        marker: "# {mark} DEBIAN MIRROR BLOCK"
+        block: |
+          {{ temp_src_content.stdout }}
+  when: set_source_at_bof | default(true)
+- name: Use new repo setting
+  template:
+    src: '{{ ansible_distribution }}/{{ ansible_distribution_release }}.sources.list'
     dest: /etc/apt/sources.list
-    insertbefore: BOF
-    marker: "# {mark} DEBIAN MIRROR BLOCK"
-    block: |
-      {{ temp_src_content.stdout }}
+  when: set_source_at_bof | default(false)
+
 # - name: Use new repo setting
 #   template:
 #     src: '{{ ansible_distribution }}/{{ ansible_distribution_release }}.sources.list'

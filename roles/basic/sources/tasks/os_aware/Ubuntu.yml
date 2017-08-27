@@ -1,5 +1,0 @@
----
-
-- name: In Debian way
-  include: '{{ role_path }}/tasks/os_aware/Debian_override.yml'
-  

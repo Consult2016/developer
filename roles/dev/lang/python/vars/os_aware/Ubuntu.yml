@@ -2,3 +2,16 @@
 dependencies: 
   - gcc
   - build-essential
+
+  - libbz2-dev
+  - libncurses5-dev
+  - libgdbm-dev
+  - liblzma-dev
+  # - sqlite3
+  - libsqlite3-dev
+  # - openssl
+  - libssl-dev
+  - tcl8.5-dev
+  - tk8.5-dev
+  - libreadline-dev
+  # - zlib1g-dev

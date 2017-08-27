@@ -4,20 +4,23 @@
 PRIVATE_KEY_SOURCE      = '/Users/gaoyuan/.vagrant.d/insecure_private_key'
 PRIVATE_KEY_DESTINATION = '/home/vagrant/.ssh/id_rsa'
 
-class BoxRef
-  def initialize(box, box_version)
-    @box = box
-    @box_version = box_version
-  end
+SUPPORTED_OS = {
+  "centos-6"  => {box: "centos/6",            box_v: ""},
+  "centos-7"  => {box: "centos/7",            box_v: ""},
 
-  def box()
-    @box
-  end
+  "ubuntu-12" => {box: "ubuntu/precise64",    box_v: ""}, #12
+  "ubuntu-14" => {box: "ubuntu/trusty64",     box_v: ""},
+  "ubuntu-16" => {box: "bento/ubuntu-16.04",  box_v: ""},
+ 
+  "debian-7"  => {box: "debian/wheezy64",     box_v: ""}, #7
+  "debian-8"  => {box: "debian/contrib-jessie64", box_v: ""}, 
+}
 
-  def box_version()
-    @box_version
-  end
-end
+$subnet = "192.168.101"
+$num_instances = 7
+$vm_memory = 1024
+$vm_cpus = 2
+$instance_name_prefix = "devnode"
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -26,95 +29,39 @@ end
 Vagrant.configure("2") do |config|
   config.vm.box_check_update = false
 
-  boxes = [
-    BoxRef.new("centos/6", ""),
-    BoxRef.new("centos/7", ""),
+  oses = [
+    "centos-6",
+    "centos-7",
 
-    BoxRef.new("ubuntu/precise64", ""), #12
-    BoxRef.new("ubuntu/trusty64", ""),
-    BoxRef.new("bento/ubuntu-16.04", ""),
+    "ubuntu-12",
+    "ubuntu-14",
+    "ubuntu-16",
    
-    BoxRef.new("debian/wheezy64", ""),  #7
-    BoxRef.new("debian/contrib-jessie64", ""), 
+    "debian-7",
+    "debian-8",
   ]
 
-
-  (0..6).each do |i|
+  max_id = $num_instances - 1
+  (0..max_id).each do |i|
     ip = 100 + i
-    node_name = "devnode#{ip}"
-    host_name = "devnode#{ip}"
-    config.vm.define node_name do |node|
-      node.vm.hostname = host_name
+    config.vm.define node_name = "%s-%02d" % [$instance_name_prefix, i] do |node|
+      node.vm.hostname = node_name
 
-      boxr = boxes[i % boxes.length]
-      node.vm.box = boxr.box
-      node.vm.box_version = boxr.box_version if (boxr.box_version != "")
+      os = SUPPORTED_OS[oses[i % oses.length]]
+      node.vm.box = os[:box]
+      if os.has_key? :box_v
+        node.vm.box_version = os[:box_v]
+      end
 
-      node.vm.network "private_network" , ip: "192.168.101.#{ip}"
+      node.vm.network "private_network" , ip: "#{$subnet}.#{ip}"
       node.vm.provider "virtualbox" do |v|
         v.name = node_name
-        v.cpus = 2
-        v.memory = 1024
+        v.cpus = $vm_cpus
+        v.memory = $vm_memory
       end
       # copy private key so hosts can ssh using key authentication (the script below sets permissions to 600)
       node.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "host_id_rsa.pub"
       node.vm.provision "shell", path: "bootstrap.sh"
     end
   end
-
-
-  # Disable automatic box update checking. If you disable this, then
-  # boxes will only be checked for updates when the user runs
-  # `vagrant box outdated`. This is not recommended.
-  # config.vm.box_check_update = false
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
-
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
-
-  # Create a public network, which generally matched to bridged network.
-  # Bridged networks make the machine appear as another physical device on
-  # your network.
-  # config.vm.network "public_network"
-
-  # Share an additional folder to the guest VM. The first argument is
-  # the path on the host to the actual folder. The second argument is
-  # the path on the guest to mount the folder. And the optional third
-  # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
-
-  # Provider-specific configuration so you can fine-tune various
-  # backing providers for Vagrant. These expose provider-specific options.
-  # Example for VirtualBox:
-  #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
-  #
-  # View the documentation for the provider you are using for more
-  # information on available options.
-
-  # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
-  # such as FTP and Heroku are also available. See the documentation at
-  # https://docs.vagrantup.com/v2/push/atlas.html for more information.
-  # config.push.define "atlas" do |push|
-  #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
-  # end
-
-  # Enable provisioning with a shell script. Additional provisioners such as
-  # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
-  # documentation for more information about their specific syntax and use.
-  # config.vm.provision "shell", inline: <<-SHELL
-  #   apt-get update
-  #   apt-get install -y apache2
-  # SHELL
 end

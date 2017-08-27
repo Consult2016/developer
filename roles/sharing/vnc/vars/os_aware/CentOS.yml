@@ -19,3 +19,4 @@ pkg_set:
       - gnome-backgrounds
       # - ubuntu-desktop # not necessary, but more pretty 
     xstartup: xstartup-gnome
+  conf_select: vnc_normal
