@@ -5,7 +5,7 @@ pkg_set:
   vnc_normal:
     vnc_pkgs: [tigervnc-server]
     dm_pkgs: [gnome-icon-theme]
-    yum_pkgs: ["@^Desktop"]
+    yum_pkgs: ["@Desktop"]
     xstartup: xstartup-gnome
   vnc_gnome:
     vnc_pkgs: [tigervnc-server]

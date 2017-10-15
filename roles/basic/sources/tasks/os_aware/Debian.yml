@@ -1,21 +1,22 @@
 ---
 
-- name: Check if .bk exist
+- name: (Debian) Check if sources.list.bk exist
   stat: path="/etc/apt/sources.list.bk"
   register: bkstat
-- name: Backup sources.list
+- name: (Debian) Backup sources.list
   copy:
     remote_src: true
     src: /etc/apt/sources.list
     dest: /etc/apt/sources.list.bk
   when: ( not bkstat.stat.exists )
 
-- name: Setup sources.list by adding mrrior config at BOF
+- name: (Debian) Setup sources.list by adding mrrior config at BOF
   block:
-    - name: Create temporary rpm file directory
+    - name: Create temporary directory
       tempfile: state=directory
       register: temp_src_dir
-    - copy:
+    - name: Copy template sources.list to temporary directory
+      copy:
         src: 'templates/{{ ansible_distribution }}/{{ ansible_distribution_release }}.sources.list'
         dest: '{{ temp_src_dir.path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list'
     - name: Reading Mirror file and register it into data variable
@@ -29,18 +30,18 @@
         block: |
           {{ temp_src_content.stdout }}
   when: set_source_at_bof | default(true)
-- name: Use new repo setting
+- name: (Debian) Use new repo setting
   template:
     src: '{{ ansible_distribution }}/{{ ansible_distribution_release }}.sources.list'
     dest: /etc/apt/sources.list
-  when: set_source_at_bof | default(false)
+  when: not (set_source_at_bof | default(false) )
 
 # - name: Use new repo setting
 #   template:
 #     src: '{{ ansible_distribution }}/{{ ansible_distribution_release }}.sources.list'
 #     dest: /etc/apt/sources.list
 
-- name: Update repo cache
+- name: (Debian) Update repo cache
   apt:
     update_cache: yes
     cache_valid_time: 3600

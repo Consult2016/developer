@@ -1,11 +1,11 @@
 ---
 
 - name: Install sbt from tar
-  include: install_sbt_from_tar.yml
+  include_tasks: install_sbt_from_tar.yml
   vars:
     pkg_ic: '{{ pkg_ics.sbt_ic}}'
 
 - name: Install scala from repo
-  include: install_scala_from_tar.yml
+  include_tasks: install_scala_from_tar.yml
   vars:
     pkg_ic: '{{ pkg_ics.scala_ic}}'

@@ -1,0 +1,5 @@
+dependency:
+  - openssh-server
+  - openssh-client
+  - rsync
+  - tar

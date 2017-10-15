@@ -8,15 +8,6 @@ if ! [ -L /var/www ]; then
   ln -fs /vagrant /var/www
 fi
 
-APT_GET_CMD=$(which apt-get)
-if [[ ! -z $APT_GET_CMD ]]; then
-    apt-get install -y python
-fi
-YUM_CMD=$(which yum)
-if [[ ! -z $YUM_CMD ]]; then
-    yum -y install libselinux-python
-fi
-
 #echo r00tpassw0rd | passwd --stdin
 echo "root:passw0rd" | chpasswd
 #sed -i 's/\%sudo/sudo/g' /etc/sudoers
@@ -45,6 +36,17 @@ cat /home/swift/.ssh/id_rsa.pub >> /home/swift/.ssh/authorized_keys
 
 #cat /home/vagrant/host_id_rsa.pub  >> /home/swift/.ssh/authorized_keys
 cat /home/vagrant/host_id_rsa.pub  >> /home/swift/.ssh/authorized_keys
+
+
+APT_GET_CMD=$(which apt-get)
+if [[ ! -z $APT_GET_CMD ]]; then
+    apt-get install -y python
+fi
+YUM_CMD=$(which yum)
+if [[ ! -z $YUM_CMD ]]; then
+    yum -y install libselinux-python
+fi
+
 
 eth1_cnf_file=/etc/sysconfig/network-scripts/ifcfg-eth1
 if [ -f $eth1_cnf_file ]; then

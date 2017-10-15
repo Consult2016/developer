@@ -10,7 +10,7 @@
     url: "{{ pkg_ics.deb.url }}"
     dest: '{{ deb_temp.path }}/{{ pkg_ics.deb.file }}'
 
-- name: Install a .deb package
+- name: Install {{ pkg_ics.deb.file }}
   apt:
     deb: '{{ deb_temp.path }}/{{ pkg_ics.deb.file }}'
   ignore_errors: true

@@ -1,27 +1,27 @@
 ---
 
-- name: Install the dependence packages
+- name: (CentOS) Install the dependence packages
   package: name="{{ item_foo }}" state=present
   with_items: '{{ pkg_conf.dependencies }}'
   loop_control:
     loop_var: item_foo
 
-- name: Check CentOS-Base.repo.backup
+- name: (CentOS) Check CentOS-Base.repo.backup
   stat: path="/etc/yum.repos.d/CentOS-Base.repo.backup"
   register: bkstat
-- name: Backup /etc/yum.repos.d/CentOS-Base.repo
+- name: (CentOS) Backup CentOS-Base.repo
   copy:
     remote_src: true
     src: /etc/yum.repos.d/CentOS-Base.repo
     dest: /etc/yum.repos.d/CentOS-Base.repo.backup
   when: ( not bkstat.stat.exists )
 
-- name: Use new repo setting
+- name: (CentOS) Use new CentOS-Base.repo
   template:
     src: '{{ ansible_distribution }}/CentOS-{{ ansible_distribution_major_version }}.repo'
     dest: /etc/yum.repos.d/CentOS-Base.repo
 
-- name: Update repo cache
+- name: (CentOS) Update repo cache
   yum:
     list: ansible
     update_cache: yes

@@ -1,4 +1,5 @@
 .idea/
+.vagrant/
 *.retry
 .DS_Store
 vm/.vagrant/

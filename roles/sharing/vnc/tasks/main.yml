@@ -13,7 +13,7 @@
   loop_control:
     loop_var: item_x
 
-- include: setup_vnc.yml
+- import_tasks: setup_vnc.yml
   vars:
     vnc_s: '{{ pkg_set[pkg_set.conf_select] }}'
 

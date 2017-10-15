@@ -23,7 +23,7 @@
   changed_when: False
   ignore_errors: true
 - name: Install python2
-  include: install_by_make.yml
+  include_tasks: install_by_make.yml
   when: "( python2_v | failed ) or ( pkg_ics.python2.version_expect not in python2_v.stdout )"
   vars:
     python_x: python2
@@ -37,10 +37,10 @@
   changed_when: False
   ignore_errors: true
 - name: Install python3
-  include: install_by_make.yml
+  include_tasks: install_by_make.yml
   when: "( python3_v | failed ) or ( pkg_ics.python3.version_expect not in python3_v.stdout )"
   vars:
     python_x: python3
     pkg_ic: '{{ pkg_ics.python3 }}'
 
-# - include: install_from_tar.yml
+# - include_tasks: install_from_tar.yml

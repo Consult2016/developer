@@ -15,10 +15,10 @@
 - name: Configure Docker daemon
   template: src=daemon.json dest=/etc/docker/daemon.json
 
-- include: '{{ role_path }}/tasks/os_aware/config_registry.yml'
+- import_tasks: '{{ role_path }}/tasks/os_aware/config_registry.yml'
 
 # Proxy Setting
-- include: '{{ role_path }}/tasks/os_aware/proxy_setting.yml'
+- import_tasks: '{{ role_path }}/tasks/os_aware/proxy_setting.yml'
 
 # Configure Docker to start on boot
 - name: Docker daemon reload by systemd

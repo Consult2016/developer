@@ -1,10 +1,10 @@
 ---
 
 - name: Pick install script
-  include: "os_aware/{{ ansible_distribution }}/install.yml"
+  include_tasks: "os_aware/{{ ansible_distribution }}/install.yml"
 
 - name: Load post install script
-  include: '{{ item }}'
+  include_tasks: '{{ item }}'
   with_first_found:
   - files:
       - '{{ ansible_distribution }}/postinstall-{{ ansible_distribution_release }}.yml'
@@ -23,13 +23,13 @@
   when: docker_installed | default(false)
 
 - name: Install docker compose
-  include: install_compose.yml
+  include_tasks: install_compose.yml
   vars:
     param_conf: '{{ docker_packages.tools.compose}}'
   when: docker_installed | default(false)
 
 - name: Install docker machine
-  include: install_machine.yml
+  include_tasks: install_machine.yml
   vars:
     param_conf: '{{ docker_packages.tools.machine}}'
   when: docker_installed | default(false)

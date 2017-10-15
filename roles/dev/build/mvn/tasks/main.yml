@@ -6,5 +6,5 @@
   changed_when: false
   failed_when: false
 - name: Install mvn
-  include: install_from_tar.yml
+  include_tasks: install_from_tar.yml
   when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout )"

@@ -39,6 +39,6 @@
     - dev/build/gradle
     - dev/ide/eclipse
     - dev/ide/idea
-    - dev/ansible
     - dev/docker
+    - dev/ansible
 

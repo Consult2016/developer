@@ -1,7 +1,7 @@
 ---
 
 - name: Post install
-  include: '{{ item_l1 }}'
+  include_tasks: '{{ item_l1 }}'
   with_first_found:
   - files:
     - '{{ ansible_distribution }}.yml'

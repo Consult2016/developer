@@ -1,4 +1,4 @@
 ---
 
 - name: Install from tar
-  include: install_from_tar.yml
+  import_tasks: install_from_tar.yml

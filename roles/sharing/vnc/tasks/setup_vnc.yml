@@ -1,14 +1,26 @@
 ---
 
+- name: (CentOS) Update repo cache
+  yum:
+    update_cache: yes
+    cache_valid_time: 3600
+  failed_when: false
+  changed_when: false
+  ignore_errors: True
+- name: (Debian) Update repo cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  failed_when: false
+  changed_when: false
+  ignore_errors: True
+
 # - name: Remove old vnc packages
 #   package: name="{{ item }}" state=absent
 #   with_items: [tightvncserver]
-- name: Install the vnc packages
+- name: Install the packages (vnc + dm)
   package: name="{{ item }}" state=present
-  with_items: '{{ vnc_s.vnc_pkgs }}'
-- name: Install the dm packages
-  package: name="{{ item }}" state=present
-  with_items: '{{ vnc_s.dm_pkgs }}'
+  with_items: '{{ vnc_s.vnc_pkgs | union(vnc_s.dm_pkgs) }}'
 - name: Install the dm packages
   yum: name="{{ item }}" state=present
   with_items: '{{ vnc_s.yum_pkgs | default([]) }}'

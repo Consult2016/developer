@@ -1,6 +1,5 @@
 ---
 
 - name: Pick install script
-  include: "install_using_{{ repo_install | ternary('repo', 'package') }}.yml"
-  static: no
+  include_tasks: "install_using_{{ repo_install | ternary('repo', 'package') }}.yml"
   when: ansible_distribution_release in ["trusty", "xenial"]

@@ -51,7 +51,7 @@
   when: not proxy.enable
 
 - name: Platform dependent setting
-  include: "{{ item }}"
+  include_tasks: "{{ item }}"
   with_first_found:
   - files:
     - '{{ ansible_distribution_release }}.yml'

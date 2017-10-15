@@ -1,7 +1,7 @@
 ---
 
 - name: Setup proxy for package manager
-  include: "proxy/{{ ansible_pkg_mgr }}.yml"
+  include_tasks: "proxy/{{ ansible_pkg_mgr }}.yml"
 
 - name: Resolve vars
   include_vars: "{{ item_x }}"
@@ -17,7 +17,7 @@
     loop_var: item_x
 
 - name: Update repo
-  include: "{{ item }}"
+  include_tasks: "{{ item }}"
   with_first_found:
   - files:
     - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml'
