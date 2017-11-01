@@ -30,7 +30,9 @@
 - debug:
     msg: su - {{ dev_user }} -l -c "{{ vnc_setpw_cmd}}"
 - name: Init vnc
-  raw: su - {{ dev_user }} -l -c "{{ vnc_setpw_cmd}}"
+  shell: "{{ vnc_setpw_cmd}}"
+  become: true
+  become_user: "{{ dev_user}}"
 - name: Check if .bk exist
   stat: path="/home/{{ dev_user }}/.vnc/xstartup.bk"
   register: bkstat

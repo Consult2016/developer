@@ -1,4 +1,7 @@
 ---
+
+source_provider: aliyun
+
 proxy:
   enable: false
   default: http://xxx.xxx.xxx.xxx:yyy

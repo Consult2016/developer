@@ -3,17 +3,17 @@
 
 SUPPORTED_OS = {
   "centos6"  => {box: "centos/6",            box_v: ""},
-  "centos7"  => {box: "centos/7",            box_v: ""},
+  "centos7"  => {box: "centos/7",            box_v: "1708.01"},
+ 
+  "debian7"  => {box: "debian/wheezy64",     box_v: ""}, #7
+  "debian8"  => {box: "debian/contrib-jessie64", box_v: ""}, 
 
   "ubuntu12" => {box: "ubuntu/precise64",    box_v: ""}, #12
   "ubuntu14" => {box: "ubuntu/trusty64",     box_v: ""},
   "ubuntu16" => {box: "bento/ubuntu-16.04",  box_v: ""},
- 
-  "debian7"  => {box: "debian/wheezy64",     box_v: ""}, #7
-  "debian8"  => {box: "debian/contrib-jessie64", box_v: ""}, 
 }
 
-$subnet = "192.168.111"
+$subnet = "192.168.100"
 $num_instances = 7
 $vm_memory = 1024
 $vm_cpus = 2
@@ -30,13 +30,13 @@ Vagrant.configure("2") do |config|
   oses = [
     "centos6",
     "centos7",
+   
+    "debian7",
+    "debian8",
 
     "ubuntu12",
     "ubuntu14",
     "ubuntu16",
-   
-    "debian8",
-    "debian7",
   ]
 
   a_node_names = Array.new($num_instances, "node_default_name")

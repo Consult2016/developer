@@ -1,5 +1,6 @@
 ---
 
+# BACKUP
 - name: (Debian) Check if sources.list.bk exist
   stat: path="/etc/apt/sources.list.bk"
   register: bkstat
@@ -10,6 +11,19 @@
     dest: /etc/apt/sources.list.bk
   when: ( not bkstat.stat.exists )
 
+
+# CHANGE MIRROR
+- name: Pick Mirror config
+  set_fact:
+    mirror_config: '{{ item_foo }}'
+  with_first_found:
+    - files:
+        - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list.{{ source_provider }}'
+        - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list'
+      paths:
+        - '{{ role_path }}/templates/mirrors'
+  loop_control:
+    loop_var: item_foo
 - name: (Debian) Setup sources.list by adding mrrior config at BOF
   block:
     - name: Create temporary directory
@@ -17,7 +31,7 @@
       register: temp_src_dir
     - name: Copy template sources.list to temporary directory
       copy:
-        src: 'templates/{{ ansible_distribution }}/{{ ansible_distribution_release }}.sources.list'
+        src: '{{ mirror_config }}'
         dest: '{{ temp_src_dir.path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list'
     - name: Reading Mirror file and register it into data variable
       shell: cat {{ temp_src_dir.path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list
@@ -32,7 +46,7 @@
   when: set_source_at_bof | default(true)
 - name: (Debian) Use new repo setting
   template:
-    src: '{{ ansible_distribution }}/{{ ansible_distribution_release }}.sources.list'
+    src: '{{ mirror_config }}'
     dest: /etc/apt/sources.list
   when: not (set_source_at_bof | default(false) )
 
@@ -41,6 +55,7 @@
 #     src: '{{ ansible_distribution }}/{{ ansible_distribution_release }}.sources.list'
 #     dest: /etc/apt/sources.list
 
+# UPDATE
 - name: (Debian) Update repo cache
   apt:
     update_cache: yes

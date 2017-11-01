@@ -16,10 +16,12 @@
   with_items: "{{ dependencies }}"
 
 - name: Fetch python2 version
-  raw: su - {{ dev_user}} -l -c "python2 --version 2>&1"
+  shell: "python2 --version 2>&1"
   # next line wont work on centos ?
   # shell: "python2 --version 2>&1"
   register: python2_v
+  become: true
+  become_user: "{{ dev_user}}"
   changed_when: False
   ignore_errors: true
 - name: Install python2
@@ -30,9 +32,11 @@
     pkg_ic: '{{ pkg_ics.python2 }}'
 
 - name: Fetch python3 version
-  raw: su - {{ dev_user}} -l -c "python3 --version 2>&1"
+  shell: "python3 --version 2>&1"
   # next line wont work on centos ?
   # shell: "python3 --version 2>&1"
+  become: true
+  become_user: "{{ dev_user}}"
   register: python3_v
   changed_when: False
   ignore_errors: true

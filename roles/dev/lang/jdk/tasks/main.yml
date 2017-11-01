@@ -3,13 +3,15 @@
 - name: Fetch JAVA_HOME, setup if absent
   command: /bin/sh -l -c "echo $JAVA_HOME"
   register: fetch_java_home
-  changed_when: False
+  changed_when: false
 
 - debug: msg="os{{ ':'}}{{ ansible_os_family }}, distribution{{ ':'}}{{ ansible_distribution }}-{{ ansible_distribution_version }}({{ ansible_distribution_release }}), JAVA_HOME{{ ':'}}{{ fetch_java_home.stdout }}"
 - name: Fetch java version
-  raw: su - {{ dev_user}} -l -c "java -version"
+  shell: "java -version"
   register: java_v
-  changed_when: False
+  become: true
+  become_user: "{{ dev_user}}"
+  changed_when: false
   ignore_errors: true
 
 - name: Install from repo
@@ -21,8 +23,8 @@
   when: ((fetch_java_home.stdout == '') or ( java_v | failed ) )
 
 - name: Check java installation
-  raw: su - {{ dev_user}} -l -c "java -version"
+  raw: su - {{ dev_user}} -l -c "java -version" 
   register: java_v
-  changed_when: False
+  changed_when: false
   failed_when: "( java_v | failed )"
 

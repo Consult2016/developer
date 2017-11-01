@@ -38,16 +38,6 @@ cat /home/swift/.ssh/id_rsa.pub >> /home/swift/.ssh/authorized_keys
 cat /home/vagrant/host_id_rsa.pub  >> /home/swift/.ssh/authorized_keys
 
 
-APT_GET_CMD=$(which apt-get)
-if [[ ! -z $APT_GET_CMD ]]; then
-    apt-get install -y python
-fi
-YUM_CMD=$(which yum)
-if [[ ! -z $YUM_CMD ]]; then
-    yum -y install libselinux-python
-fi
-
-
 eth1_cnf_file=/etc/sysconfig/network-scripts/ifcfg-eth1
 if [ -f $eth1_cnf_file ]; then
 	chown root:root $eth1_cnf_file
@@ -64,3 +54,13 @@ if [ -f /etc/sudoers ]; then
 #     sed -i '/tty/!s/mesg n/tty -s \\&\\& mesg n/' /root/.profile
       sed -i 's/^# %wheel\tALL=(ALL)\tALL$/%wheel\tALL=(ALL)\tALL/g' /etc/sudoers
 fi
+
+APT_GET_CMD=$(which apt-get)
+if [[ ! -z $APT_GET_CMD ]]; then
+    apt-get install -y python
+fi
+YUM_CMD=$(which yum)
+if [[ ! -z $YUM_CMD ]]; then
+    yum -y install libselinux-python
+fi
+
