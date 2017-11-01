@@ -12,27 +12,32 @@ Ubuntu 14.04
 Ubuntu 16.04
 
 ## Including tasks:
-* Proxy setting
-* APT/YUM source mirrors
-* Developer account define
-* JDK
-* Scala
-* Go
-* NodeJS
-* Python2/Python3
-* Vim Setting
-* Sublime
-* Meld
-* Chrome
-* NFS
-* Samba
-* VNC
-* Maven
-* Gradle
-* Eclipse
-* Idea IDE
-* Docker
-* Ansible
+* General setting
+  * Proxy setting
+  * APT/YUM source mirrors
+  * Developer account define
+* SDKs
+  * JDK
+  * Scala
+  * Go
+  * NodeJS
+  * Python2/Python3
+* Editors
+  * Vim Setting
+  * Sublime
+  * Meld
+* Tools
+  * Chrome
+  * NFS
+  * Samba
+  * VNC
+* Developer Tools
+  * Maven
+  * Gradle
+  * Eclipse
+  * Idea IDE
+  * Docker
+  * Ansible
 
 ## Usage
 Define inventory
