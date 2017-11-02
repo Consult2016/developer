@@ -26,40 +26,46 @@
   with_items: '{{ vnc_s.yum_pkgs | default([]) }}'
 
 - set_fact:
-    vnc_setpw_cmd: "echo {{ (ansible_distribution in ['Ubuntu', 'Debian']) | ternary(' ', '-e') }} '{{ vnc_init_pwd }}\n{{ vnc_init_pwd }}\n' | vncpasswd"
+    # vnc_setpw_cmd: "echo {{ (ansible_distribution in ['Ubuntu', 'Debian']) | ternary(' ', '-e') }} '{{ vnc_init_pwd }}\n{{ vnc_init_pwd }}\n' | vncpasswd"
+    vnc_setpw_cmd: "printf '{{ vnc_init_pwd }}\n{{ vnc_init_pwd }}\n' | vncpasswd"
+    dev_user_vnc: "/home/{{ dev_user }}/.vnc"
 - debug:
-    msg: su - {{ dev_user }} -l -c "{{ vnc_setpw_cmd}}"
+    msg: su - {{ dev_user }} -l -c "{{ vnc_setpw_cmd }}"
 - name: Init vnc
-  shell: "{{ vnc_setpw_cmd}}"
+  shell: "{{ vnc_setpw_cmd }}"
+  register: initvnc_stat
   become: true
-  become_user: "{{ dev_user}}"
-- name: Check if .bk exist
-  stat: path="/home/{{ dev_user }}/.vnc/xstartup.bk"
-  register: bkstat
-- name: Check if xstartup exist
-  stat: path="/home/{{ dev_user }}/.vnc/xstartup"
-  register: xstat
+  become_user: "{{ dev_user }}"
+
 - name: Backup xstartup
-  copy:
-    remote_src: true
-    src: /home/{{ dev_user }}/.vnc/xstartup
-    dest: /home/{{ dev_user }}/.vnc/xstartup.bk
-    owner: '{{ dev_user}}' 
-    group: '{{ dev_group}}' 
-    mode: 0770 
-  when: (xstat.stat.exists) and ( not bkstat.stat.exists )
+  block:
+    - name: Check if .bk exist
+      stat: path="{{ dev_user_vnc }}/xstartup.bk"
+      register: bkstat
+    - name: Check if xstartup exist
+      stat: path="{{ dev_user_vnc }}/xstartup"
+      register: xstat
+    - name: Backup xstartup
+      copy:
+        remote_src: true
+        src: "{{ dev_user_vnc }}/xstartup"
+        dest: "{{ dev_user_vnc }}/xstartup.bk"
+        owner: '{{ dev_user}}' 
+        group: '{{ dev_group}}' 
+        mode: 0770 
+      when: (xstat.stat.exists) and ( not bkstat.stat.exists )
 
 - name: Set xstartup by copy
   template:
     src: '{{ vnc_s.xstartup }}'
-    dest: '/home/{{ dev_user }}/.vnc/{{ vnc_s.xstartup }}'
+    dest: '{{ dev_user_vnc }}/{{ vnc_s.xstartup }}'
     owner: '{{ dev_user}}' 
     group: '{{ dev_group}}' 
     mode: 0770 
 - name: Set xstartup
   template:
     src: '{{ vnc_s.xstartup }}'
-    dest: '/home/{{ dev_user }}/.vnc/xstartup'
+    dest: '{{ dev_user_vnc }}/xstartup'
     owner: '{{ dev_user}}' 
     group: '{{ dev_group}}' 
     mode: 0770 

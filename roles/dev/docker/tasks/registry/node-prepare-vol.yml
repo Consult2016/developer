@@ -1,0 +1,8 @@
+---
+
+- name: Present registry data dir
+  file:
+    path: '{{ docker_reg_svr_conf.localstorage }}'
+    state: directory
+    recurse: yes
+    mode: 0755

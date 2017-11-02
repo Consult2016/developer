@@ -1,0 +1,23 @@
+---
+
+- name: Print Resigtry Commands
+  debug:
+    msg: "{{ registry_cmds }}"
+- name: Stop registry server
+  shell: "{{ registry_cmds.stop }}"
+  failed_when: false
+  become: true
+  become_user: "{{ dev_user}}"
+- name: Start registry server
+  shell: "{{ registry_cmds.start }}"
+  become: true
+  become_user: "{{ dev_user}}"
+- name: Check Resigtry server status
+  shell: "{{ registry_cmds.ps }}"
+  register: start_registry_result
+  become: true
+  become_user: "{{ dev_user}}"
+  failed_when: "( start_registry_result | failed ) or ( docker_reg_svr_conf.container_name not in start_registry_result.stdout )"
+- name: Resigtry Server Usage
+  debug:
+    msg: "{{ registry_cmds.push_example }}"

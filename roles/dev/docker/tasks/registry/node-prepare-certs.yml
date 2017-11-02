@@ -1,0 +1,19 @@
+---
+
+- name: Present certs dir
+  file:
+    path: '{{ the_cert_path }}'
+    state: directory
+    recurse: yes
+    mode: 0755
+- name: Build openssl command
+  set_fact:
+    gen_cert_cmd: >
+      openssl req  -newkey rsa:4096 -nodes -sha256 
+      -keyout {{ the_cert_path }}/domain.key 
+      -x509 -days 365 
+      -out {{ the_cert_path }}/domain.crt 
+      -subj "/C={{ docker_reg_svr_conf.self_signed_cert.C }}/ST={{ docker_reg_svr_conf.self_signed_cert.ST }}/L={{ docker_reg_svr_conf.self_signed_cert.L }}/O={{ docker_reg_svr_conf.self_signed_cert.O }}/OU={{ docker_reg_svr_conf.self_signed_cert.OU }}/CN={{ docker_reg_svr_conf.hostname }}"
+- name: Generate self signed certificates
+  raw: '{{ gen_cert_cmd }}'
+  changed_when: False

@@ -1,0 +1,56 @@
+---
+
+- name: Docker save TLS certificate
+  shell: |
+    {{ swarm_registry_cmds.save_cert_crt}}
+    {{ swarm_registry_cmds.save_cert_key}}
+  become: true
+  changed_when: false
+  become_user: "{{ dev_user}}"
+
+- name: List node ids
+  shell: docker node ls | grep -v HOSTNAME | awk '{print $1}'
+  register: nodes_result
+  become: true
+  changed_when: false
+  become_user: "{{ dev_user}}"
+
+- name: Remove label for registry
+  shell: docker node update --label-rm registry {{ item }}
+  become: true
+  changed_when: false
+  failed_when: false
+  become_user: "{{ dev_user}}"
+  with_items: "{{ nodes_result.stdout_lines}}"
+
+- name: Fetch node id of First Registry Server
+  shell: docker info -f {%raw%}{{.Swarm.NodeID}}{%endraw%}
+  register: fetch_reg_nodeid_result
+  become: true
+  changed_when: false
+  become_user: "{{ dev_user}}"
+  delegate_to: "{{ the_registry_server.host}}"
+
+- name: Add label for registry
+  shell: docker node update --label-add registry=true {{ fetch_reg_nodeid_result.stdout }}
+  become: true
+  changed_when: false
+  become_user: "{{ dev_user}}"
+
+- name: Stop Registry Service
+  shell: "{{ swarm_registry_cmds.swarm_service.stop }}"
+  become: true
+  changed_when: false
+  failed_when: false
+  become_user: "{{ dev_user}}"
+
+- name: Start Registry Service
+  shell: "{{ swarm_registry_cmds.swarm_service.start }}"
+  become: true
+  changed_when: false
+  become_user: "{{ dev_user}}"
+
+- name: Print Usage
+  debug:
+    var: swarm_registry_cmds.swarm_service
+

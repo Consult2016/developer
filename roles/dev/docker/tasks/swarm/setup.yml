@@ -1,0 +1,38 @@
+---
+
+- name: Count swarm managers
+  set_fact:
+    swarm_manager_count: '{{ groups["swarm_managers"] | default([]) | length }}'
+- name: Prepare swarm facts
+  set_fact:
+    first_swarm_manager:
+      host: '{{ groups["swarm_managers"][0]}}'
+      hostname: '{{ hostvars[groups["swarm_managers"][0]].ansible_hostname  }}'
+  when: '(swarm_manager_count > 0)'
+
+- name: All nodes leave swarm (worker and manager)
+  shell: "{{ command_item }}"
+  failed_when: false
+  changed_when: false
+  become: true
+  become_user: "{{ dev_user}}"
+  with_items: ["docker swarm leave", "docker swarm leave --force"]
+  loop_control:
+    loop_var: command_item
+
+- name: Launch Swarm Cluster
+  block:
+    - name: Init swarm on first manager
+      include_tasks: init.yml
+      when: '(swarm_manager_count > 0) and (first_swarm_manager.hostname == ansible_hostname)'
+    - name: Gather join command
+      set_fact:
+        swarm_join_cmds: '{{ hostvars[first_swarm_manager.host].swarm_join_cmds_local }}'
+
+    - name: Other managers join swarm
+      include_tasks: managers-except-first.yml
+      when: '(swarm_manager_count > 1) and ("swarm_managers" in group_names) and (first_swarm_manager.hostname != ansible_hostname)' 
+    - name: Workers join swarm
+      include_tasks: workers.yml
+      when: '(swarm_manager_count > 1) and ("swarm_workers" in group_names)'
+  when: docker_launch_swarm | bool | default(false)

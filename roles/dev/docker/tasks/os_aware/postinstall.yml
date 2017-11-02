@@ -15,7 +15,7 @@
 - name: Configure Docker daemon
   template: src=daemon.json dest=/etc/docker/daemon.json
 
-- import_tasks: '{{ role_path }}/tasks/os_aware/config_registry.yml'
+# - import_tasks: '{{ role_path }}/tasks/os_aware/config_registry.yml'
 
 # Proxy Setting
 - import_tasks: '{{ role_path }}/tasks/os_aware/proxy_setting.yml'

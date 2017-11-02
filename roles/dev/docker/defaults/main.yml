@@ -2,12 +2,6 @@
 
 repo_install: false
 
-docker_conf:
-  enable_custom_registry: false
-  custom_registry_hostname: abcregistry.domain.com
-  custom_registry_port: 5000
-  custom_registry_ip: 127.0.0.1
-
 docker_packages:
   tools:
     compose:
@@ -18,7 +12,6 @@ docker_packages:
     machine:
       file: docker-machine-Linux-x86_64-v0.12.2
       url: https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-Linux-x86_64
-
 
   docker_download_url: https://download.docker.com/linux/ubuntu/dists/
   version_expect: 17.06.0-ce
@@ -50,5 +43,24 @@ docker_packages:
       file: docker-ce_17.06.0-ce-0-debian_amd64(stretch).deb
       url: https://download.docker.com/linux/debian/dists/stretch/pool/stable/amd64/docker-ce_17.06.0~ce-0~debian_amd64.deb
 
-
 docker_group: docker
+
+docker_launch_swarm: false
+
+docker_reg_svr_conf:
+  image_name: registry:2.6.2
+  container_name: registry
+  hostname: docker.gy.io
+  config_hosts_file: true
+  port: 5000
+  cert_dir: /certs
+  localstorage: /var/docker/registry
+  self_signed_cert:
+    C: CN
+    ST: Shanghai
+    L: Shanghai
+    O: N\/A
+    OU: N\/A
+  run_on_a_node: false
+  run_on_swarm: false
+

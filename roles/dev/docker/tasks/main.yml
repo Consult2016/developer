@@ -1,9 +1,9 @@
 ---
 
-- name: Pick install script
+- name: Install docker
   include_tasks: "os_aware/{{ ansible_distribution }}/install.yml"
 
-- name: Load post install script
+- name: Post-install docker
   include_tasks: '{{ item }}'
   with_first_found:
   - files:
@@ -33,3 +33,10 @@
   vars:
     param_conf: '{{ docker_packages.tools.machine}}'
   when: docker_installed | default(false)
+
+- name: Setup swarm
+  include_tasks: swarm/setup.yml
+
+- name: Setup registry
+  include_tasks: registry/setup.yml
+

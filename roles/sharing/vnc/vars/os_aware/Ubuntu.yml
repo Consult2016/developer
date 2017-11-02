@@ -1,6 +1,7 @@
 ---
 
 pkg_set:
+  conf_select: vnc_gnome
   vnc_xfce4:
     vnc_pkgs: [vnc4server]
     dm_pkgs: [xfce4, xfce4-goodies]
@@ -15,4 +16,3 @@ pkg_set:
       - gnome-terminal
       - ubuntu-desktop # not necessary, but more pretty 
     xstartup: xstartup-gnome
-  conf_select: vnc_gnome

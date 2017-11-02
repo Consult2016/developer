@@ -1,0 +1,13 @@
+---
+
+- name: Calc certs path
+  set_fact:
+    the_cert_path: '{{ docker_reg_svr_conf.cert_dir }}/{{ docker_reg_svr_conf.hostname }}'
+
+- name: Setup Resigtry Server (Node mode)
+  include_tasks: setup-registry-server-on-node.yml
+  when:  docker_reg_svr_conf.run_on_a_node | default(false)
+
+- name: Setup Resigtry Server (Swarm mode)
+  include_tasks: setup-registry-server-on-swarm.yml
+  when:  (docker_reg_svr_conf.run_on_swarm | default(false)) and ( docker_launch_swarm | default(false) )

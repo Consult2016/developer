@@ -1,12 +1,13 @@
 ---
 
 pkg_set:
-  dependencies: [vnc-server, vnc, xterm]
+  conf_select: vnc_normal
   vnc_normal:
     vnc_pkgs: [tigervnc-server]
     dm_pkgs: [gnome-icon-theme]
     yum_pkgs: ["@^GNOME Desktop"]
     xstartup: xstartup-centos-7
+    vncpasswd_postfix: 'n\n'
   vnc_gnome:
     vnc_pkgs: [tigervnc-server]
     dm_pkgs: 
@@ -19,4 +20,4 @@ pkg_set:
       - gnome-backgrounds
       # - ubuntu-desktop # not necessary, but more pretty 
     xstartup: xstartup-gnome
-  conf_select: vnc_normal
+    vncpasswd_postfix: 'n\n'

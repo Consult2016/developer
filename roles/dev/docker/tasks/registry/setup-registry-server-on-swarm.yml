@@ -1,0 +1,67 @@
+---
+
+- name: Determine swarm situation
+  block:
+    - name: Count swarm nodes
+      set_fact:
+        swarm_manager_count: '{{ groups["swarm_managers"] | default([]) | length }}'
+    - name: Prepare swarm facts
+      set_fact:
+        first_swarm_manager:
+          host: '{{ groups["swarm_managers"][0]}}'
+          hostname: '{{ hostvars[groups["swarm_managers"][0]].ansible_hostname  }}'
+        swarm_registry_cmds:
+          save_cert_crt: docker secret create domain.crt {{ the_cert_path }}/domain.crt
+          save_cert_key: docker secret create domain.key {{ the_cert_path }}/domain.key
+
+          swarm_service:
+            stop: "docker service rm registry"
+            start: >
+              docker service create --name registry 
+              --secret domain.crt --secret domain.key 
+              --constraint 'node.labels.registry==true' 
+              --mount type=bind,src={{ docker_reg_svr_conf.localstorage }},dst=/var/lib/registry 
+              -e REGISTRY_HTTP_ADDR=0.0.0.0:80 
+              -e REGISTRY_HTTP_TLS_CERTIFICATE=/run/secrets/domain.crt 
+              -e REGISTRY_HTTP_TLS_KEY=/run/secrets/domain.key 
+              -p 80:80 --replicas 1 {{ docker_reg_svr_conf.image_name }}
+            push_example: |
+              docker pull busybox:1.24.1
+              docker tag busybox:1.24.1 127.0.0.1:80/busybox:1.24.1
+              docker images
+              docker push 127.0.0.1:80/busybox:1.24.1 
+              docker image rm 127.0.0.1:80/busybox:1.24.1 
+              docker images
+              docker pull 127.0.0.1:80/busybox:1.24.1
+              docker images
+      when: '(swarm_manager_count > 0)'
+
+- name: Determine the registry server
+  block:
+    - name: Gather Resigtry Servers
+      set_fact:
+        _gather_registry_servers: '{{ hostvars.values() | json_query("[*].{host: inventory_hostname, is_registry: registry_server}") | selectattr("is_registry", "equalto", "true") | list | json_query("[*].host") | intersect(groups["swarm_nodes"]) }}'
+    - name: Count registry server
+      set_fact:
+        _local_registry_server_count: '{{ _gather_registry_servers | default([]) | length }}'
+    - name: Resigtry Server Specified, use first one
+      set_fact:
+        the_registry_server:
+          host: "{{ _gather_registry_servers[0] }}"
+          hostname: '{{ hostvars[_gather_registry_servers[0]].ansible_hostname  }}'
+      when: _local_registry_server_count | int > 0
+    - name: Resigtry Server Not Specified, use first swarm manager
+      set_fact:
+        the_registry_server: '{{ first_swarm_manager }}'
+      when: _local_registry_server_count | int == 0
+
+- name: Setup Resigtry Server (Certs)
+  include_tasks: node-prepare-certs.yml
+  when:  first_swarm_manager.hostname == ansible_hostname
+- name: Setup Resigtry Server (Vol)
+  include_tasks: node-prepare-vol.yml
+  when:  the_registry_server.hostname == ansible_hostname
+
+- name: Setup Resigtry Server (Certs)
+  include_tasks: registry-server-on-swarm-do-launch.yml
+  when:  first_swarm_manager.hostname == ansible_hostname
