@@ -26,7 +26,9 @@
     mode: 0755
   when: not tempdstat.stat.exists
 - name: Configure Docker proxy (HTTP)
-  template: src=http-proxy.conf dest=/etc/systemd/system/docker.service.d/http-proxy.conf
+  template:
+    src: http-proxy.conf
+    dest: /etc/systemd/system/docker.service.d/http-proxy.conf
   when: (not tempdstat.stat.exists) and proxy.enable
 # - name: Configure Docker proxy (HTTPS)
 #   template: src=https-proxy.conf dest=/etc/systemd/system/docker.service.d/https-proxy.conf

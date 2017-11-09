@@ -36,7 +36,16 @@
   register: initvnc_stat
   become: true
   become_user: "{{ dev_user }}"
+- name: Present .vnc dir
+  file:
+    path: '{{ dev_user_vnc }}'
+    owner: "{{ dev_user }}"
+    group: "{{ dev_group }}"
+    state: directory
+    mode: 0755
 
+- debug:
+    var: initvnc_stat
 - name: Backup xstartup
   block:
     - name: Check if .bk exist

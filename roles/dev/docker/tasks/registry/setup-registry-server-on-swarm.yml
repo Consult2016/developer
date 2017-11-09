@@ -1,11 +1,11 @@
 ---
 
-- name: Determine swarm situation
+- name: (Resigtry on Swarm) Determine swarm situation
   block:
-    - name: Count swarm nodes
+    - name: (Resigtry on Swarm) Count swarm nodes
       set_fact:
         swarm_manager_count: '{{ groups["swarm_managers"] | default([]) | length }}'
-    - name: Prepare swarm facts
+    - name: (Resigtry on Swarm) Prepare swarm facts
       set_fact:
         first_swarm_manager:
           host: '{{ groups["swarm_managers"][0]}}'
@@ -34,34 +34,34 @@
               docker images
               docker pull 127.0.0.1:80/busybox:1.24.1
               docker images
-      when: '(swarm_manager_count > 0)'
+      when: swarm_manager_count | int > 0
 
-- name: Determine the registry server
+- name: (Resigtry on Swarm) Determine the registry server
   block:
-    - name: Gather Resigtry Servers
+    - name: (Resigtry on Swarm) Gather Resigtry Servers
       set_fact:
-        _gather_registry_servers: '{{ hostvars.values() | json_query("[*].{host: inventory_hostname, is_registry: registry_server}") | selectattr("is_registry", "equalto", "true") | list | json_query("[*].host") | intersect(groups["swarm_nodes"]) }}'
-    - name: Count registry server
+        _gather_registry_servers: '{{ hostvars.values() | json_query("[*].{host: inventory_hostname, is_registry: registry_server}") | selectattr("is_registry", "equalto", "true") | list | json_query("[*].host") | intersect(swarm_nodes.all) }}'
+    - name: (Resigtry on Swarm) Count Resigtry Servers
       set_fact:
         _local_registry_server_count: '{{ _gather_registry_servers | default([]) | length }}'
-    - name: Resigtry Server Specified, use first one
+    - name: (Resigtry on Swarm) Resigtry Server Specified, use first one
       set_fact:
         the_registry_server:
           host: "{{ _gather_registry_servers[0] }}"
           hostname: '{{ hostvars[_gather_registry_servers[0]].ansible_hostname  }}'
       when: _local_registry_server_count | int > 0
-    - name: Resigtry Server Not Specified, use first swarm manager
+    - name: (Resigtry on Swarm) Resigtry Server Not Specified, use first swarm manager
       set_fact:
         the_registry_server: '{{ first_swarm_manager }}'
       when: _local_registry_server_count | int == 0
 
-- name: Setup Resigtry Server (Certs)
+- name: (Resigtry on Swarm) Setup Resigtry Server (Certs)
   include_tasks: node-prepare-certs.yml
   when:  first_swarm_manager.hostname == ansible_hostname
-- name: Setup Resigtry Server (Vol)
+- name: (Resigtry on Swarm) Setup Resigtry Server (Vol)
   include_tasks: node-prepare-vol.yml
   when:  the_registry_server.hostname == ansible_hostname
 
-- name: Setup Resigtry Server (Certs)
+- name: (Resigtry on Swarm) Setup Resigtry Server (Certs)
   include_tasks: registry-server-on-swarm-do-launch.yml
   when:  first_swarm_manager.hostname == ansible_hostname

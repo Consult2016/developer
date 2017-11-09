@@ -1,7 +1,31 @@
 ---
+- name: Mark Docker not installed
+  set_fact:
+    docker_installed: false
 
-- name: Install docker
+- name: Install Docker
   include_tasks: "os_aware/{{ ansible_distribution }}/install.yml"
+
+- name: Check Docker installation
+  shell: "docker version"
+  register: docker_v
+  changed_when: false
+  failed_when: false
+  ignore_errors: true
+
+- name: Mark Docker installation
+  set_fact:
+    docker_installed : "{{ docker_packages.version_expect in docker_v.stdout | default(false) }}"
+  ignore_errors: true
+
+- name: Gather Docker Nodes
+  set_fact:
+    # docker_nodes: '{{ hostvars.values() | json_query("[*].{host: inventory_hostname, docker_installed: docker_installed}") | selectattr("docker_installed", "equalto", "true") | list | json_query("[*].host") }}'
+    docker_nodes: '{{ hostvars.values() | json_query("[*].{host: inventory_hostname, docker_installed: docker_installed}") | selectattr("docker_installed", "equalto", true) | list | json_query("[*].host") }}'
+- debug:
+    msg: installed -> {{ docker_installed}}, dockers -> {{ docker_nodes }}
+- debug:
+    var: docker_nodes
 
 - name: Post-install docker
   include_tasks: '{{ item }}'
@@ -13,30 +37,34 @@
       - 'postinstall.yml'
       - 'default.yml'
     paths: '{{ role_path }}/tasks/os_aware'
-  when: docker_installed | default(false)
+  when: inventory_hostname in docker_nodes
 
-- name: Check docker installation
-  raw: su - {{ dev_user}} -l -c "docker version"
+- name: Check Docker installation again
+  shell: "docker version"
   register: docker_v
   changed_when: False
+  become: true
+  become_user: "{{ dev_user}}"
   failed_when: "( docker_v | failed ) or (docker_packages.version_expect not in docker_v.stdout )"
-  when: docker_installed | default(false)
+  when: docker_installed
 
-- name: Install docker compose
+- name: Install Docker compose
   include_tasks: install_compose.yml
   vars:
     param_conf: '{{ docker_packages.tools.compose}}'
-  when: docker_installed | default(false)
+  when: docker_installed
 
-- name: Install docker machine
+- name: Install Docker machine
   include_tasks: install_machine.yml
   vars:
     param_conf: '{{ docker_packages.tools.machine}}'
-  when: docker_installed | default(false)
+  when: docker_installed
 
 - name: Setup swarm
   include_tasks: swarm/setup.yml
+  when: inventory_hostname in docker_nodes
 
 - name: Setup registry
   include_tasks: registry/setup.yml
+  when: inventory_hostname in docker_nodes
 

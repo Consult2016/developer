@@ -34,8 +34,6 @@
     name: '{{ rpm_temp.path}}/{{ temp_ic.file }}'
     state: present
   when: temp_ic.defined
-- set_fact:
-    docker_installed: temp_ic.defined
 
 - name: Enable bridge-nf-call-iptables and bridge-nf-call-ip6tables
   blockinfile:

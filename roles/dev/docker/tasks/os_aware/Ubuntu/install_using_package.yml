@@ -1,5 +1,13 @@
 ---
 
+# Uninstall old versions
+- name: Remove old version
+  apt:
+    name: '{{ item_l2 }}'
+    state: absent
+  with_items: [docker, docker-engine, docker.io]
+  loop_control:
+    loop_var: item_l2
 - name: Create temporary deb file directory
   tempfile: state=directory
   register: deb_temp
@@ -9,7 +17,6 @@
 - set_fact:
     temp_ic:
       name: docker
-      install_path: '{{ deb_temp.path }}'
       url: "{{ temp_pkg_info.url | default('') }}"
       file: "{{ temp_pkg_info.file | default('') }}"
       defined: "{{ temp_pkg_info.defined | default(true) }}"
@@ -25,6 +32,3 @@
   apt:
     deb: '{{ deb_temp.path}}/{{ temp_ic.file }}'
   when: temp_ic.defined
-
-- set_fact:
-    docker_installed: temp_ic.defined

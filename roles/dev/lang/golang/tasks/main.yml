@@ -1,4 +1,11 @@
 ---
 
+- name: Check go installation
+  raw: su - {{ dev_user}} -l -c "go version"
+  register: pkg_v
+  changed_when: false
+  ignore_errors: true
+
 - name: Install from tar
-  import_tasks: install_from_tar.yml
+  include_tasks: install_from_tar.yml
+  when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout )"

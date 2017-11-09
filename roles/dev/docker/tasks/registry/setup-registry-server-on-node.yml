@@ -1,6 +1,6 @@
 ---
 
-- name: Calc Resigtry Commands
+- name: (Resigtry Node mode) Calc Commands
   set_fact:
     registry_cmds:
       ps: docker ps -f name={{ docker_reg_svr_conf.container_name}} | grep -v COMMAND
@@ -22,61 +22,61 @@
         docker images
         docker pull {{ docker_reg_svr_conf.hostname }}:{{ docker_reg_svr_conf.port }}/busybox:1.24.1
         docker images
-- name: Stop any registry server
+- name: (Resigtry Node mode) Stop any registry server
   shell: "{{ registry_cmds.stop }}"
   failed_when: false
   become: true
   become_user: "{{ dev_user }}"
 
-- name: Determine the registry server
+- name: (Resigtry Node mode) Determine the registry server
   block:
-    - name: Gather Resigtry Servers
+    - name: (Resigtry Node mode) Gather Resigtry Servers
       set_fact:
         _gather_registry_servers: '{{ hostvars.values() | json_query("[*].{host: inventory_hostname, is_registry: registry_server}") | selectattr("is_registry", "equalto", "true") | list | json_query("[*].host") }}'
-    - name: Count registry server
+    - name: (Resigtry Node mode) Count registry server
       set_fact:
         # run_as_dev_user_su_params: '- {{ dev_user}} -g {{ docker_group }} -l -c'
         _local_registry_server_count: "{{ _gather_registry_servers | default([]) | length }}"
-    - name: Resigtry Server Specified, use first one
+    - name: (Resigtry Node mode) Resigtry Server Specified, use first one
       set_fact:
         the_registry_server:
           host: "{{ _gather_registry_servers[0] }}"
           hostname: "{{ hostvars[_gather_registry_servers[0]].ansible_hostname  }}"
       when: _local_registry_server_count | int > 0
-    - name: Resigtry Server Not Specified, use first node
+    - name: (Resigtry Node mode) Resigtry Server Not Specified, use first node
       set_fact:
         the_registry_server:
           host: "{{ play_hosts[0] }}"
           hostname: "{{ hostvars[play_hosts[0]].ansible_hostname  }}"
       when: _local_registry_server_count | int == 0
-    - name: Calc Resistry Server Variable
+    - name: (Resigtry Node mode) Calc Resistry Server Variable
       set_fact:
         registry_server_url: '{{ docker_reg_svr_conf.hostname }}:{{ docker_reg_svr_conf.port }}'
-    - name: Tag the Resistry Server
+    - name: (Resigtry Node mode) Tag the Resistry Server
       set_fact:
         chosen_registry_server: true | bool
       when: (the_registry_server.host == inventory_hostname)
 
-- name: Setup Resigtry Server (Certs)
+- name: (Resigtry Node mode) Setup Resigtry Server (Certs)
   include_tasks: node-prepare-certs.yml
   when:  chosen_registry_server | default(false)
-- name: Setup Resigtry Server (Vol)
+- name: (Resigtry Node mode) Setup Resigtry Server (Vol)
   include_tasks: node-prepare-vol.yml
   when:  chosen_registry_server | default(false)
-- name: Start Resigtry Server (Single node)
+- name: (Resigtry Node mode) Start Resigtry Server (Single node)
   include_tasks: registry-server-on-node-do-launch.yml
   when:  chosen_registry_server | default(false)
 
-- name: Trust the Resigtry Server
+- name: (Resigtry Node mode) Trust the Resigtry Server
   block:
-    - name: Read domain.crt
+    - name: (Resigtry Node mode) Read domain.crt
       shell: cat {{ the_cert_path}}/domain.crt
       register: domain_crt_content
       delegate_to: "{{ the_registry_server.host }}"
       become: true
       changed_when: false
       run_once: true
-    - name: Mkdir for Docker daemon certs
+    - name: (Resigtry Node mode) Mkdir for Docker daemon certs
       file: path=/etc/docker/certs.d/{{ registry_server_url }} state=directory
       recurse: yes
     - name: Copy ca.crt
@@ -84,7 +84,7 @@
         content:  '{{ domain_crt_content.stdout }}'
         dest: /etc/docker/certs.d/{{ registry_server_url }}/ca.crt
       become: true
-    - name: Update /etc/hosts with {{ docker_reg_svr_conf.hostname }}
+    - name: (Resigtry Node mode) Update /etc/hosts with {{ docker_reg_svr_conf.hostname }}
       lineinfile:
         dest: /etc/hosts 
         regexp: '{{ docker_reg_svr_conf.hostname }}$'

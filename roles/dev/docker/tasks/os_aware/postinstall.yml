@@ -18,7 +18,7 @@
 # - import_tasks: '{{ role_path }}/tasks/os_aware/config_registry.yml'
 
 # Proxy Setting
-- import_tasks: '{{ role_path }}/tasks/os_aware/proxy_setting.yml'
+- include_tasks: '{{ role_path }}/tasks/os_aware/proxy_setting.yml'
 
 # Configure Docker to start on boot
 - name: Docker daemon reload by systemd

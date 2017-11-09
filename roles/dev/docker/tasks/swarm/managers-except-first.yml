@@ -1,6 +1,6 @@
 ---
 
-- name: Other managers nodes join
+- name: (Swarm) Other managers nodes join
   shell: "{{ swarm_join_cmds.manager }}"
   register: swarm_join_result
   become: true

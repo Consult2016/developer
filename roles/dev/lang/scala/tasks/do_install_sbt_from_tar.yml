@@ -1,0 +1,46 @@
+---
+
+- name: Present install path '{{ pkg_ic.install_path }}'
+  file: path="{{ pkg_ic.install_path }}" state=directory
+- name: Download {{ pkg_ic.file }}
+  cached_get_url:
+    cached: "{{ resource_cache }}/{{ pkg_ic.file }}"
+    url: "{{ pkg_ic.url }}"
+    dest: '{{ pkg_ic.install_path }}/{{ pkg_ic.file }}'
+
+- name: Check unarchived
+  stat: path="{{ pkg_ic.install_path }}/{{ pkg_ic.basename }}"
+  register: pkg_stat
+- name: 'Unarchive package'
+  unarchive:
+    src: "{{ pkg_ic.install_path }}/{{ pkg_ic.file }}"
+    dest: "{{ pkg_ic.install_path }}"
+    remote_src: yes
+  when: pkg_stat.stat.isdir is not defined
+- name: Rename '{{ pkg_ic.basename_from }} -> {{ pkg_ic.basename }}'
+  shell: |
+    mv {{ pkg_ic.install_path }}/{{ pkg_ic.basename_from }} {{ pkg_ic.install_path }}/{{ pkg_ic.basename }}
+  when: (pkg_ic.basename_from|default(none) != none) and (pkg_ic.basename_from|default("") != "" ) and ( pkg_stat.stat.isdir is not defined)
+
+# export environment variable
+- name: Export SBT_HOME (/etc/environment)
+  lineinfile:
+    path: /etc/environment
+    regexp: '^SBT_HOME='
+    line: 'SBT_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
+- name: Export SBT_HOME
+  lineinfile:
+    path: "{{ sys_profile }}"
+    regexp: '^export SBT_HOME='
+    line: 'export SBT_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
+- name: Export SBT_HOME to PATH
+  lineinfile:
+    path: '{{ sys_profile }}'
+    line: 'export PATH=$SBT_HOME/bin:$PATH'
+
+# check
+- name: Check sbt installation
+  raw: su - {{ dev_user}} -l -c "sbt sbt-version"
+  register: pkg_v
+  failed_when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout) "
+  changed_when: false

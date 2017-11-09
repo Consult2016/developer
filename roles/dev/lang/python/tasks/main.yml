@@ -24,6 +24,9 @@
   become_user: "{{ dev_user}}"
   changed_when: False
   ignore_errors: true
+- debug:
+    msg: "Expect: {{ pkg_ics.python2.version_expect }}, got: {{ python2_v.stdout }}"
+
 - name: Install python2
   include_tasks: install_by_make.yml
   when: "( python2_v | failed ) or ( pkg_ics.python2.version_expect not in python2_v.stdout )"
@@ -40,6 +43,8 @@
   register: python3_v
   changed_when: False
   ignore_errors: true
+- debug:
+    msg: "Expect: {{ pkg_ics.python3.version_expect }}, got: {{ python3_v.stdout }}"
 - name: Install python3
   include_tasks: install_by_make.yml
   when: "( python3_v | failed ) or ( pkg_ics.python3.version_expect not in python3_v.stdout )"

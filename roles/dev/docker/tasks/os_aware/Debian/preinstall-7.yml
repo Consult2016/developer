@@ -1,19 +1,41 @@
 ---
 
-- name: Add ansible PPA ...
-  blockinfile:
-    path: /etc/apt/sources.list
-    marker: "# {mark} PPA BLOCK for init-system-helpers"
-    block: |
-      deb http://ftp.debian.org/debian/ wheezy-backports main
+# - name: Add PPA BLOCK for init-system-helpers ...
+#   blockinfile:
+#     path: /etc/apt/sources.list
+#     marker: "# {mark} PPA BLOCK for init-system-helpers"
+#     block: |
+#       deb http://ftp.debian.org/debian/ wheezy-backports main
 
-- name: Update repositories cache
-  apt:
-    update_cache: yes
-  failed_when: false
-  changed_when: false
-  ignore_errors: True
+# - name: Update repositories cache
+#   apt:
+#     update_cache: yes
+#   failed_when: false
+#   changed_when: false
+#   ignore_errors: True
 
-- name: Install the dependence packages
+- name: Install the dependence packages (init-system-helpers, irqbalance, ...)
   package: name="{{ item }}" state=present
-  with_items: ['init-system-helpers']
+  with_items: ['init-system-helpers', 'irqbalance', 'firmware-linux-free', 'initramfs-tools']
+
+- name: Check kernel version
+  shell: "uname -r | cut -d '-' -f1 "
+  # sudo: yes
+  register: kernel_v
+  failed_when: false
+- debug:
+    msg: kernel version is {{ ansible_kernel }} , kv is {{ kernel_v.stdout }}
+
+- name: Check kernel version
+  raw: "uname -r | cut -d '-' -f1"
+  # sudo: yes
+  register: kernel_v
+  failed_when: ( kernel_v.stdout | version_compare('3.10', '<') )
+  fail:
+    msg: >
+      Kernel version {{ ansible_kernel}} not compatible.( Run following )
+      # apt-get update 
+      # apt-get -t wheezy-backports upgrade 
+      # apt-get -t wheezy-backports install linux-image-amd64 
+      # shutdown -r now
+      # apt-get remove linux-image-3.2.0-4-amd64 

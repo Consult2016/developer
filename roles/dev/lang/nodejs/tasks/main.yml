@@ -1,4 +1,15 @@
 ---
 
+# check
+- name: Check nodejs installation
+  raw: su - {{ dev_user}} -l -c "node --version"
+  register: command_result
+  changed_when: false
+  ignore_errors: true
+- name: Print version
+  debug:
+    msg: "Expect: {{ pkg_ic.version_expect }}, got: {{ pkg_v.stdout }}"
+
 - name: Install from tar
-  import_tasks: install_from_tar.yml
+  include_tasks: install_from_tar.yml
+  when: "( command_result | failed ) or ( pkg_ic.version_expect not in command_result.stdout) "

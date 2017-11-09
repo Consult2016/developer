@@ -1,21 +1,33 @@
 ---
 
+# Uninstall old versions
+- name: Remove old version
+  apt:
+    name: '{{ item }}'
+    state: absent
+  with_items: [docker, docker-engine, docker.io]
+
 - name: Create temporary deb file directory
   tempfile: state=directory
   register: deb_temp
 
 - set_fact:
+    temp_pkg_info: "{{ docker_packages[ansible_distribution ][ansible_distribution_release] | default({ 'defined' : false }) }}"
+- set_fact:
     temp_ic:
       name: docker
-      url: "{{ docker_packages[ansible_distribution ][ansible_distribution_release].url }}"
-      file: "{{ docker_packages[ansible_distribution ][ansible_distribution_release].file }}"
+      url: "{{ temp_pkg_info.url | default('') }}"
+      file: "{{ temp_pkg_info.file | default('') }}"
+      defined: "{{ temp_pkg_info.defined | default(true) }}"
 
 - name: Download '{{ temp_ic.file }}'
   cached_get_url:
-    cached: "{{ resource_cache }}/{{ temp_ic.file }}"
+    cached: '{{ resource_cache }}/{{ temp_ic.file }}'
     url: "{{ temp_ic.url }}"
     dest: '{{ deb_temp.path }}/{{ temp_ic.file }}'
+  when: temp_ic.defined
 
 - name: Install a .deb package
   apt:
     deb: '{{ deb_temp.path}}/{{ temp_ic.file }}'
+  when: temp_ic.defined

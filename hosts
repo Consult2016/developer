@@ -6,9 +6,9 @@ controller ansible_connection=local
 centos6-00 ansible_host=192.168.100.100 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
 centos7-01 ansible_host=192.168.100.101 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
 
-ubuntu12-02 ansible_host=192.168.100.102 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
-ubuntu14-03 ansible_host=192.168.100.103 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
-ubuntu16-04 ansible_host=192.168.100.104 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+debian7-02 ansible_host=192.168.100.102 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+debian8-03 ansible_host=192.168.100.103 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
 
-debian7-05 ansible_host=192.168.100.105 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
-debian8-06 ansible_host=192.168.100.106 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+ubuntu12-04 ansible_host=192.168.100.104 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+ubuntu14-05 ansible_host=192.168.100.105 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+ubuntu16-06 ansible_host=192.168.100.106 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd

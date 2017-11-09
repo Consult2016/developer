@@ -1,16 +1,35 @@
 ---
 
-- name: Count swarm managers
+- name: (Swarm) Count swarm nodes
   set_fact:
-    swarm_manager_count: '{{ groups["swarm_managers"] | default([]) | length }}'
-- name: Prepare swarm facts
+    # swarm_nodes: '{{ (groups["swarm_managers"] | default([])) | union((groups["swarm_workers"] | default([]) )) }}'
+    _local_swarm_nodes:
+      managers: '{{ (groups["swarm_managers"] | default([]) | intersect(docker_nodes) ) }}'
+      workers: '{{ (groups["swarm_workers"] | default([])) | intersect(docker_nodes) }}'
+- name: (Swarm) Normalize swarm nodes
+  set_fact:
+    # swarm_nodes: '{{ (groups["swarm_managers"] | default([])) | union((groups["swarm_workers"] | default([]) )) }}'
+    first_swarm_manager:
+      host: ' '
+      hostname: ' '
+    swarm_nodes:
+      managers: '{{ _local_swarm_nodes.managers }}'
+      workers: '{{ _local_swarm_nodes.workers }}'
+      all: '{{ _local_swarm_nodes.managers | union(_local_swarm_nodes.workers) }}'
+    swarm_manager_count: '{{ _local_swarm_nodes.managers | length }}'
+
+- debug:
+    var: swarm_nodes
+- debug:
+    msg: "manager Count {{ swarm_manager_count }}"
+- name: (Swarm) Prepare facts
   set_fact:
     first_swarm_manager:
-      host: '{{ groups["swarm_managers"][0]}}'
-      hostname: '{{ hostvars[groups["swarm_managers"][0]].ansible_hostname  }}'
-  when: '(swarm_manager_count > 0)'
+      host: '{{ swarm_nodes.managers[0]}}'
+      hostname: '{{ hostvars[swarm_nodes.managers[0]].ansible_hostname  }}'
+  when: swarm_manager_count | int > 0
 
-- name: All nodes leave swarm (worker and manager)
+- name: (Swarm) All nodes leave swarm (worker and manager)
   shell: "{{ command_item }}"
   failed_when: false
   changed_when: false
@@ -20,19 +39,20 @@
   loop_control:
     loop_var: command_item
 
-- name: Launch Swarm Cluster
+- name: (Swarm) Launch Cluster
   block:
-    - name: Init swarm on first manager
+    - name: (Swarm) Init swarm on first manager
       include_tasks: init.yml
-      when: '(swarm_manager_count > 0) and (first_swarm_manager.hostname == ansible_hostname)'
-    - name: Gather join command
+      when: (swarm_manager_count > 0) and (first_swarm_manager.host == inventory_hostname)
+    - name: (Swarm) Gather join command
       set_fact:
         swarm_join_cmds: '{{ hostvars[first_swarm_manager.host].swarm_join_cmds_local }}'
+      when: ( swarm_manager_count | int ) > 0
 
-    - name: Other managers join swarm
+    - name: (Swarm) Other managers join swarm
       include_tasks: managers-except-first.yml
-      when: '(swarm_manager_count > 1) and ("swarm_managers" in group_names) and (first_swarm_manager.hostname != ansible_hostname)' 
-    - name: Workers join swarm
+      when: '(swarm_manager_count | int > 1) and (inventory_hostname in swarm_nodes.managers) and (first_swarm_manager.host != inventory_hostname)' 
+    - name: (Swarm) Workers join swarm
       include_tasks: workers.yml
-      when: '(swarm_manager_count > 1) and ("swarm_workers" in group_names)'
+      when: '(swarm_manager_count > 1) and (inventory_hostname in swarm_nodes.workers)'
   when: docker_launch_swarm | bool | default(false)

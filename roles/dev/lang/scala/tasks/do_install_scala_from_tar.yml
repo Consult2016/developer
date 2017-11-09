@@ -1,0 +1,37 @@
+---
+
+- name: Present install path '{{ "[" }}{{ pkg_ic.install_path }}{{ "]" }}'
+  file: path="{{ pkg_ic.install_path }}" state=directory
+- name: Download {{ pkg_ic.file }}
+  cached_get_url:
+    cached: "{{ resource_cache }}/{{ pkg_ic.file }}"
+    url: "{{ pkg_ic.url }}"
+    dest: '{{ pkg_ic.install_path }}/{{ pkg_ic.file }}'
+- name: Unarchive package
+  unarchive:
+    src: "{{ pkg_ic.install_path }}/{{ pkg_ic.file }}"
+    dest: "{{ pkg_ic.install_path }}"
+    remote_src: yes
+
+# export environment variable
+- name: Export SCALA_HOME (/etc/environment)
+  lineinfile:
+    path: /etc/environment
+    regexp: '^SCALA_HOME='
+    line: 'SCALA_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
+- name: Export SCALA_HOME
+  lineinfile:
+    path: "{{ sys_profile }}"
+    regexp: '^export SCALA_HOME='
+    line: 'export SCALA_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
+- name: Export SCALA_HOME to PATH
+  lineinfile:
+    path: '{{ sys_profile }}'
+    line: 'export PATH=$SCALA_HOME/bin:$PATH'
+
+# check
+- name: Check scala installation
+  raw: su - {{ dev_user}} -l -c "scala -version"
+  register: pkg_v
+  failed_when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout) "
+  changed_when: false

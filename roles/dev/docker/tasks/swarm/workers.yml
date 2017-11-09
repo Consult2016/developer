@@ -1,5 +1,5 @@
 ---
-- name: Other worker nodes join
+- name: (Swarm) Other worker nodes join
   shell: "{{ swarm_join_cmds.worker }}"
   register: swarm_join_result
   become: true
