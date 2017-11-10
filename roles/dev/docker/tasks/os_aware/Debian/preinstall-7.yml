@@ -1,18 +1,18 @@
 ---
 
-# - name: Add PPA BLOCK for init-system-helpers ...
-#   blockinfile:
-#     path: /etc/apt/sources.list
-#     marker: "# {mark} PPA BLOCK for init-system-helpers"
-#     block: |
-#       deb http://ftp.debian.org/debian/ wheezy-backports main
+- name: Add PPA BLOCK for init-system-helpers ...
+  blockinfile:
+    path: /etc/apt/sources.list
+    marker: "# {mark} PPA BLOCK for init-system-helpers"
+    block: |
+      deb http://ftp.debian.org/debian/ wheezy-backports main
 
-# - name: Update repositories cache
-#   apt:
-#     update_cache: yes
-#   failed_when: false
-#   changed_when: false
-#   ignore_errors: True
+- name: Update repositories cache
+  apt:
+    update_cache: yes
+  failed_when: false
+  changed_when: false
+  ignore_errors: True
 
 - name: Install the dependence packages (init-system-helpers, irqbalance, ...)
   package: name="{{ item }}" state=present
@@ -30,12 +30,15 @@
   raw: "uname -r | cut -d '-' -f1"
   # sudo: yes
   register: kernel_v
-  failed_when: ( kernel_v.stdout | version_compare('3.10', '<') )
+  ignore_errors: True
+
+- name: Print Kernel Update command
   fail:
     msg: >
-      Kernel version {{ ansible_kernel}} not compatible.( Run following )
-      # apt-get update 
-      # apt-get -t wheezy-backports upgrade 
-      # apt-get -t wheezy-backports install linux-image-amd64 
-      # shutdown -r now
-      # apt-get remove linux-image-3.2.0-4-amd64 
+      Kernel version {{ ansible_kernel}} not compatible. ( Run following )
+      apt-get update 
+      apt-get -y -t wheezy-backports upgrade 
+      apt-get -y -t wheezy-backports install linux-image-amd64 
+      shutdown -r now
+      apt-get remove linux-image-3.2.0-4-amd64 
+  when: ( kernel_v.stdout | version_compare('3.10', '<') )
