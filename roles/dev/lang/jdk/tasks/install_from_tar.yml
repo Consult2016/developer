@@ -1,16 +1,23 @@
 ---
 
+- name: Concat jdk version string
+  set_fact:
+    _jdk_:
+      version_detail: '{{ pkg_ic.java_version }}u{{ pkg_ic.java_subversion }}-b{{ pkg_ic.b_version }}'
+      tarball_file: 'jdk-{{ pkg_ic.java_version }}u{{ pkg_ic.java_subversion }}-linux-x64.tar.gz'
+      basename: 'jdk1.{{ pkg_ic.java_version }}.0_{{ pkg_ic.java_subversion }}'
 - name: Present install path '{{ "[" }}{{ pkg_ic.install_path }}{{ "]" }}'
   file: path="{{ pkg_ic.install_path }}" state=directory
-- name: Download {{ pkg_ic.file }}
+- name: Download {{ _jdk_.tarball_file }}
   cached_get_url:
-    cached: "{{ resource_cache }}/{{ pkg_ic.file }}"
-    url: "{{ pkg_ic.url }}"
+    cached: "{{ resource_cache }}/{{ _jdk_.tarball_file }}"
+    # url: "{{ pkg_ic.url }}/{{ _jdk_.version_detail }}/{{ _jdk_.tarball_file }}"
+    url: "{{ pkg_ic.full_url }}"
     headers: 'Cookie:oraclelicense=accept-securebackup-cookie'
-    dest: '{{ pkg_ic.install_path }}/{{ pkg_ic.file }}'
+    dest: '{{ pkg_ic.install_path }}/{{ _jdk_.tarball_file }}'
 - name: 'Unarchive package'
   unarchive:
-    src: "{{ pkg_ic.install_path }}/{{ pkg_ic.file }}"
+    src: "{{ pkg_ic.install_path }}/{{ _jdk_.tarball_file }}"
     dest: "{{ pkg_ic.install_path }}"
     remote_src: yes
 
@@ -19,12 +26,12 @@
   lineinfile:
     path: /etc/environment
     regexp: '^JAVA_HOME='
-    line: 'JAVA_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
+    line: 'JAVA_HOME={{ pkg_ic.install_path }}/{{ _jdk_.basename }}'
 - name: Export JAVA_HOME
   lineinfile:
     path: "{{ sys_profile }}"
     regexp: '^export JAVA_HOME='
-    line: 'export JAVA_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
+    line: 'export JAVA_HOME={{ pkg_ic.install_path }}/{{ _jdk_.basename }}'
 - name: Export JAVA_HOME to PATH
   lineinfile:
     path: '{{ sys_profile }}'

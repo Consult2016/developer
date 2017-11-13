@@ -4,11 +4,20 @@ pkg_ics:
   sbt_ic:
     name: sbt
     install_path:  /usr/lib/sbt
-    url: https://cocl.us/sbt01316tgz
+    url: https://cocl.us/sbt-0.13.16.tgz
     file: sbt-0.13.16.tgz
     basename: sbt-0.13.16
     basename_from: sbt
     version_expect: '0.13.16'
+
+  sbt_ic_:
+    name: sbt
+    install_path:  /usr/lib/sbt
+    url: https://github.com/sbt/sbt/releases/download/v1.0.3/sbt-1.0.3.tgz
+    file: sbt-1.0.3.tgz
+    basename: sbt-1.0.3
+    basename_from: sbt
+    version_expect: '1.0.3'
 
   scala_ic:
     name: scala
