@@ -5,3 +5,4 @@ user_profile: .bash_profile
 user_env_files: ['.bashrc']
 nobody: nobody
 nogroup: nobody
+sudo_group: wheel

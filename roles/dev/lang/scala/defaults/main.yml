@@ -1,7 +1,7 @@
 ---
 
 pkg_ics:
-  sbt_ic:
+  sbt_ic_:
     name: sbt
     install_path:  /usr/lib/sbt
     url: https://cocl.us/sbt-0.13.16.tgz
@@ -10,7 +10,7 @@ pkg_ics:
     basename_from: sbt
     version_expect: '0.13.16'
 
-  sbt_ic_:
+  sbt_ic:
     name: sbt
     install_path:  /usr/lib/sbt
     url: https://github.com/sbt/sbt/releases/download/v1.0.3/sbt-1.0.3.tgz
@@ -22,7 +22,7 @@ pkg_ics:
   scala_ic:
     name: scala
     install_path:  /usr/lib/scala
-    url: https://downloads.lightbend.com/scala/2.12.3/scala-2.12.3.tgz
-    file: scala-2.12.3.tgz
-    basename: scala-2.12.3
-    version_expect: 'Scala code runner version 2.12.3'
+    url: https://downloads.lightbend.com/scala/2.12.4/scala-2.12.4.tgz
+    file: scala-2.12.4.tgz
+    basename: scala-2.12.4
+    version_expect: 'Scala code runner version 2.12.4'

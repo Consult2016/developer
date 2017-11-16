@@ -7,7 +7,7 @@
     block: |
       proxy={{ proxy.http }}
     create: yes
-  when: (proxy.enable)
+  when: (proxy.enable | default(false) )
 
 - name: Disable proxy for yum
   blockinfile:
@@ -16,4 +16,4 @@
     block: |
       # --------- PROXY DISABLED
     create: yes
-  when: not proxy.enable
+  when: not (proxy.enable | default(false) )

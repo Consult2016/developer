@@ -14,6 +14,81 @@ from ansible.plugins.action.copy import ActionModule as CopyActionModule
 from ansible.plugins.connection.local import Connection as LocalConnection
 
 class ActionModule(CopyActionModule):
+    _get_url_compatible_args = [
+        "url",
+        "force",
+        "http_agent",
+        "use_proxy",
+        "validate_certs",
+        "url_username",
+        "url_password",
+        "force_basic_auth",
+        "client_cert",
+        "client_key",
+        "dest",
+        "backup",
+        "sha256sum",
+        "checksum",
+        "timeout",
+        "headers",
+        "tmp_dest",
+    ]
+    _get_url_incompatible_args = [
+        "original_basename",
+        "content",
+        "cached",
+    ]
+    _copy_compatible_args = [
+        "src",
+        "original_basename",
+        "content",
+        "dest",
+        "backup",
+        "force",
+        "validate",
+        "directory_mode",
+        "remote_src",
+        "local_follow"
+    ]
+    _copy_incompatible_args = [
+        "url",
+        "cached",
+        "validate_certs",
+        "http_agent",
+        "use_proxy",
+        "validate_certs",
+        "url_username",
+        "url_password",
+        "force_basic_auth",
+        "client_cert",
+        "client_key",
+        "backup",
+        "sha256sum",
+        "checksum",
+        "timeout",
+        "headers",
+        "tmp_dest",
+    ]
+
+    @staticmethod
+    def _keep_compatible (_dict, compatible_keys):
+        to_del_keys = []
+        for k in _dict.keys():
+            if k not in compatible_keys:
+                to_del_keys.append(k)
+        for k in to_del_keys:
+            _dict.pop(k)
+
+    @staticmethod
+    def _drop_incompatible (_dict, incompatible_keys):
+        to_del_keys = []
+        for k in _dict.keys():
+            if k in incompatible_keys:
+                to_del_keys.append(k)
+        for k in to_del_keys:
+            _dict.pop(k)
+
+
     def _local_get_url (self, task_vars, task_args):
         task = self._task
         loader = self._loader
@@ -90,14 +165,12 @@ class ActionModule(CopyActionModule):
         return module_ret
 
     def run(self, tmp=None, task_vars=None):
-        orig_args = self._task.args.copy()
+        orig_args = self._task.args
+        orig_args_copy = orig_args.copy()
         if task_vars is None:
             task_vars = dict()
 
-        args = self._task.args
-        args.pop('cached')
-
-        cached  = orig_args.get('cached', None)
+        cached  = orig_args_copy.get('cached', None)
         b_cache_path = to_bytes(cached, errors='surrogate_or_strict')
         cache_exist = os.path.exists(b_cache_path)
 
@@ -106,7 +179,7 @@ class ActionModule(CopyActionModule):
         local_get_res = None
         if not cache_exist:
             lock_file = open(cached_file_lock, "w")
-            lock_file.write("0")
+            lock_file.write(local_task_args['url'])
             lock_file.close()
             local_get_suc = False
             try:
@@ -116,7 +189,7 @@ class ActionModule(CopyActionModule):
                 fcntl.flock(lock_fd, fcntl.LOCK_EX)
                 cache_exist = os.path.exists(b_cache_path)
                 if not cache_exist :
-                    local_get_res = self._local_get_url(task_vars, orig_args)
+                    local_get_res = self._local_get_url(task_vars, orig_args_copy)
                     local_get_suc = not local_get_res.get('failed', False);
                     if local_get_suc:
                         call_path.append('local.get_url.ok')
@@ -134,21 +207,32 @@ class ActionModule(CopyActionModule):
 
         cache_exist = os.path.exists(b_cache_path)
         if cache_exist:
-            args['src'] = cached
-            args.pop('url')
-            if args.has_key('headers'):
-                args.pop('headers')
+            local_task_args = orig_args.copy()
+            local_task_args['src'] = cached
+            ActionModule._drop_incompatible(local_task_args, ActionModule._copy_incompatible_args)
+            self._task.args = local_task_args
             result = super(ActionModule, self).run(tmp, task_vars)
+            self._task.args = orig_args
             call_path.append('copy')
+            if os.path.exists(cached_file_lock):
+                try:
+                    os.remove(cached_file_lock)
+                except Exception as e:
+                    call_path.append(u"delete lock file exception: %s" % to_text(e))
         else:
+            local_task_args = orig_args.copy()
+            ActionModule._drop_incompatible(local_task_args, ActionModule._get_url_incompatible_args)
             result = self._execute_module(module_name="get_url",
-                                              module_args=args,
+                                              module_args=local_task_args,
                                               task_vars=task_vars,
                                               tmp=tmp)
             call_path.append('remote.get_url')
+
+        final_suc = not result.get('failed', False);
         path_msg = ", ".join(call_path)
         path_msg = result.get('msg', '') + "(Call-path: " + path_msg + ")"
         result['msg'] = path_msg
         result['local_get_url'] = local_get_res
-        result['_ansible_verbose_always'] = True
+        if not final_suc:
+            result['_ansible_verbose_always'] = True
         return result
