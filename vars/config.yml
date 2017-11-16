@@ -1,6 +1,6 @@
 ---
 
-resource_cache: "{{ playbook_dir | dirname }}/.resources"
+resource_cache: "{{ lookup('env','HOME') }}/.resources"
 
 dev_group: developer
 dev_user: abc

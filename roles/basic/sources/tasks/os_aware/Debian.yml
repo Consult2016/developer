@@ -61,7 +61,6 @@
     update_cache: yes
     cache_valid_time: 3600
   failed_when: false
-  changed_when: false
   ignore_errors: True
 
 # - name: apt-get upgrade

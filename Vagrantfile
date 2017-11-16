@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 SUPPORTED_OS = {
-  "centos6"  => {box: "centos/6",            box_v: ""},
+  "centos6"  => {box: "centos/6",            box_v: "1710.01"},
   "centos7"  => {box: "centos/7",            box_v: "1708.01"},
  
   "debian7"  => {box: "debian/wheezy64",     box_v: ""}, #7

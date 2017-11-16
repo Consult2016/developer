@@ -1,11 +1,24 @@
 ---
 
-- name: Install sbt from tar
-  include_tasks: install_sbt_from_tar.yml
-  vars:
-    pkg_ic: '{{ pkg_ics.sbt_ic}}'
+- include_vars: '{{ item }}'
+  with_first_found:
+  - files:
+    - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml'
+    - '{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml'
+    - '{{ ansible_distribution }}.yml'
+    - '{{ ansible_os_family }}.yml'
+    - 'default.yml'
+    paths: '{{ role_path }}/vars/os'
+- name: Install the dependence packages
+  package: name="{{ item }}" state=present
+  with_items: '{{ dependency }}'
 
 - name: Install scala from repo
   include_tasks: install_scala_from_tar.yml
   vars:
     pkg_ic: '{{ pkg_ics.scala_ic}}'
+
+- name: Install sbt from tar
+  include_tasks: install_sbt_from_tar.yml
+  vars:
+    pkg_ic: '{{ pkg_ics.sbt_ic}}'

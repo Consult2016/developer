@@ -20,8 +20,7 @@
 
 - name: Gather Docker Nodes
   set_fact:
-    # docker_nodes: '{{ hostvars.values() | json_query("[*].{host: inventory_hostname, docker_installed: docker_installed}") | selectattr("docker_installed", "equalto", "true") | list | json_query("[*].host") }}'
-    docker_nodes: '{{ hostvars.values() | json_query("[*].{host: inventory_hostname, docker_installed: docker_installed}") | selectattr("docker_installed", "equalto", true) | list | json_query("[*].host") }}'
+    docker_nodes: '{{ hostvars | hosts_with("docker_installed", true) }}'
 - debug:
     msg: installed -> {{ docker_installed}}, dockers -> {{ docker_nodes }}
 - debug:

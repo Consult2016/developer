@@ -2,11 +2,21 @@
 
 - name: Present install path '{{ pkg_ic.install_path }}'
   file: path="{{ pkg_ic.install_path }}" state=directory
+# - name: GET_URL Download {{ pkg_ic.file }}
+#   get_url:
+#     url: "{{ pkg_ic.url }}"
+#     dest: '/Users/gaoyuan/.resources/{{ pkg_ic.file }}.lll'
+#     validate_certs: False
+#   become: no
+#   delegate_to: localhost
+#   run_once: true
+
 - name: Download {{ pkg_ic.file }}
   cached_get_url:
     cached: "{{ resource_cache }}/{{ pkg_ic.file }}"
     url: "{{ pkg_ic.url }}"
     dest: '{{ pkg_ic.install_path }}/{{ pkg_ic.file }}'
+    validate_certs: False
 
 - name: Check unarchived
   stat: path="{{ pkg_ic.install_path }}/{{ pkg_ic.basename }}"
@@ -40,7 +50,7 @@
 
 # check
 - name: Check sbt installation
-  raw: su - {{ dev_user}} -l -c "sbt sbt-version"
+  raw: su - {{ dev_user}} -l -c "sbt sbtVersion"
   register: pkg_v
   failed_when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout) "
   changed_when: false

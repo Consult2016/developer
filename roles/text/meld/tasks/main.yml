@@ -1,9 +1,17 @@
 ---
 
+- name: Update repo cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  failed_when: false
+  ignore_errors: True
+
 - name: Post install
   include_tasks: '{{ item_l1 }}'
   with_first_found:
   - files:
+    - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml'
     - '{{ ansible_distribution }}.yml'
     - 'default.yml'
     paths: '{{ role_path }}/tasks/os_aware'

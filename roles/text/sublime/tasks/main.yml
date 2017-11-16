@@ -15,6 +15,7 @@
     cached: "{{ resource_cache }}/{{ pkg_ic.file }}"
     url: "{{ pkg_ic.url }}"
     dest: '{{ pkg_ic.install_path }}/{{ pkg_ic.file }}'
+    validate_certs: False 
 - name: Unarchive package
   unarchive:
     src: "{{ pkg_ic.install_path }}/{{ pkg_ic.file }}"

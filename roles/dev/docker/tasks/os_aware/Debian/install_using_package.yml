@@ -3,10 +3,11 @@
 # Uninstall old versions
 - name: Remove old version
   apt:
-    name: '{{ item }}'
+    name: '{{ item_l2 }}'
     state: absent
   with_items: [docker, docker-engine, docker.io]
-
+  loop_control:
+    loop_var: item_l2
 - name: Create temporary deb file directory
   tempfile: state=directory
   register: deb_temp

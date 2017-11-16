@@ -5,7 +5,7 @@ from ansible.errors import AnsibleError, AnsibleFilterError
 
 from ansible.plugins.filter.json_query import json_query
 from jinja2 import filters, contextfilter
-# - name: Gather Nodes
+# - name: Gather Nodes with property 'xxx_installed' == true
 #   set_fact:
 #     xxx_nodes: '{{ hostvars.values() | json_query("[*].{id: inventory_hostname, x_prop: xxx_installed}")
 #                       | selectattr("x_prop", "equalto", true)

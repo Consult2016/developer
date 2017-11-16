@@ -32,7 +32,7 @@
   block:
     - name: (Resigtry Node mode) Gather Resigtry Servers
       set_fact:
-        _gather_registry_servers: '{{ hostvars.values() | json_query("[*].{host: inventory_hostname, is_registry: registry_server}") | selectattr("is_registry", "equalto", "true") | list | json_query("[*].host") }}'
+        _gather_registry_servers: '{{ hostvars | hosts_with("registry_server", "true") }}'
     - name: (Resigtry Node mode) Count registry server
       set_fact:
         # run_as_dev_user_su_params: '- {{ dev_user}} -g {{ docker_group }} -l -c'

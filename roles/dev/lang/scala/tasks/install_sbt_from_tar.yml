@@ -2,7 +2,7 @@
 
 # check
 - name: Check sbt installation
-  raw: su - {{ dev_user}} -l -c "sbt sbt-version"
+  raw: su - {{ dev_user}} -l -c "sbt sbtVersion"
   register: pkg_v
   changed_when: false
   ignore_errors: true
