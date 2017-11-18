@@ -5,6 +5,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import os
+import errno
 import fcntl
 import getpass
 
@@ -171,8 +172,17 @@ class ActionModule(CopyActionModule):
             task_vars = dict()
 
         cached  = orig_args_copy.get('cached', None)
-        b_cache_path = to_bytes(cached, errors='surrogate_or_strict')
-        cache_exist = os.path.exists(b_cache_path)
+        # cached = to_bytes(cached, errors='surrogate_or_strict')
+        cache_exist = os.path.exists(cached)
+        cached_dir = os.path.dirname(cached)
+        if not os.path.exists(cached_dir):
+            try:
+                os.makedirs(cached_dir, 0777)
+            except OSError as exc:  # Python >2.5
+                if exc.errno == errno.EEXIST and os.path.isdir(path):
+                    pass
+                else:
+                    raise
 
         call_path = []
         cached_file_lock = cached + ".lock"
@@ -187,7 +197,7 @@ class ActionModule(CopyActionModule):
                 lock_fd = lock_file.fileno()
 
                 fcntl.flock(lock_fd, fcntl.LOCK_EX)
-                cache_exist = os.path.exists(b_cache_path)
+                cache_exist = os.path.exists(cached)
                 if not cache_exist :
                     local_get_res = self._local_get_url(task_vars, orig_args_copy)
                     local_get_suc = not local_get_res.get('failed', False);
@@ -205,7 +215,7 @@ class ActionModule(CopyActionModule):
                 except Exception as e:
                     call_path.append(u"delete lock file exception: %s" % to_text(e))
 
-        cache_exist = os.path.exists(b_cache_path)
+        cache_exist = os.path.exists(cached)
         if cache_exist:
             local_task_args = orig_args.copy()
             local_task_args['src'] = cached
