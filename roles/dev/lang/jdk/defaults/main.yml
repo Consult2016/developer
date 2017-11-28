@@ -9,4 +9,3 @@ pkg_ic:
   b_version: 16
   url: http://download.oracle.com/otn-pub/java/jdk
   full_url: http://download.oracle.com/otn-pub/java/jdk/8u152-b16/aa0333dd3019491ca4f6ddbe78cdb6d0/jdk-8u152-linux-x64.tar.gz
-  basename: jdk1.8.0_131
