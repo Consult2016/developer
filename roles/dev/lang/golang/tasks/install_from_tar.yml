@@ -22,24 +22,16 @@
     mv {{ pkg_ic.install_path }}/{{ pkg_ic.basename_from }} {{ pkg_ic.install_path }}/{{ pkg_ic.basename }}
   when: (pkg_ic.basename_from|default(none) != none) and (pkg_ic.basename_from|default("") != "" ) and ( pkg_stat.stat.isdir is not defined)
 
-# export environment variable
-- name: Export GOROOT (/etc/environment)
-  lineinfile:
-    path: /etc/environment
-    regexp: '^GOROOT='
-    line: 'GOROOT={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: Export GOROOT
-  lineinfile:
-    path: "{{ sys_profile }}"
-    regexp: '^export GOROOT='
-    line: 'export GOROOT={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
-- name: Export GOROOT to PATH
-  lineinfile:
-    path: '{{ sys_profile }}'
-    line: 'export PATH=$GOROOT/bin:$PATH'
+  env_edit:
+    varlist:
+      - GOROOT: '{{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
+      - PATH: $GOROOT/bin/:$PATH
+    marker: "{mark} GOROOT BLOCK"
+    profile_filename: goroot.sh
 
 - name: Check go installation
-  raw: su - {{ dev_user}} -l -c "go version"
+  shell: /bin/bash -l -c "go version"
   register: pkg_v
   changed_when: False
   failed_when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout )"

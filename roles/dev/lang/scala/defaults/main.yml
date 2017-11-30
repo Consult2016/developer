@@ -25,4 +25,6 @@ pkg_ics:
     url: https://downloads.lightbend.com/scala/2.12.4/scala-2.12.4.tgz
     file: scala-2.12.4.tgz
     basename: scala-2.12.4
-    version_expect: 'Scala code runner version 2.12.4'
+    # version_command: scala -version 2>&1 | cut -f 1 -d '-' | awk 'NF>1{print $NF}'
+    version_command: scala -version 2>&1
+    version_expect: 2.12.4

@@ -2,7 +2,7 @@
 
 # check
 - name: Check scala installation
-  raw: su - {{ dev_user}} -l -c "scala -version"
+  shell: /bin/bash -l -c "{{ pkg_ic.version_command }}"
   register: pkg_v
   changed_when: false
   ignore_errors: true

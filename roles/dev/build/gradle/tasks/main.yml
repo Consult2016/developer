@@ -2,7 +2,7 @@
 
 
 - name: Fetch gradle version
-  raw: '/bin/bash -l -c "gradle -version"'
+  shell: /bin/bash -l -c "{{ gradle_version_command }}"
   register: pkg_v
   changed_when: false
   failed_when: false

@@ -6,4 +6,4 @@ pkg_ic:
   url: https://services.gradle.org/distributions/gradle-4.0.2-bin.zip
   file: gradle-4.0.2-bin.zip
   basename: gradle-4.0.2
-  version_expect: Gradle 4.0.2
+  version_expect: 4.0.2

@@ -13,24 +13,16 @@
     dest: "{{ pkg_ic.install_path }}"
     remote_src: yes
 
-# export environment variable
-- name: Export MAVEN_HOME (/etc/environment)
-  lineinfile:
-    path: /etc/environment
-    regexp: '^MAVEN_HOME='
-    line: 'MAVEN_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: Export MAVEN_HOME
-  lineinfile:
-    path: "{{ sys_profile }}"
-    regexp: '^export MAVEN_HOME='
-    line: 'export MAVEN_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
-- name: Export MAVEN_HOME to PATH
-  lineinfile:
-    path: '{{ sys_profile }}'
-    line: 'export PATH=$MAVEN_HOME/bin:$PATH'
+  env_edit:
+    varlist:
+      - MAVEN_HOME: '{{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
+      - PATH: $MAVEN_HOME/bin/:$PATH
+    marker: "{mark} MAVEN BLOCK"
+    profile_filename: maven.sh
 
 - name: Check mvn installation
-  raw: '/bin/bash -l -c "mvn -version"'
+  shell: '/bin/bash -l -c "mvn -version"'
   register: pkg_v
   changed_when: False
   failed_when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout )"

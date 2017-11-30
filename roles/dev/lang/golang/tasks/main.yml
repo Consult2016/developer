@@ -1,7 +1,7 @@
 ---
 
 - name: Check go installation
-  raw: su - {{ dev_user}} -l -c "go version"
+  shell: /bin/bash -l -c "go version"
   register: pkg_v
   changed_when: false
   ignore_errors: true

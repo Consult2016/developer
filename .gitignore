@@ -8,3 +8,4 @@ vm/.vagrant/
 *.pyc
 .config.yml
 .hosts
+launch.py

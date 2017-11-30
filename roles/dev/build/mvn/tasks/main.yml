@@ -1,7 +1,7 @@
 ---
 
 - name: Fetch mvn version
-  raw: '/bin/bash -l -c "mvn -version"'
+  shell: '/bin/bash -l -c "mvn -version"'
   register: pkg_v
   changed_when: false
   failed_when: false

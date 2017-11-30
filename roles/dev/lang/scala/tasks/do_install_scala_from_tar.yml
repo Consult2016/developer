@@ -13,25 +13,16 @@
     dest: "{{ pkg_ic.install_path }}"
     remote_src: yes
 
-# export environment variable
-- name: Export SCALA_HOME (/etc/environment)
-  lineinfile:
-    path: /etc/environment
-    regexp: '^SCALA_HOME='
-    line: 'SCALA_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: Export SCALA_HOME
-  lineinfile:
-    path: "{{ sys_profile }}"
-    regexp: '^export SCALA_HOME='
-    line: 'export SCALA_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
-- name: Export SCALA_HOME to PATH
-  lineinfile:
-    path: '{{ sys_profile }}'
-    line: 'export PATH=$SCALA_HOME/bin:$PATH'
+  env_edit:
+    varlist:
+      - SCALA_HOME: '{{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
+      - PATH: $SCALA_HOME/bin/:$PATH
+    marker: "{mark} SCALA BLOCK"
+    profile_filename: scala.sh
 
-# check
 - name: Check scala installation
-  raw: su - {{ dev_user}} -l -c "scala -version"
+  shell: /bin/bash -l -c "{{ pkg_ic.version_command }}"
   register: pkg_v
   failed_when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout) "
   changed_when: false

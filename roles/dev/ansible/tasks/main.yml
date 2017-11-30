@@ -12,7 +12,7 @@
     skip: true
 
 - name: Check ansible versions
-  raw: "ansible --version | grep ansible | grep -v config | cut -d ' ' -f2"
+  shell: "ansible --version | grep ansible | grep -v '=' | cut -d ' ' -f2"
   # sudo: yes
   register: ansible_v
   failed_when: ( ansible_v.stdout | version_compare('2.3.0.0', '<=') )

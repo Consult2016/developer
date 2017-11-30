@@ -1,0 +1,4 @@
+---
+
+# gradle_version_command: gradle -version | grep Gradle | cut -d ' ' -f2
+gradle_version_command: gradle -version | grep Gradle

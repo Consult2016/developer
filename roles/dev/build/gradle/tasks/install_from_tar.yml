@@ -13,25 +13,17 @@
     dest: "{{ pkg_ic.install_path }}"
     remote_src: yes
 
-# export environment variable
-- name: Export GRADLE_HOME (/etc/environment)
-  lineinfile:
-    path: /etc/environment
-    regexp: '^GRADLE_HOME='
-    line: 'GRADLE_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: Export GRADLE_HOME
-  lineinfile:
-    path: "{{ sys_profile }}"
-    regexp: '^export GRADLE_HOME='
-    line: 'export GRADLE_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
-- name: Export GRADLE_HOME to PATH
-  lineinfile:
-    path: '{{ sys_profile }}'
-    line: 'export PATH=$GRADLE_HOME/bin:$PATH'
+  env_edit:
+    varlist:
+      - GRADLE_HOME: '{{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
+      - PATH: $GRADLE_HOME/bin/:$PATH
+    marker: "{mark} GRADLE BLOCK"
+    profile_filename: gradle.sh
 
 # check version
 - name: Check gradle installation
-  raw: '/bin/bash -l -c "gradle -version"'
+  shell: /bin/bash -l -c "{{ gradle_version_command }}"
   register: pkg_v
   changed_when: False
   failed_when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout )"

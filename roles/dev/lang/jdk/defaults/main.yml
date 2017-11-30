@@ -6,6 +6,7 @@ pkg_ic:
   install_path: /usr/lib/jdk
   java_version: 8
   java_subversion: 152
+  java_full_version: 1.8.0_152
   b_version: 16
   url: http://download.oracle.com/otn-pub/java/jdk
   full_url: http://download.oracle.com/otn-pub/java/jdk/8u152-b16/aa0333dd3019491ca4f6ddbe78cdb6d0/jdk-8u152-linux-x64.tar.gz

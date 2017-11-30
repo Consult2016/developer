@@ -4,15 +4,16 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import os
+import os, imp
 import errno
 import fcntl
-import getpass
+
+_localcall_path = os.path.join(os.path.dirname(__file__), "_localcall.py")
+localcall = imp.load_source('', _localcall_path)
 
 from ansible.inventory.host import Host
-from ansible.module_utils._text import to_bytes, to_native, to_text
+from ansible.module_utils._text import to_text
 from ansible.plugins.action.copy import ActionModule as CopyActionModule
-from ansible.plugins.connection.local import Connection as LocalConnection
 
 class ActionModule(CopyActionModule):
     _get_url_compatible_args = [
@@ -99,9 +100,7 @@ class ActionModule(CopyActionModule):
         play_context = self._play_context
 
         cached  = task_args.get('cached', None)
-        play = self._task._role._play
-        # local_connection = LocalConnection(play_context=play_context, new_stdin=None)
-        host_connection = LocalConnection(play_context=play_context, new_stdin='/dev/null')
+        play = task._role._play
 
         # Update task_args
         new_task_args = task_args.copy()
@@ -109,37 +108,10 @@ class ActionModule(CopyActionModule):
         new_task_args['dest'] = cached
 
         # Save call-context
-        old = dict()
-        old['t_become'] = task.become
-        old['t_become_flags'] = task.become_flags
-        old['t_become_method'] = task.become_method
-        old['t_become_user'] = task.become_user
-        old['pc_become'] = play_context.become
-        old['pc_become_flags'] = play_context.become_flags
-        old['pc_become_method'] = play_context.become_method
-        old['pc_become_user'] = play_context.become_user
-        old['delegate_to'] = task.delegate_to
-        # old['delegated_vars'] = task_vars.get('ansible_delegated_vars', None)
-        old['_connection'] = self._connection # -> local-connection
-        old['connection'] = play_context.connection # -> local
-        old['remote_addr'] = play_context.remote_addr # -> localhost
-        old['remote_user'] = play_context.remote_user # -> current-user
-
+        local_switch = localcall.Switch2Local(task=task, play_context=play_context, action_module=self)
         try:
             # Set call-context
-            task.become = False
-            task.become_flags = None
-            task.become_method = None
-            task.become_user = None
-            play_context.become = False
-            play_context.become_flags = None
-            play_context.become_method = None
-            play_context.become_user = None
-            self._task.delegate_to = 'localhost'
-            self._connection = host_connection
-            play_context.connection = 'local'
-            play_context.remote_addr = 'localhost'
-            play_context.remote_user = getpass.getuser()
+            local_switch.turn_on()
 
             localhost = Host('localhost')
             new_task_vars = variable_manager.get_vars(play=play, host=localhost, task=self._task)
@@ -149,20 +121,7 @@ class ActionModule(CopyActionModule):
                                               tmp=None)
         finally:
             # Un-Set call-context
-            task.become = old['t_become']
-            task.become_flags = old['t_become_flags']
-            task.become_method = old['t_become_method']
-            task.become_user = old['t_become_user']
-            play_context.become = old['pc_become']
-            play_context.become_flags = old['pc_become_flags']
-            play_context.become_method = old['pc_become_method']
-            play_context.become_user = old['pc_become_user']
-            task.delegate_to=old['delegate_to']
-            self._connection = old['_connection']
-            play_context.connection = old['connection']
-            play_context.remote_addr = old['remote_addr']
-            play_context.remote_user = old['remote_user']
-
+            local_switch.turn_off()
         return module_ret
 
     def run(self, tmp=None, task_vars=None):
@@ -179,7 +138,7 @@ class ActionModule(CopyActionModule):
             try:
                 os.makedirs(cached_dir, 0777)
             except OSError as exc:  # Python >2.5
-                if exc.errno == errno.EEXIST and os.path.isdir(path):
+                if exc.errno == errno.EEXIST and os.path.isdir(cached_dir):
                     pass
                 else:
                     raise

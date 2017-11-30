@@ -37,25 +37,17 @@
     mv {{ pkg_ic.install_path }}/{{ pkg_ic.basename_from }} {{ pkg_ic.install_path }}/{{ pkg_ic.basename }}
   when: (pkg_ic.basename_from|default(none) != none) and (pkg_ic.basename_from|default("") != "" ) and ( pkg_stat.stat.isdir is not defined)
 
-# export environment variable
-- name: Export NODEJS_HOME (/etc/environment)
-  lineinfile:
-    path: /etc/environment
-    regexp: '^NODEJS_HOME='
-    line: 'NODEJS_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: Export NODEJS_HOME
-  lineinfile:
-    path: "{{ sys_profile }}"
-    regexp: '^export NODEJS_HOME='
-    line: 'export NODEJS_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
-- name: Export NODEJS_HOME to PATH
-  lineinfile:
-    path: '{{ sys_profile }}'
-    line: 'export PATH=$NODEJS_HOME/bin:$PATH'
+  env_edit:
+    varlist:
+      - NODEJS_HOME: '{{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
+      - PATH: $NODEJS_HOME/bin/:$PATH
+    marker: "{mark} NODEJS BLOCK"
+    profile_filename: nodejs.sh
 
 # check
 - name: Check nodejs installation
-  raw: su - {{ dev_user}} -l -c "node --version"
+  shell: /bin/bash -l -c "node --version"
   register: command_result
   failed_when: "( command_result | failed ) or ( pkg_ic.version_expect not in command_result.stdout) "
   changed_when: false

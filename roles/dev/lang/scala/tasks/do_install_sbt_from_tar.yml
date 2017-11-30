@@ -32,25 +32,17 @@
     mv {{ pkg_ic.install_path }}/{{ pkg_ic.basename_from }} {{ pkg_ic.install_path }}/{{ pkg_ic.basename }}
   when: (pkg_ic.basename_from|default(none) != none) and (pkg_ic.basename_from|default("") != "" ) and ( pkg_stat.stat.isdir is not defined)
 
-# export environment variable
-- name: Export SBT_HOME (/etc/environment)
-  lineinfile:
-    path: /etc/environment
-    regexp: '^SBT_HOME='
-    line: 'SBT_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
 - name: Export SBT_HOME
-  lineinfile:
-    path: "{{ sys_profile }}"
-    regexp: '^export SBT_HOME='
-    line: 'export SBT_HOME={{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
-- name: Export SBT_HOME to PATH
-  lineinfile:
-    path: '{{ sys_profile }}'
-    line: 'export PATH=$SBT_HOME/bin:$PATH'
+  env_edit:
+    varlist:
+      - SBT_HOME: '{{ pkg_ic.install_path }}/{{ pkg_ic.basename }}'
+      - PATH: $SBT_HOME/bin/:$PATH
+    marker: "{mark} SBT BLOCK"
+    profile_filename: scala.sh
 
 # check
 - name: Check sbt installation
-  raw: su - {{ dev_user}} -l -c "sbt sbtVersion"
+  shell: /bin/bash -l -c "sbt sbtVersion"
   register: pkg_v
   failed_when: "( pkg_v | failed ) or ( pkg_ic.version_expect not in pkg_v.stdout) "
   changed_when: false

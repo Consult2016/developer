@@ -2,7 +2,7 @@
 
 # check
 - name: Check nodejs installation
-  raw: su - {{ dev_user}} -l -c "node --version"
+  shell: /bin/bash -l -c "node --version"
   register: command_result
   changed_when: false
   ignore_errors: true

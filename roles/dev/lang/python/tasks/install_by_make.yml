@@ -23,7 +23,7 @@
     chdir: "{{ pkg_ic.install_path }}/{{ pkg_ic.basename}}"
 
 - name: Check python installation
-  raw: su - {{ dev_user}} -l -c "{{ python_x}} --version 2>&1"
+  shell: /bin/bash -l -c "{{ python_x}} --version 2>&1"
   # next line wont work on centos ?
   # shell: "{{ python_x}} --version 2>&1"
   register: python_v

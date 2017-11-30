@@ -21,18 +21,16 @@
     dest: "{{ pkg_ic.install_path }}"
     remote_src: yes
 
-# export environment variable
-- name: Export JAVA_HOME (/etc/environment)
-  lineinfile:
-    path: /etc/environment
-    regexp: '^JAVA_HOME='
-    line: 'JAVA_HOME={{ pkg_ic.install_path }}/{{ _jdk_.basename }}'
 - name: Export JAVA_HOME
-  lineinfile:
-    path: "{{ sys_profile }}"
-    regexp: '^export JAVA_HOME='
-    line: 'export JAVA_HOME={{ pkg_ic.install_path }}/{{ _jdk_.basename }}'
-- name: Export JAVA_HOME to PATH
-  lineinfile:
-    path: '{{ sys_profile }}'
-    line: 'export PATH=$JAVA_HOME/bin:$PATH'
+  env_edit:
+    varlist:
+      - JAVA_HOME: '{{ pkg_ic.install_path }}/{{ _jdk_.basename }}'
+      - PATH: $JAVA_HOME/bin/:$PATH
+    marker: "{mark} JAVA BLOCK"
+    profile_filename: java.sh
+
+- name: Check java installation
+  shell: /bin/sh -l -c "{{ java_version_command }}"
+  register: java_v
+  changed_when: false
+  failed_when: "( java_v | failed ) or ( pkg_ic.java_full_version not in java_v.stdout )"
