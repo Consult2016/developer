@@ -43,6 +43,14 @@ options:
     description:
       - Setting system environment variables will possibly result in writing
         file under /etc/profile.d/. The profile_filename indicates the .sh file to write to.
+  explict_file
+    required: false
+    default: None
+    description:
+      - Set an explict file to write the environment variables. The option contains properties:
+        - path (required): the file path to write variables
+        - comment_symbol (not required): comment symbol of the file, default: '#'
+        - export_symbol (not required): mark the line to be exported, default: 'export '
   insertafter:
     required: false
     default: EOF
@@ -90,4 +98,17 @@ EXAMPLES = r"""
     state: present
     owner: andy
     group: wheel
+
+  env_edit:
+    varlist:
+      - JAVA_HOME: /opt/jdk1.8
+      - PATH: $JAVA_HOME/bin/:$PATH
+    marker: "{mark} JAVA BLOCK"
+    comment: "Java environment by ansible"
+    state: present
+    explict_file:
+      path: /abc/def/ghi.sh
+      comment_symbol: '#'
+      export_symbol: 'export '
+
 """
