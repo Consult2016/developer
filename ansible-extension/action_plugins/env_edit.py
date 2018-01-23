@@ -27,14 +27,16 @@ class Utils:
         return result
 
 class EnvFileDesc:
-    def __init__(self, filename, owner=None, group=None, mode=None, touch=False, comment_symbol='#', export_leading=""):
+    def __init__(self, filename,
+                 owner=None, group=None,
+                 mode=None, touch=False, comment_symbol='#', export_symbol=""):
         self.filename = filename
         self.owner = owner
         self.group = group
         self.mode = mode
         self.touch = touch
         self.comment_symbol = comment_symbol
-        self.export_leading = export_leading
+        self.export_symbol = export_symbol
 
     @staticmethod
     def _as_sys_etc_environmenet():
@@ -58,7 +60,7 @@ class EnvFileDesc:
             raise AnsibleError(err_msg)
         return EnvFileDesc(filename=os.path.join("/etc/profile.d/", filename),
                         touch=True,
-                        export_leading='export ')
+                        export_symbol='export ')
 
     @staticmethod
     def _as_user_pam_environment(owner_home, owner, group):
@@ -73,7 +75,7 @@ class EnvFileDesc:
                         owner=owner,
                         group=group,
                         touch=True,
-                        export_leading="export ")
+                        export_symbol="export ")
 
     @staticmethod
     def _as_user_bashrc(owner_home, owner, group):
@@ -81,7 +83,7 @@ class EnvFileDesc:
                         owner=owner,
                         group=group,
                         touch=True,
-                        export_leading="export ")
+                        export_symbol="export ")
 
     @staticmethod
     def as_sys_env_files(fd, filename):
@@ -182,6 +184,18 @@ class Distribution:
         for f in efd.get('system', []):
             env_files.append(EnvFileDesc.as_sys_env_files(f, filename=profile_filename))
         return env_files
+    
+    def explict_env_files(self, explict_file, owner='', group=''):
+        comment_symbol = explict_file.get('comment_symbol', '#')
+        export_symbol = explict_file.get('export_symbol', 'export ')
+        path = explict_file.get('path', None)
+        if path == None:
+            raise AnsibleError('Invalid option "explict_file", property "path" required')
+
+        env_files = []
+        env_files.append(EnvFileDesc(path, owner=owner, group=group,
+                                     comment_symbol=comment_symbol, export_symbol=export_symbol))
+        return env_files
 
 class ActionModule(ActionBase):
 
@@ -221,11 +235,11 @@ class ActionModule(ActionBase):
             if ef == None:
                 continue
             blockinfile_args = blockinfile_args_tpl.copy()
-            export_leading = ef.export_leading
+            export_symbol = ef.export_symbol
             comment_symbol = ef.comment_symbol + " "
             lines = []
             if present:
-                lines = Utils.concat_vars_list_to_string(leading_str=export_leading,
+                lines = Utils.concat_vars_list_to_string(leading_str=export_symbol,
                                                                 var_list=varlist, result=lines)
 
             blockinfile_args['path'] = ef.filename
@@ -295,10 +309,14 @@ class ActionModule(ActionBase):
             owner_home = '~' + owner
 
         profile_filename = orig_args.get('profile_filename', None)
+        explict_file = orig_args.get('explict_file', None)
 
         user_mode = bool(owner_home)
+        explict_mode = (explict_file != None)
         distribution = Distribution(task_vars=task_vars)
-        if user_mode:
+        if explict_mode:
+            e
+        elif user_mode:
             env_files = distribution.user_env_files(owner_home=owner_home,
                                                     owner=owner,
                                                     group=group)
