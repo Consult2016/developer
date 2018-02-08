@@ -1,1 +1,3 @@
+nobody: nobody
+nogroup: nogroup
 sudo_group: sudo

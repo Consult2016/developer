@@ -18,8 +18,8 @@
     mirror_config: '{{ item_foo }}'
   with_first_found:
     - files:
-        - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list.{{ source_provider }}'
-        - '{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list'
+        - '{{ ansible_lsb.id }}-{{ ansible_lsb.codename }}.sources.list.{{ source_provider }}'
+        - '{{ ansible_lsb.id }}-{{ ansible_lsb.codename }}.sources.list'
       paths:
         - '{{ role_path }}/templates/mirrors'
   loop_control:
@@ -32,9 +32,9 @@
     - name: Copy template sources.list to temporary directory
       copy:
         src: '{{ mirror_config }}'
-        dest: '{{ temp_src_dir.path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list'
+        dest: '{{ temp_src_dir.path }}/{{ ansible_lsb.id }}-{{ ansible_lsb.codename }}.sources.list'
     - name: Reading Mirror file and register it into data variable
-      shell: cat {{ temp_src_dir.path }}/{{ ansible_distribution }}-{{ ansible_distribution_release }}.sources.list
+      shell: cat {{ temp_src_dir.path }}/{{ ansible_lsb.id }}-{{ ansible_lsb.codename }}.sources.list
       register: temp_src_content
     - name: Insert the text from Mirror file into file sources.list
       blockinfile:

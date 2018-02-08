@@ -1,0 +1,4 @@
+---
+
+nfs_dirs:
+  - { path: '/sharing',   owner: '', group: '', mode: "0700", access: '*(rw,sync,no_root_squash,no_subtree_check)' }

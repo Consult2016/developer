@@ -7,26 +7,53 @@
       - 'default.yml'
     paths: '{{ role_path }}/vars/os'
 
-- name: Present developer group
-  group: name={{ dev_group }} state=present
-- name: Present developer account
+- name: Present groups
+  group: name={{ g_item.name }} gid={{ g_item.id }} state=present
+  with_items: '{{ deploy_groups }}'
+  loop_control:
+    loop_var: g_item
+
+- name: Present accounts
   user:
-    name: "{{ dev_user }}"
-    comment: "{{ dev_user}}"
-    group: "{{ dev_group }}"
-    groups: ["{{ sudo_group }}"]
+    name: "{{ u_item.name }}"
+    comment: "{{ u_item.name }}"
+    uid: "{{ u_item.id }}"
+    group: "{{ u_item.groups[0] }}"
+    groups: "{{ u_item.groups }}"
     shell: /bin/bash
     generate_ssh_key: yes
     ssh_key_bits: 2048
     ssh_key_file: ".ssh/id_rsa"
+  with_items: '{{ deploy_users }}'
+  loop_control:
+    loop_var: u_item
 
-- name: Configure developer password
-  raw: echo "{{ dev_user}}:{{ dev_user_pwd }}"  | chpasswd
+- name: Configure user password
+  raw: echo "{{ u_item.name}}:{{ u_item.pwd }}"  | chpasswd
+  when: u_item.pwd | default('') | length > 1
+  with_items: '{{ deploy_users }}'
+  loop_control:
+    loop_var: u_item
 
-- name: Present developer desktop
+- name: Append sudo group for admin
+  user:
+    name: "{{ u_item.name }}"
+    group: '{{ sudo_group }}'
+    append: yes
+  when: u_item.sudoer | default(false)
+  with_items: '{{ deploy_users }}'
+  loop_control:
+    loop_var: u_item
+
+- name: Present user desktop
   file:
-    path: ~{{ dev_user}}/Desktop
-    owner: "{{ dev_user }}"
-    group: "{{ dev_group }}"
+    path: ~{{ u_item.name }}/Desktop
+    owner: "{{ u_item.name }}"
+    group: "{{ u_item.groups[0] }}"
     state: directory
     mode: 0755
+  when: u_item.desktop_user | default(false)
+  with_items: '{{ deploy_users }}'
+  loop_control:
+    loop_var: u_item
+

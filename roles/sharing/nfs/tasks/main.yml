@@ -17,24 +17,21 @@
 
 - name: Present nfs sharing dir
   file:
-    path: '{{ sharing_dir }}'
-    owner: '{{ nobody }}'
-    group: '{{ nogroup }}'
+    path: '{{ nfsdd.path }}'
+    owner: "{{ ( nfsdd.owner | default('') | length > 1 ) | ternary(nfsdd.owner, nobody) }}"
+    group: "{{ ( nfsdd.group | default('') | length > 1 ) | ternary(nfsdd.group, nogroup) }}"
     state: directory
-    mode: 0777
-- name: Present sample file
-  file:
-    path: '{{ sharing_dir }}/{{ inventory_hostname }}'
-    owner: '{{ nobody }}'
-    group: '{{ nogroup }}'
-    state: touch
-    mode: 0666
+    mode: '{{ nfsdd.mode }}'
+  with_items: '{{ nfs_dirs }}'
+  loop_control:
+    loop_var: nfsdd
+    label: "{{ nfsdd.path }}"
 
 - name: Define exports
   blockinfile:
     path: /etc/exports
     block: |
-      {{ sharing_dir }}    *(rw,sync,no_root_squash,no_subtree_check)
+      {{ nfs_dirs | lines_of_items('$path   $access') }}
 
 - name: Restart nfsserver
   service: name='{{ pkg_set.service }}' state=restarted enabled=yes
@@ -42,7 +39,14 @@
 - name: Check nfs setting
   raw: "exportfs"
   register: exportfs_o
-  failed_when: ( exportfs_o | failed ) or ( sharing_dir not in exportfs_o.stdout )
+  failed_when: ( exportfs_o | failed )
   changed_when: false
 
-
+- name: Check nfs exportfs
+  fail:
+    msg: "{{ nfsdd.path }} not in exportfs"
+  when:  ( nfsdd.path not in exportfs_o.stdout )
+  with_items:  '{{ nfs_dirs }}'
+  loop_control:
+    loop_var: nfsdd
+    label: "{{ nfsdd.path }}"

@@ -1,53 +1,27 @@
 ---
 
-- name: Setup proxy in /etc/environment
-  blockinfile:
-    path: /etc/environment
-    marker: "# {mark} PROXY BLOCK"
-    block: |
-      http_proxy={{ '"' }}{{ proxy.http }}{{ '"' }}
-      HTTP_PROXY={{ '"' }}{{ proxy.http }}{{ '"' }}
-      https_proxy={{ '"' }}{{ proxy.https }}{{ '"' }}
-      HTTPS_PROXY={{ '"' }}{{ proxy.https }}{{ '"' }}
-      ftp_proxy={{ '"' }}{{ proxy.ftp }}{{ '"' }}
-      FTP_PROXY={{ '"' }}{{ proxy.ftp }}{{ '"' }}
-      socks_proxy={{ '"' }}{{ proxy.socks }}{{ '"' }}
-      SOCKS_PROXY={{ '"' }}{{ proxy.socks }}{{ '"' }}
-      no_proxy={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
-      NO_PROXY={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
-  when: proxy.enable
-
-- name: Setup no-proxy in /etc/environment
-  blockinfile:
-    path: /etc/environment
-    marker: "# {mark} PROXY BLOCK"
-    block: |
-      # --------- PROXY DISABLED
-  when: not proxy.enable
-
 - name: Export proxies
-  blockinfile:
-    path: '{{ sys_bashrc }}'
+  env_edit:
     marker: "# {mark} PROXY BLOCK"
-    block: |
-      export http_proxy={{ '"' }}{{ proxy.http }}{{ '"' }}
-      export HTTP_PROXY={{ '"' }}{{ proxy.http }}{{ '"' }}
-      export https_proxy={{ '"' }}{{ proxy.https }}{{ '"' }}
-      export HTTPS_PROXY={{ '"' }}{{ proxy.https }}{{ '"' }}
-      export ftp_proxy={{ '"' }}{{ proxy.ftp }}{{ '"' }}
-      export FTP_PROXY={{ '"' }}{{ proxy.ftp }}{{ '"' }}
-      export socks_proxy={{ '"' }}{{ proxy.socks }}{{ '"' }}
-      export SOCKS_PROXY={{ '"' }}{{ proxy.socks }}{{ '"' }}
-      export no_proxy={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
-      export NO_PROXY={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
+    profile_filename: proxy.sh
+    varlist:
+      - http_proxy: '{{ proxy.http }}'
+      - HTTP_PROXY: '{{ proxy.http }}'
+      - https_proxy: '{{ proxy.https }}'
+      - HTTPS_PROXY: '{{ proxy.https }}'
+      - ftp_proxy: '{{ proxy.ftp }}'
+      - FTP_PROXY: '{{ proxy.ftp }}'
+      - socks_proxy: '{{ proxy.socks }}'
+      - SOCKS_PROXY: '{{ proxy.socks }}'
+      - no_proxy: '{{ proxy.no_proxy }}'
+      - NO_PROXY: '{{ proxy.no_proxy }}'
   when: proxy.enable
 
 - name: Un-Export proxies
-  blockinfile:
-    path: '{{ sys_bashrc }}'
+  env_edit:
     marker: "# {mark} PROXY BLOCK"
-    block: |
-      # --------- PROXY DISABLED
+    profile_filename: proxy.sh
+    state: absent
   when: not proxy.enable
 
 - name: Platform dependent setting
