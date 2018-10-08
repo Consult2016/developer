@@ -1,0 +1,3 @@
+[submodule "ansible-extension"]
+	path = ansible-extension
+	url = https://github.com/altiplanogao/ansible-extension.git
