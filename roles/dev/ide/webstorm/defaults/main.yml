@@ -1,9 +1,0 @@
----
-
-pkg_ic:
-  name: WebStorm
-  install_path: /opt
-  manual_url: https://www.jetbrains.com/webstorm/
-  url: https://www.jetbrains.com/webstorm/
-  file: WebStorm-2017.3.1.tar.gz
-  basename: WebStorm-173.3942.31

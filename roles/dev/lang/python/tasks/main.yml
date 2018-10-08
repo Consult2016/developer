@@ -20,6 +20,8 @@
   # next line wont work on centos ?
   # shell: "python2 --version 2>&1"
   register: python2_v
+  become: true
+  become_user: "{{ dev_user}}"
   changed_when: False
   ignore_errors: true
 - debug:
@@ -36,6 +38,8 @@
   shell: "python3 --version 2>&1"
   # next line wont work on centos ?
   # shell: "python3 --version 2>&1"
+  become: true
+  become_user: "{{ dev_user}}"
   register: python3_v
   changed_when: False
   ignore_errors: true

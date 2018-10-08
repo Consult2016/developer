@@ -8,7 +8,7 @@
   ignore_errors: true
 - name: Print version
   debug:
-    msg: "Expect: {{ pkg_ic.version_expect }}, got: {{ command_result.stdout }}"
+    msg: "Expect: {{ pkg_ic.version_expect }}, got: {{ pkg_v.stdout }}"
 
 - name: Install from tar
   include_tasks: install_from_tar.yml
