@@ -13,8 +13,8 @@
     - .config.yml
 
   roles:
-    - basic/user
-    - sharing/nfs
+#    - basic/user
+#    - sharing/nfs
 
     - basic/proxy
     - basic/sources

@@ -1,0 +1,35 @@
+---
+
+source_provider: 163
+
+resource_cache: "{{ playbook_dir | dirname }}/.resources"
+
+#User
+deploy_groups:
+  - { name: sample_group,   id: 2000 }
+  - { name: developer,   id: 2001 }
+deploy_users:
+  - { name: sample_user, id: 12001, groups: [sample_group], pwd: 'abcdefg', sudoer: False }
+  - { name: andy, id: 12002, groups: [developer, users], pwd: 'abcabc', sudoer: True, desktop_user: True }
+
+dev_group: developer
+dev_user: andy
+
+sharing_dir: /workdisk
+smb_conf:
+  sharing_dir: /workdisk
+  init_pwd: abcdefg
+# http_proxy: 
+vnc_init_pwd: abcdefg
+
+proxy:
+  enable: true
+  default: http://127.0.0.1:1080
+  http: http://127.0.0.1:1080
+  https: http://127.0.0.1:1080
+  ftp: http://127.0.0.1:1080
+  socks: http://127.0.0.1:1080
+  no_proxy: "localhost,127.0.0.1,localaddress,.localdomain.com"
+
+mounts:
+  - {type: nfs, host: localhost, path: /workdisk, mountpoint: /xxx}
