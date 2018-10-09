@@ -14,36 +14,36 @@ docker_packages:
       url: https://github.com/docker/machine/releases/download/v0.12.2/docker-machine-Linux-x86_64
 
   docker_download_url: https://download.docker.com/linux/ubuntu/dists/
-  version_expect: 17.06.0-ce
+  version_expect: 18.06.1-ce
 
   Ubuntu:
     trusty:
       comment: 14
-      file: docker-ce_17.06.0-ce-0-ubuntu_amd64(trusty).deb
-      url: https://download.docker.com/linux/ubuntu/dists/trusty/pool/stable/amd64/docker-ce_17.06.0~ce-0~ubuntu_amd64.deb
+      file: docker-ce_18.06.1~ce~3-0~ubuntu_amd64(trusty).deb
+      url: https://download.docker.com/linux/ubuntu/dists/trusty/pool/stable/amd64/docker-ce_18.06.1~ce~3-0~ubuntu_amd64.deb
     xenial:
       comment: 16
 #      file: docker-ce_17.06.0-ce-0-ubuntu_amd64(xenial).deb
 #      url: https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/docker-ce_17.06.0~ce-0~ubuntu_amd64.deb
       file: docker-ce_18.06.1~ce~3-0~ubuntu_amd64(xenial).deb
-        url: https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/docker-ce_18.06.1~ce~3-0~ubuntu_amd64.deb
+      url: https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/docker-ce_18.06.1~ce~3-0~ubuntu_amd64.deb
   CentOS:
     _7:
-      file: docker-ce-17.06.0.ce-1.el7.centos.x86_64.rpm
-      url: https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-17.06.0.ce-1.el7.centos.x86_64.rpm
+      file: docker-ce-18.06.1.ce-3.el7.centos.x86_64.rpm
+      url: https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce-18.06.1.ce-3.el7.x86_64.rpm
   Debian:
     wheezy:
       comment: 7
-      file: docker-ce_17.06.0-ce-0-debian_amd64(wheezy).deb
-      url: https://download.docker.com/linux/debian/dists/wheezy/pool/stable/amd64/docker-ce_17.06.0~ce-0~debian_amd64.deb
+      file: docker-ce_18.03.1~ce-0~debian_amd64(wheezy).deb
+      url: https://download.docker.com/linux/debian/dists/wheezy/pool/stable/amd64/docker-ce_18.03.1~ce-0~debian_amd64.deb
     jessie:
       comment: 8
-      file: docker-ce_17.06.0-ce-0-debian_amd64(jessie).deb
-      url: https://download.docker.com/linux/debian/dists/jessie/pool/stable/amd64/docker-ce_17.06.0~ce-0~debian_amd64.deb
+      file: docker-ce_18.03.1~ce-0~debian_amd64(jessie).deb
+      url: https://download.docker.com/linux/debian/dists/jessie/pool/stable/amd64/docker-ce_18.03.1~ce-0~debian_amd64.deb
     stretch:
       comment: 9
-      file: docker-ce_17.06.0-ce-0-debian_amd64(stretch).deb
-      url: https://download.docker.com/linux/debian/dists/stretch/pool/stable/amd64/docker-ce_17.06.0~ce-0~debian_amd64.deb
+      file: docker-ce_18.03.1~ce-0~debian_amd64(stretch).deb
+      url: https://download.docker.com/linux/debian/dists/stretch/pool/stable/amd64/docker-ce_18.03.1~ce-0~debian_amd64.deb
 
 docker_group: docker
 
