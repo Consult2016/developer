@@ -28,4 +28,4 @@
    writable   = yes
    browseable = yes 
    guest ok = yes
-   write list = @{{ dev_group}}
+   write list = @{{ dev_group }}

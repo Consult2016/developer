@@ -13,14 +13,11 @@
     - .config.yml
 
   roles:
-    - basic/user
-    - sharing/nfs
-
-    # - basic/proxy
+    - basic/proxy
     # - basic/sources
-    # - basic/common
-    # - basic/user
-    # - basic/firewall
+    - basic/common
+    - basic/user
+    - basic/firewall
 
     # - dev/lang/jdk
     # - dev/lang/scala
@@ -41,6 +38,6 @@
     # - dev/build/gradle
     # - dev/ide/eclipse
     # - dev/ide/idea
-    # - dev/docker
+    - dev/docker
     # - dev/ansible
 

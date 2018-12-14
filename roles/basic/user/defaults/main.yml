@@ -4,4 +4,4 @@ deploy_groups:
   - { name: sample_group,   id: 2000 }
 
 deploy_users:
-  - { name: sample_user, id: 12001, groups: [sample_group], pwd: 'abcabc', sudoer: False }
+  - { name: sample_user, id: 12001, groups: [sample_group], pwd: 'abcabc', desktop_user: False, sudoer: False }

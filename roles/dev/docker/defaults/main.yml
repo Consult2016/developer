@@ -23,8 +23,8 @@ docker_packages:
       url: https://download.docker.com/linux/ubuntu/dists/trusty/pool/stable/amd64/docker-ce_17.06.0~ce-0~ubuntu_amd64.deb
     xenial:
       comment: 16
-      file: docker-ce_17.06.0-ce-0-ubuntu_amd64(xenial).deb
-      url: https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/docker-ce_17.06.0~ce-0~ubuntu_amd64.deb
+      file: docker-ce_18.03.1-ce-0-ubuntu_amd64(xenial).deb
+      url: https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/docker-ce_18.03.1~ce-0~ubuntu_amd64.deb
   CentOS:
     _7:
       file: docker-ce-17.06.0.ce-1.el7.centos.x86_64.rpm

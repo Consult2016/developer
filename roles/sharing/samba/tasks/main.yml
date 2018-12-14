@@ -22,13 +22,6 @@
     group: '{{ nogroup }}'
     state: directory
     mode: 0777
-- name: Present a sample file
-  file:
-    path: '{{ smb_conf.sharing_dir }}/{{ inventory_hostname}}'
-    owner: '{{ nobody }}'
-    group: '{{ nogroup }}'
-    state: touch
-    mode: 0666
 
 - name: Set samba configure file
   template:
@@ -48,7 +41,7 @@
 - name: Check service status
   shell: "smbclient -L localhost -U={{ dev_user }}%{{ smb_conf.init_pwd }}"
   become: true
-  become_user: "{{ dev_user}}"
+  become_user: "{{ dev_user }}"
   register: smbc_res
   changed_when: False
   failed_when: "( smbc_res | failed ) or ( ('Workzone on Samba' not in smbc_res.stdout ) and (ansible_python_version not in python_v.stdout ) )"
