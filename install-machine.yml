@@ -13,31 +13,33 @@
     - .config.yml
 
   roles:
+    - basic/user
+    - sharing/nfs
+
     - basic/proxy
-    # - basic/sources
+    - basic/sources
     - basic/common
     - basic/user
     - basic/firewall
 
-    # - dev/lang/jdk
-    # - dev/lang/scala
-    # - dev/lang/golang
-    # - dev/lang/nodejs
-    # - dev/lang/python
+    - dev/lang/jdk
+#    - dev/lang/scala
+    - dev/lang/golang
+    - dev/lang/nodejs
+    - dev/lang/python
 
-    # - text/vim
-    # - text/sublime
-    # # - text/meld
-    # - internet/chrome
-    # - sharing/nfs
-    # - sharing/samba
-    # - sharing/vnc
-    # - dev/general
-    
-    # - dev/build/mvn
-    # - dev/build/gradle
-    # - dev/ide/eclipse
-    # - dev/ide/idea
+    - text/vim
+    - text/sublime
+     # - text/meld
+    - internet/chrome
+    - sharing/nfs
+    - sharing/samba
+    - sharing/vnc
+    - dev/general
+
+    - dev/build/mvn
+    - dev/build/gradle
+    - dev/ide/eclipse
+    - dev/ide/idea
     - dev/docker
-    # - dev/ansible
-
+    - dev/ansible

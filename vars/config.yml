@@ -4,7 +4,6 @@ resource_cache: "{{ lookup('env','HOME') }}/.resources"
 
 dev_group: developer
 dev_user: abc
-dev_user_pwd: abcdefg
 
 sharing_dir: /sharing
 smb_conf:

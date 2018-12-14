@@ -1,11 +1,10 @@
 ---
 
 # https://stackoverflow.com/questions/26550360/docker-ubuntu-behind-proxy
+- debug:
+    msg: ansible_service_mgr is {{ ansible_service_mgr }}
 
-- name: Check if /etc/default/docker exist
-  stat: path="/etc/default/docker"
-  register: tempdstat
-- name: Export PROXIES
+- name: Enable proxies for systemd
   blockinfile:
     path: '/etc/default/docker'
     marker: "# {mark} PROXY BLOCK"
@@ -15,8 +14,17 @@
       export ftp_proxy={{ '"' }}{{ proxy.ftp }}{{ '"' }}
       export socks_proxy={{ '"' }}{{ proxy.socks }}{{ '"' }}
       export no_proxy={{ '"' }}{{ proxy.no_proxy }}{{ '"' }}
-  when: tempdstat.stat.exists and proxy.enable
+  when: ansible_service_mgr == "sysvinit" and proxy.enable
+- name: Disable proxies for systemd
+  blockinfile:
+    path: '/etc/default/docker'
+    marker: "# {mark} PROXY BLOCK"
+    state: absent
+  when: ansible_service_mgr == "sysvinit" and (not proxy.enable)
 
+- name: Check if /etc/default/docker exist
+  stat: path="/etc/default/docker"
+  register: tempdstat
 - name: Configure Docker proxy
   file:
     path: '/etc/systemd/system/docker.service.d'
@@ -24,12 +32,12 @@
     owner: root
     group: root
     mode: 0755
-  when: not tempdstat.stat.exists
+  when: ansible_service_mgr == "systemd"
 - name: Configure Docker proxy (HTTP)
   template:
     src: http-proxy.conf
     dest: /etc/systemd/system/docker.service.d/http-proxy.conf
-  when: (not tempdstat.stat.exists) and proxy.enable
+  when: ansible_service_mgr == "systemd" and proxy.enable
 # - name: Configure Docker proxy (HTTPS)
 #   template: src=https-proxy.conf dest=/etc/systemd/system/docker.service.d/https-proxy.conf
 #   when: (not tempdstat.stat.exists) and proxy.enable

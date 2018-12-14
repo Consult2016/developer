@@ -22,7 +22,7 @@
   set_fact:
     docker_nodes: '{{ hostvars | hosts_with("docker_installed", true) }}'
 - debug:
-    msg: installed -> {{ docker_installed}}, dockers -> {{ docker_nodes }}
+    msg: installed -> {{ docker_installed }}, dockers -> {{ docker_nodes }}
 - debug:
     var: docker_nodes
 
